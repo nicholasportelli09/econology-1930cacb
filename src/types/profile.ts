@@ -9,6 +9,7 @@ export interface UserProfile {
   financialGoals: string[];
   topicsOfInterest: string[];
   learningStyle: string;
+  quizScore: number | null;
 }
 
 export const defaultProfile: UserProfile = {
@@ -22,6 +23,7 @@ export const defaultProfile: UserProfile = {
   financialGoals: [],
   topicsOfInterest: [],
   learningStyle: "",
+  quizScore: null,
 };
 
 export const STUDENT_STATUSES = [
