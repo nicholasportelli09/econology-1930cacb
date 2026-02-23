@@ -1,8 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import EconologyLogo from "@/components/EconologyLogo";
 import FeatureCard from "@/components/FeatureCard";
 import { Lightbulb, BookOpen, Newspaper, ArrowRight } from "lucide-react";
 
 const Index = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background gradient orbs */}
@@ -36,7 +38,7 @@ const Index = () => {
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mb-10 leading-relaxed">
             Personalized financial education for students. Daily tips, market insights, economic news, and AI tutoring — all tailored to <span className="text-accent font-semibold">YOU</span>.
           </p>
-          <button className="group flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-display font-semibold gradient-bg text-primary-foreground transition-all duration-300 hover:shadow-[0_0_40px_hsl(270_70%_55%/0.4)] hover:scale-105">
+          <button onClick={() => navigate("/onboarding")} className="group flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-display font-semibold gradient-bg text-primary-foreground transition-all duration-300 hover:shadow-[0_0_40px_hsl(270_70%_55%/0.4)] hover:scale-105">
             Start Your Journey
             <ArrowRight size={20} className="transition-transform duration-300 group-hover:translate-x-1" />
           </button>
