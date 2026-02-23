@@ -33,7 +33,7 @@ const Onboarding = () => {
 
   const handleFinish = () => {
     localStorage.setItem("econology_profile", JSON.stringify(profile));
-    navigate("/");
+    navigate("/quiz");
   };
 
   const canProceed = () => {
