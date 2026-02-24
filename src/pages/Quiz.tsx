@@ -44,7 +44,7 @@ const Quiz = () => {
 
   const handleSkip = () => {
     saveScore(null);
-    navigate("/");
+    navigate("/dashboard");
   };
 
   const saveScore = (finalScore: number | null) => {
@@ -57,7 +57,7 @@ const Quiz = () => {
   };
 
   const handleFinish = () => {
-    navigate("/");
+    navigate("/dashboard");
   };
 
   // Intro screen
