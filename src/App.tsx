@@ -11,6 +11,7 @@ import TipArticle from "./pages/TipArticle";
 import Learn from "./pages/Learn";
 import MarketIdeas from "./pages/MarketIdeas";
 import InvestmentDetail from "./pages/InvestmentDetail";
+import EconomicNews from "./pages/EconomicNews";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/market" element={<MarketIdeas />} />
           <Route path="/tip/:tipId" element={<TipArticle />} />
           <Route path="/investment" element={<InvestmentDetail />} />
+          <Route path="/news" element={<EconomicNews />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
