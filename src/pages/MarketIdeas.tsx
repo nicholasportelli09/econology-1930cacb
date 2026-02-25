@@ -308,7 +308,7 @@ const MarketIdeas = () => {
                   </div>
 
                   <button
-                    onClick={() => navigate("/ask")}
+                    onClick={() => navigate("/investment", { state: { investment: inv } })}
                     className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80 mt-auto"
                   >
                     Explore Further <ArrowRight size={14} />
