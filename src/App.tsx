@@ -3,7 +3,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Onboarding from "./pages/Onboarding";
 import Quiz from "./pages/Quiz";
 import Dashboard from "./pages/Dashboard";
@@ -23,20 +27,27 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/quiz" element={<Quiz />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/learn" element={<Learn />} />
-          <Route path="/market" element={<MarketIdeas />} />
-          <Route path="/tip/:tipId" element={<TipArticle />} />
-          <Route path="/investment" element={<InvestmentDetail />} />
-          <Route path="/news" element={<EconomicNews />} />
-          <Route path="/ask" element={<AskClaude />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/learn" element={<Learn />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/quiz" element={<Quiz />} />
+            <Route path="/tip/:tipId" element={<TipArticle />} />
+
+            {/* Protected routes */}
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/market" element={<ProtectedRoute><MarketIdeas /></ProtectedRoute>} />
+            <Route path="/investment" element={<ProtectedRoute><InvestmentDetail /></ProtectedRoute>} />
+            <Route path="/news" element={<ProtectedRoute><EconomicNews /></ProtectedRoute>} />
+            <Route path="/ask" element={<ProtectedRoute><AskClaude /></ProtectedRoute>} />
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

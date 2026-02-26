@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import EconologyLogo from "@/components/EconologyLogo";
 import FeatureCard from "@/components/FeatureCard";
+import { useAuth } from "@/contexts/AuthContext";
 import { Lightbulb, BookOpen, Newspaper, ArrowRight } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, enterGuestMode } = useAuth();
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background gradient orbs */}
@@ -19,9 +21,15 @@ const Index = () => {
             <EconologyLogo size={44} />
             <span className="font-display text-xl font-bold gradient-text">Econology</span>
           </div>
-          <button className="px-5 py-2 rounded-lg text-sm font-medium gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 hover:shadow-[0_0_20px_hsl(270_70%_55%/0.3)]">
-            Sign In
-          </button>
+          {user ? (
+            <button onClick={() => navigate("/dashboard")} className="px-5 py-2 rounded-lg text-sm font-medium gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 hover:shadow-[0_0_20px_hsl(270_70%_55%/0.3)]">
+              Dashboard
+            </button>
+          ) : (
+            <button onClick={() => navigate("/login")} className="px-5 py-2 rounded-lg text-sm font-medium gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 hover:shadow-[0_0_20px_hsl(270_70%_55%/0.3)]">
+              Sign In
+            </button>
+          )}
         </nav>
 
         {/* Hero */}
@@ -38,9 +46,18 @@ const Index = () => {
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mb-10 leading-relaxed">
             Personalized financial education for students. Daily tips, market insights, economic news, and AI tutoring — all tailored to <span className="text-accent font-semibold">YOU</span>.
           </p>
-          <button onClick={() => navigate("/onboarding")} className="group flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-display font-semibold gradient-bg text-primary-foreground transition-all duration-300 hover:shadow-[0_0_40px_hsl(270_70%_55%/0.4)] hover:scale-105">
+          <button onClick={() => navigate("/signup")} className="group flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-display font-semibold gradient-bg text-primary-foreground transition-all duration-300 hover:shadow-[0_0_40px_hsl(270_70%_55%/0.4)] hover:scale-105">
             Start Your Journey
             <ArrowRight size={20} className="transition-transform duration-300 group-hover:translate-x-1" />
+          </button>
+          <button
+            onClick={() => {
+              enterGuestMode();
+              navigate("/onboarding");
+            }}
+            className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
+          >
+            Continue as Guest (limited features)
           </button>
         </section>
 

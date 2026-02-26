@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import EconologyLogo from "@/components/EconologyLogo";
 import { NavLink } from "@/components/NavLink";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   X,
   ArrowRight,
@@ -11,7 +12,7 @@ import {
   Newspaper,
   MessageCircle,
   LayoutDashboard,
-  User,
+  LogOut,
 } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import {
@@ -103,6 +104,7 @@ const NAV_ITEMS = [
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { signOut, isGuest } = useAuth();
   const profile = useMemo(getProfile, []);
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [tips, setTips] = useState(() => pickTips(profile, new Set()));
@@ -183,6 +185,16 @@ const Dashboard = () => {
               <DropdownMenuItem onClick={() => navigate("/onboarding")}>
                 Redo Onboarding
               </DropdownMenuItem>
+              {isGuest ? (
+                <DropdownMenuItem onClick={() => navigate("/login")}>
+                  Sign In
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem onClick={() => signOut().then(() => navigate("/"))}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
