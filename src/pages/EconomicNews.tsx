@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import EconologyLogo from "@/components/EconologyLogo";
 import { NavLink } from "@/components/NavLink";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Newspaper,
   TrendingUp,
@@ -11,6 +12,7 @@ import {
   Loader2,
   CheckCircle2,
   Sparkles,
+  LogOut,
 } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import { Badge } from "@/components/ui/badge";
@@ -73,6 +75,7 @@ const categoryColor = (cat: string) => {
 
 const EconomicNews = () => {
   const navigate = useNavigate();
+  const { signOut, isGuest } = useAuth();
   const profile = useMemo(getProfile, []);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<NewsData | null>(null);
@@ -148,6 +151,16 @@ const EconomicNews = () => {
               <DropdownMenuItem onClick={() => navigate("/onboarding")}>
                 Redo Onboarding
               </DropdownMenuItem>
+              {isGuest ? (
+                <DropdownMenuItem onClick={() => navigate("/login")}>
+                  Sign In
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem onClick={() => signOut().then(() => navigate("/"))}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
