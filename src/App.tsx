@@ -17,6 +17,8 @@ import MarketIdeas from "./pages/MarketIdeas";
 import InvestmentDetail from "./pages/InvestmentDetail";
 import EconomicNews from "./pages/EconomicNews";
 import AskClaude from "./pages/AskClaude";
+import Progress from "./pages/Progress";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +46,8 @@ const App = () => (
             <Route path="/investment" element={<ProtectedRoute><InvestmentDetail /></ProtectedRoute>} />
             <Route path="/news" element={<ProtectedRoute><EconomicNews /></ProtectedRoute>} />
             <Route path="/ask" element={<ProtectedRoute><AskClaude /></ProtectedRoute>} />
+            <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
