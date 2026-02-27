@@ -8,6 +8,17 @@ const TipArticle = () => {
   const navigate = useNavigate();
   const article = tipId ? TIP_ARTICLES[tipId] : undefined;
 
+  // Track explored tips
+  if (tipId) {
+    try {
+      const explored: string[] = JSON.parse(localStorage.getItem("econology_tips_explored") || "[]");
+      if (!explored.includes(tipId)) {
+        explored.push(tipId);
+        localStorage.setItem("econology_tips_explored", JSON.stringify(explored));
+      }
+    } catch { /* ignore */ }
+  }
+
   if (!article) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
