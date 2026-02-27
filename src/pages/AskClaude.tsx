@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, MessageCircle, Sparkles } from "lucide-react";
+import { DashboardHeader } from "@/components/DashboardHeader";
+import { Send, MessageCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,13 +18,7 @@ const SUGGESTED_QUESTIONS = [
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
-async function streamChat({
-  messages,
-  profile,
-  onDelta,
-  onDone,
-  onError,
-}: {
+async function streamChat({ messages, profile, onDelta, onDone, onError }: {
   messages: Msg[];
   profile: UserProfile;
   onDelta: (text: string) => void;
@@ -44,11 +39,7 @@ async function streamChat({
     onError(err.error || "Something went wrong");
     return;
   }
-
-  if (!resp.body) {
-    onError("No response body");
-    return;
-  }
+  if (!resp.body) { onError("No response body"); return; }
 
   const reader = resp.body.getReader();
   const decoder = new TextDecoder();
@@ -59,7 +50,6 @@ async function streamChat({
     const { done: readerDone, value } = await reader.read();
     if (readerDone) break;
     buffer += decoder.decode(value, { stream: true });
-
     let newlineIdx: number;
     while ((newlineIdx = buffer.indexOf("\n")) !== -1) {
       let line = buffer.slice(0, newlineIdx);
@@ -67,13 +57,8 @@ async function streamChat({
       if (line.endsWith("\r")) line = line.slice(0, -1);
       if (line.startsWith(":") || line.trim() === "") continue;
       if (!line.startsWith("data: ")) continue;
-
       const jsonStr = line.slice(6).trim();
-      if (jsonStr === "[DONE]") {
-        done = true;
-        break;
-      }
-
+      if (jsonStr === "[DONE]") { done = true; break; }
       try {
         const parsed = JSON.parse(jsonStr);
         const content = parsed.choices?.[0]?.delta?.content as string | undefined;
@@ -85,7 +70,6 @@ async function streamChat({
     }
   }
 
-  // flush remaining
   if (buffer.trim()) {
     for (let raw of buffer.split("\n")) {
       if (!raw) continue;
@@ -100,7 +84,6 @@ async function streamChat({
       } catch {}
     }
   }
-
   onDone();
 }
 
@@ -116,15 +99,15 @@ export default function AskClaude() {
     try {
       const saved = localStorage.getItem("econology_profile");
       return saved ? JSON.parse(saved) : defaultProfile;
-    } catch {
-      return defaultProfile;
-    }
+    } catch { return defaultProfile; }
   })();
 
+  const initials = profile.name
+    ? profile.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)
+    : "U";
+
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
 
   const send = async (text: string) => {
@@ -141,9 +124,7 @@ export default function AskClaude() {
       setMessages((prev) => {
         const last = prev[prev.length - 1];
         if (last?.role === "assistant") {
-          return prev.map((m, i) =>
-            i === prev.length - 1 ? { ...m, content: assistantSoFar } : m
-          );
+          return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: assistantSoFar } : m);
         }
         return [...prev, { role: "assistant", content: assistantSoFar }];
       });
@@ -156,21 +137,14 @@ export default function AskClaude() {
         onDelta: upsert,
         onDone: () => setIsLoading(false),
         onError: (msg) => {
-          setMessages((prev) => [
-            ...prev,
-            { role: "assistant", content: `⚠️ ${msg}` },
-          ]);
+          setMessages((prev) => [...prev, { role: "assistant", content: `⚠️ ${msg}` }]);
           setIsLoading(false);
         },
       });
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "⚠️ Something went wrong. Please try again." },
-      ]);
+      setMessages((prev) => [...prev, { role: "assistant", content: "⚠️ Something went wrong. Please try again." }]);
       setIsLoading(false);
     }
-
     inputRef.current?.focus();
   };
 
@@ -178,31 +152,8 @@ export default function AskClaude() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <div className="border-b border-border p-4">
-        <div className="max-w-3xl mx-auto flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/dashboard")}
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-primary" />
-            </div>
-            <h1 className="text-lg font-display font-semibold">
-              Ask Claude –{" "}
-              <span className="text-muted-foreground font-normal">
-                Your Personal Financial Tutor
-              </span>
-            </h1>
-          </div>
-        </div>
-      </div>
+      <DashboardHeader initials={initials} />
 
-      {/* Chat area */}
       <div className="flex-1 overflow-hidden flex flex-col max-w-3xl mx-auto w-full">
         <ScrollArea className="flex-1 p-4" ref={scrollRef}>
           {!hasMessages ? (
@@ -210,16 +161,10 @@ export default function AskClaude() {
               <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
                 <MessageCircle className="h-8 w-8 text-primary" />
               </div>
-              <h2 className="text-xl font-display font-semibold">
-                Start a Conversation
-              </h2>
+              <h2 className="text-xl font-display font-semibold">Start a Conversation</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
                 {SUGGESTED_QUESTIONS.map((q) => (
-                  <button
-                    key={q}
-                    onClick={() => send(q)}
-                    className="text-left p-3 rounded-lg border border-border bg-card hover:border-primary/50 hover:bg-muted transition-colors text-sm text-foreground"
-                  >
+                  <button key={q} onClick={() => send(q)} className="text-left p-3 rounded-lg border border-border bg-card hover:border-primary/50 hover:bg-muted transition-colors text-sm text-foreground">
                     {q}
                   </button>
                 ))}
@@ -228,19 +173,8 @@ export default function AskClaude() {
           ) : (
             <div className="space-y-4 pb-4">
               {messages.map((msg, i) => (
-                <div
-                  key={i}
-                  className={`flex ${
-                    msg.role === "user" ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${
-                      msg.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-br-md"
-                        : "bg-muted text-foreground rounded-bl-md"
-                    }`}
-                  >
+                <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${msg.role === "user" ? "bg-primary text-primary-foreground rounded-br-md" : "bg-muted text-foreground rounded-bl-md"}`}>
                     {msg.content}
                   </div>
                 </div>
@@ -248,8 +182,7 @@ export default function AskClaude() {
               {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
                 <div className="flex justify-start">
                   <div className="bg-muted text-muted-foreground rounded-2xl rounded-bl-md px-4 py-3 text-sm flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 animate-pulse text-primary" />
-                    Claude is thinking...
+                    <Sparkles className="h-4 w-4 animate-pulse text-primary" /> Claude is thinking...
                   </div>
                 </div>
               )}
@@ -257,26 +190,10 @@ export default function AskClaude() {
           )}
         </ScrollArea>
 
-        {/* Input */}
         <div className="border-t border-border p-4">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              send(input);
-            }}
-            className="flex gap-2"
-          >
-            <Input
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about budgeting, investing, credit scores..."
-              disabled={isLoading}
-              className="flex-1"
-            />
-            <Button type="submit" disabled={!input.trim() || isLoading} size="icon">
-              <Send className="h-4 w-4" />
-            </Button>
+          <form onSubmit={(e) => { e.preventDefault(); send(input); }} className="flex gap-2">
+            <Input ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask about budgeting, investing, credit scores..." disabled={isLoading} className="flex-1" />
+            <Button type="submit" disabled={!input.trim() || isLoading} size="icon"><Send className="h-4 w-4" /></Button>
           </form>
         </div>
       </div>
