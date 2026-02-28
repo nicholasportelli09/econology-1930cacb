@@ -8,6 +8,7 @@ import {
   BookOpen,
   TrendingUp,
   Newspaper,
+  Trophy,
 } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 
@@ -133,6 +134,23 @@ const Dashboard = () => {
               <RefreshCw size={15} /> Refresh Tips
             </button>
           </div>
+        </section>
+
+        {/* Retest Knowledge */}
+        <section className="animate-fade-in" style={{ animationDelay: "200ms" }}>
+          <button
+            onClick={() => navigate("/quiz?set=2")}
+            className="w-full rounded-xl border border-border bg-card p-6 card-shadow text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 flex items-center gap-5"
+          >
+            <div className="w-14 h-14 rounded-xl gradient-bg flex items-center justify-center shrink-0">
+              <Trophy size={28} className="text-primary-foreground" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-display font-semibold text-foreground">Retest Your Knowledge</h3>
+              <p className="text-sm text-muted-foreground">Take a new quiz with advanced questions to see how much you've learned!</p>
+            </div>
+            <ArrowRight size={20} className="text-muted-foreground shrink-0" />
+          </button>
         </section>
 
         {/* Hub links */}
