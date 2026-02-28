@@ -2,3 +2,12 @@ project_id = "rzwijdlukameiowfbtil"
 
 [functions.chat]
 verify_jwt = false
+
+[functions.stock-news]
+verify_jwt = false
+
+[functions.economic-news]
+verify_jwt = false
+
+[functions.market-insights]
+verify_jwt = false
