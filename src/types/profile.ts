@@ -10,6 +10,7 @@ export interface UserProfile {
   topicsOfInterest: string[];
   learningStyle: string;
   quizScore: number | null;
+  quizScore2?: number | null;
 }
 
 export const defaultProfile: UserProfile = {

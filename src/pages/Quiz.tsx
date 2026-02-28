@@ -1,22 +1,26 @@
 import { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 import { Sparkles, CheckCircle2, XCircle, ArrowRight, Trophy, SkipForward } from "lucide-react";
-import { QUIZ_QUESTIONS } from "@/types/quiz";
+import { QUIZ_QUESTIONS, QUIZ_QUESTIONS_2 } from "@/types/quiz";
 import { type UserProfile } from "@/types/profile";
 
 type Phase = "intro" | "question" | "results";
 
 const Quiz = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const quizSet = searchParams.get("set") === "2" ? 2 : 1;
+  const questions = quizSet === 2 ? QUIZ_QUESTIONS_2 : QUIZ_QUESTIONS;
+
   const [phase, setPhase] = useState<Phase>("intro");
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(false);
 
-  const question = QUIZ_QUESTIONS[currentQ];
-  const total = QUIZ_QUESTIONS.length;
+  const question = questions[currentQ];
+  const total = questions.length;
   const isCorrect = selectedIndex === question?.correctIndex;
 
   const handleAnswer = useCallback(
@@ -51,7 +55,11 @@ const Quiz = () => {
     const stored = localStorage.getItem("econology_profile");
     if (stored) {
       const profile: UserProfile = JSON.parse(stored);
-      profile.quizScore = finalScore;
+      if (quizSet === 2) {
+        profile.quizScore2 = finalScore;
+      } else {
+        profile.quizScore = finalScore;
+      }
       localStorage.setItem("econology_profile", JSON.stringify(profile));
     }
   };
@@ -59,6 +67,11 @@ const Quiz = () => {
   const handleFinish = () => {
     navigate("/dashboard");
   };
+
+  const quizTitle = quizSet === 2 ? "Advanced Knowledge Check" : "Quick Knowledge Check";
+  const quizSubtitle = quizSet === 2
+    ? "5 deeper questions on investing & finance. Let's see what you've learned!"
+    : "Optional 5-question quiz to help us personalize your learning path.";
 
   // Intro screen
   if (phase === "intro") {
@@ -71,9 +84,9 @@ const Quiz = () => {
           <div className="w-20 h-20 rounded-2xl gradient-bg flex items-center justify-center mb-8 glow-shadow">
             <Sparkles size={40} className="text-primary-foreground" />
           </div>
-          <h1 className="text-3xl font-display font-bold text-foreground mb-3">Quick Knowledge Check</h1>
+          <h1 className="text-3xl font-display font-bold text-foreground mb-3">{quizTitle}</h1>
           <p className="text-muted-foreground text-lg mb-10 leading-relaxed">
-            Optional 5-question quiz to help us personalize your learning path.{" "}
+            {quizSubtitle}{" "}
             <span className="text-foreground font-medium">No pressure!</span>
           </p>
 

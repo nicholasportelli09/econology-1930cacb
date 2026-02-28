@@ -37,3 +37,61 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     explanation: "700+ is considered good credit. 750+ is very good, and 800+ is excellent!",
   },
 ];
+
+export const QUIZ_QUESTIONS_2: QuizQuestion[] = [
+  {
+    question: "What is dollar-cost averaging?",
+    options: [
+      "Buying stocks only when they dip",
+      "Investing a fixed amount at regular intervals",
+      "Converting currencies for profit",
+      "Averaging your portfolio returns",
+    ],
+    correctIndex: 1,
+    explanation: "Dollar-cost averaging means investing a fixed amount regularly, reducing the impact of market volatility over time.",
+  },
+  {
+    question: "What does 'diversification' mean in investing?",
+    options: [
+      "Putting all money in one high-growth stock",
+      "Spreading investments across different asset types",
+      "Only investing in foreign markets",
+      "Switching investments frequently",
+    ],
+    correctIndex: 1,
+    explanation: "Diversification means spreading your money across different investments to reduce risk. Don't put all your eggs in one basket!",
+  },
+  {
+    question: "What is an ETF?",
+    options: [
+      "A type of savings account",
+      "A basket of securities traded like a stock",
+      "A government-issued bond",
+      "An insurance product",
+    ],
+    correctIndex: 1,
+    explanation: "An ETF (Exchange-Traded Fund) holds a collection of stocks, bonds, or other assets and trades on an exchange like a single stock.",
+  },
+  {
+    question: "If inflation is 3% and your savings earn 1%, what happens to your purchasing power?",
+    options: [
+      "It grows by 1%",
+      "It stays the same",
+      "It shrinks by about 2%",
+      "It grows by 4%",
+    ],
+    correctIndex: 2,
+    explanation: "When inflation (3%) exceeds your returns (1%), your real purchasing power decreases by the difference (~2%).",
+  },
+  {
+    question: "What is the 'Rule of 72' used to estimate?",
+    options: [
+      "How much to save for retirement",
+      "How long it takes to double your money",
+      "The ideal portfolio allocation by age",
+      "Maximum credit card utilization",
+    ],
+    correctIndex: 1,
+    explanation: "Divide 72 by your annual return rate to estimate how many years it takes to double your investment. At 8% return: 72 ÷ 8 = 9 years!",
+  },
+];
