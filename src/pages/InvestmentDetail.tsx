@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, MessageCircle } from "lucide-react";
+import { ArrowLeft, MessageCircle, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -11,16 +11,17 @@ interface Investment {
   riskLevel: "Low" | "Medium" | "High";
   whyGood: string;
   personalizedNote: string;
+  steps?: string[];
 }
 
 const riskColor = (level: string) => {
   switch (level) {
     case "Low":
-      return "bg-emerald-500/15 text-emerald-400 border-emerald-500/30";
+      return "bg-accent/15 text-accent border-accent/30";
     case "Medium":
-      return "bg-amber-500/15 text-amber-400 border-amber-500/30";
+      return "bg-yellow-500/15 text-yellow-500 border-yellow-500/30";
     case "High":
-      return "bg-red-500/15 text-red-400 border-red-500/30";
+      return "bg-destructive/15 text-destructive border-destructive/30";
     default:
       return "bg-muted text-muted-foreground";
   }
@@ -48,6 +49,16 @@ const InvestmentDetail = () => {
     investment.ticker && investment.ticker !== "N/A"
       ? investment.ticker
       : investment.name;
+
+  const steps = investment.steps && investment.steps.length > 0
+    ? investment.steps
+    : [
+        `Open an account with Fidelity, Vanguard, or Robinhood (free to open)`,
+        `Complete identity verification (driver's license, SSN, bank account)`,
+        `Transfer money from your bank (can start with just ${investment.startingAmount})`,
+        `Search for ${tickerLabel} and place your order`,
+        `Set up automatic monthly investments to build wealth consistently`,
+      ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -80,66 +91,74 @@ const InvestmentDetail = () => {
         <p className="text-muted-foreground leading-relaxed">{investment.description}</p>
 
         {/* Starting Amount */}
-        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-5">
-          <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+        <div className="rounded-xl border border-accent/30 bg-accent/10 p-5">
+          <span className="text-xs font-semibold text-accent uppercase tracking-wider">
             Suggested Starting Amount
           </span>
-          <p className="text-2xl font-bold text-emerald-400 mt-1">
+          <p className="text-2xl font-bold text-accent mt-1">
             {investment.startingAmount}
           </p>
+        </div>
+
+        {/* Why It's Good */}
+        <div className="rounded-xl border border-border bg-card p-5">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Why It's Good for Beginners
+          </span>
+          <p className="text-foreground mt-1 leading-relaxed">{investment.whyGood}</p>
         </div>
 
         {/* Personalized Note */}
         <div className="rounded-xl border border-primary/30 bg-primary/10 p-5">
           <span className="text-xs font-semibold text-primary uppercase tracking-wider">
-            For You
+            Personalized For You
           </span>
           <p className="text-foreground mt-1 leading-relaxed italic">
             {investment.personalizedNote}
           </p>
         </div>
 
-        {/* How to Get Started */}
-        <section className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-6 space-y-4">
+        {/* Step-by-Step Walkthrough */}
+        <section className="rounded-xl border border-primary/20 bg-card p-6 space-y-5">
           <h2 className="text-xl font-display font-semibold text-foreground">
-            How to Get Started
+            Step-by-Step: How to Execute This Investment
           </h2>
-          <ol className="space-y-3 list-decimal list-inside text-sm text-foreground leading-relaxed marker:text-blue-400 marker:font-bold">
-            <li>Open an account with Fidelity/Vanguard/Robinhood (free to open)</li>
-            <li>Complete verification (driver's license, SSN, bank account)</li>
-            <li>
-              Transfer money from your bank (can start with just{" "}
-              <span className="font-semibold text-blue-400">{investment.startingAmount}</span>)
-            </li>
-            <li>
-              Search for{" "}
-              <span className="font-semibold text-blue-400">{tickerLabel}</span> and
-              place your order
-            </li>
-            <li>Set up automatic monthly investments to build wealth consistently</li>
-          </ol>
+          <div className="space-y-4">
+            {steps.map((step, i) => {
+              // Remove leading "Step X:" prefix if present
+              const cleanStep = step.replace(/^Step\s*\d+\s*:\s*/i, "");
+              return (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/15 text-primary text-xs font-bold shrink-0 mt-0.5">
+                    {i + 1}
+                  </div>
+                  <p className="text-sm text-foreground leading-relaxed">{cleanStep}</p>
+                </div>
+              );
+            })}
+          </div>
         </section>
 
         {/* Important Considerations */}
-        <section className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-6 space-y-4">
+        <section className="rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-6 space-y-4">
           <h2 className="text-xl font-display font-semibold text-foreground">
             Important Considerations
           </h2>
           <ul className="space-y-2 text-sm text-foreground leading-relaxed">
             <li className="flex items-start gap-2">
-              <span className="text-amber-400 mt-0.5">•</span>
+              <CheckCircle2 size={16} className="text-yellow-500 mt-0.5 shrink-0" />
               Only invest money you won't need for at least 5 years
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-amber-400 mt-0.5">•</span>
+              <CheckCircle2 size={16} className="text-yellow-500 mt-0.5 shrink-0" />
               Keep an emergency fund before investing (3-6 months expenses)
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-amber-400 mt-0.5">•</span>
+              <CheckCircle2 size={16} className="text-yellow-500 mt-0.5 shrink-0" />
               Markets fluctuate — focus on long-term growth, not daily changes
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-amber-400 mt-0.5">•</span>
+              <CheckCircle2 size={16} className="text-yellow-500 mt-0.5 shrink-0" />
               This is educational information, not personalized financial advice
             </li>
           </ul>

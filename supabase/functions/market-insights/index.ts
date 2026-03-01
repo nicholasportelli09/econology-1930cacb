@@ -16,6 +16,30 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // Fetch real market data from FMP for grounding
+    let marketHeadlines = "";
+    const FMP_API_KEY = Deno.env.get("FMP_API_KEY");
+    if (FMP_API_KEY) {
+      try {
+        const fmpResp = await fetch(
+          `https://financialmodelingprep.com/stable/news/stock-latest?page=0&limit=8&apikey=${FMP_API_KEY}`
+        );
+        if (fmpResp.ok) {
+          const articles = await fmpResp.json();
+          if (Array.isArray(articles) && articles.length > 0) {
+            marketHeadlines = articles
+              .map((a: any, i: number) => `${i + 1}. "${a.title}" (${a.site || "unknown"}, ${a.publishedDate || "recent"})`)
+              .join("\n");
+          }
+        } else {
+          const t = await fmpResp.text();
+          console.error("FMP fetch failed:", fmpResp.status, t);
+        }
+      } catch (fmpErr) {
+        console.error("FMP fetch error:", fmpErr);
+      }
+    }
+
     const userData = JSON.stringify({
       studentStatus: profile?.studentStatus || "Student",
       monthlyIncome: profile?.monthlyIncome || "Unknown",
@@ -26,7 +50,15 @@ serve(async (req) => {
       livingSituation: profile?.livingSituation || "Unknown",
     });
 
-    const systemPrompt = `You are a financial advisor for students. Based on this user profile: ${userData}, provide 3 beginner-friendly investment options suitable for their situation. Return ONLY valid JSON in this format:
+    const headlinesContext = marketHeadlines
+      ? `\n\nHere are REAL current market headlines for context:\n${marketHeadlines}\n\nUse these to inform your recommendations with up-to-date market awareness.`
+      : "";
+
+    const systemPrompt = `You are a financial advisor for students. Based on this user profile: ${userData}, provide 3 beginner-friendly investment options suitable for their situation.${headlinesContext}
+
+For EACH investment, include a detailed step-by-step execution guide with 5-7 specific, actionable steps that a complete beginner can follow. Steps should include exact platform names, what to click, what documents are needed, and how to place the first order.
+
+Return ONLY valid JSON in this format:
 {
   "investments": [
     {
@@ -36,10 +68,17 @@ serve(async (req) => {
       "startingAmount": "$X",
       "riskLevel": "Low/Medium/High",
       "whyGood": "Why this is good for beginners",
-      "personalizedNote": "How this specifically fits THIS user's situation with their income/savings/goals"
+      "personalizedNote": "How this specifically fits THIS user's situation",
+      "steps": [
+        "Step 1: Specific action with platform name",
+        "Step 2: Next specific action",
+        "Step 3: ...",
+        "Step 4: ...",
+        "Step 5: ..."
+      ]
     }
   ],
-  "marketContext": "1-2 sentence current market summary",
+  "marketContext": "1-2 sentence current market summary based on real headlines if available",
   "disclaimer": "Standard disclaimer"
 }`;
 
@@ -58,7 +97,7 @@ serve(async (req) => {
             {
               role: "user",
               content:
-                "Please provide personalized investment recommendations based on my profile. Include current market context.",
+                "Please provide personalized investment recommendations with detailed step-by-step execution guides. Include current market context.",
             },
           ],
         }),
@@ -89,7 +128,6 @@ serve(async (req) => {
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content || "";
 
-    // Extract JSON from the response (handle markdown code blocks)
     let jsonStr = content;
     const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
     if (jsonMatch) {
