@@ -16,6 +16,30 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // Step 1: Fetch real headlines from FMP for grounding
+    let realHeadlines = "";
+    const FMP_API_KEY = Deno.env.get("FMP_API_KEY");
+    if (FMP_API_KEY) {
+      try {
+        const fmpResp = await fetch(
+          `https://financialmodelingprep.com/stable/news/stock-latest?page=0&limit=10&apikey=${FMP_API_KEY}`
+        );
+        if (fmpResp.ok) {
+          const articles = await fmpResp.json();
+          if (Array.isArray(articles) && articles.length > 0) {
+            realHeadlines = articles
+              .map((a: any, i: number) => `${i + 1}. "${a.title}" (${a.site || "unknown"}, ${a.publishedDate || "recent"})${a.text ? ": " + a.text.slice(0, 150) : ""}`)
+              .join("\n");
+          }
+        } else {
+          const t = await fmpResp.text();
+          console.error("FMP fetch failed:", fmpResp.status, t);
+        }
+      } catch (fmpErr) {
+        console.error("FMP fetch error:", fmpErr);
+      }
+    }
+
     const userData = JSON.stringify({
       studentStatus: profile?.studentStatus || "Student",
       monthlyIncome: profile?.monthlyIncome || "Unknown",
@@ -26,7 +50,11 @@ serve(async (req) => {
       livingSituation: profile?.livingSituation || "Unknown",
     });
 
-    const systemPrompt = `You are an economics educator for students. Find 3 current major economic events from this week that would affect young people. For EACH event, personalize to THIS specific user profile: ${userData}
+    const headlinesContext = realHeadlines
+      ? `\n\nHere are REAL current headlines to base your analysis on:\n${realHeadlines}\n\nUse these real headlines to identify the 3 most impactful economic events. Do NOT fabricate events.`
+      : "";
+
+    const systemPrompt = `You are an economics educator for students. Identify 3 current major economic events that would affect young people. For EACH event, personalize to THIS specific user profile: ${userData}${headlinesContext}
 
 Return ONLY valid JSON in this format:
 {
@@ -57,7 +85,7 @@ Return ONLY valid JSON in this format:
             {
               role: "user",
               content:
-                "Provide 3 current major economic events from this week personalized to my profile. Use real current events.",
+                "Provide 3 current major economic events personalized to my profile. Use the real headlines provided.",
             },
           ],
         }),

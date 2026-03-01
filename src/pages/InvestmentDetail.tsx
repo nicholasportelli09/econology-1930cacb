@@ -145,13 +145,13 @@ const InvestmentDetail = () => {
           </ul>
         </section>
 
-        {/* Ask Claude */}
+        {/* Ask Ekon */}
         <Button
           onClick={() => navigate("/ask")}
           className="w-full gap-2"
           size="lg"
         >
-          <MessageCircle size={18} /> Ask Claude About This Investment
+          <MessageCircle size={18} /> Ask Ekon About This Investment
         </Button>
       </div>
     </div>

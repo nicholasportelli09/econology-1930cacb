@@ -70,7 +70,7 @@ const Learn = () => {
               { to: "/learn", label: "Learn" },
               { to: "/market", label: "Market Ideas" },
               { to: "/news", label: "Economic News" },
-              { to: "/ask", label: "Ask Claude" },
+              { to: "/ask", label: "Ask Ekon" },
             ].map((item) => (
               <NavLink
                 key={item.to}

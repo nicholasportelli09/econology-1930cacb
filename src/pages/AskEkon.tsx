@@ -87,7 +87,7 @@ async function streamChat({ messages, profile, onDelta, onDone, onError }: {
   onDone();
 }
 
-export default function AskClaude() {
+export default function AskEkon() {
   const navigate = useNavigate();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -182,7 +182,7 @@ export default function AskClaude() {
               {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
                 <div className="flex justify-start">
                   <div className="bg-muted text-muted-foreground rounded-2xl rounded-bl-md px-4 py-3 text-sm flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 animate-pulse text-primary" /> Claude is thinking...
+                    <Sparkles className="h-4 w-4 animate-pulse text-primary" /> Ekon is thinking...
                   </div>
                 </div>
               )}

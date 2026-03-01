@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const FMP_BASE_URL = "https://financialmodelingprep.com/api/v3";
+const FMP_BASE = "https://financialmodelingprep.com/stable";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -15,21 +15,16 @@ serve(async (req) => {
 
   try {
     const FMP_API_KEY = Deno.env.get("FMP_API_KEY");
-    if (!FMP_API_KEY) {
-      throw new Error("FMP_API_KEY is not configured");
-    }
+    if (!FMP_API_KEY) throw new Error("FMP_API_KEY is not configured");
 
     const { type = "general", tickers, limit = 10 } = await req.json();
 
     let url: string;
-
     if (type === "ticker" && tickers) {
-      // Ticker-specific news
       const tickerStr = Array.isArray(tickers) ? tickers.join(",") : tickers;
-      url = `${FMP_BASE_URL}/stock_news?tickers=${encodeURIComponent(tickerStr)}&limit=${limit}&apikey=${FMP_API_KEY}`;
+      url = `${FMP_BASE}/news/stock?symbols=${encodeURIComponent(tickerStr)}&limit=${limit}&apikey=${FMP_API_KEY}`;
     } else {
-      // General stock news
-      url = `${FMP_BASE_URL}/stock_news?limit=${limit}&apikey=${FMP_API_KEY}`;
+      url = `${FMP_BASE}/news/stock-latest?page=0&limit=${limit}&apikey=${FMP_API_KEY}`;
     }
 
     const response = await fetch(url);
@@ -42,15 +37,14 @@ serve(async (req) => {
 
     const data = await response.json();
 
-    // Transform to a cleaner shape for the frontend
-    const articles = data.map((item: any) => ({
+    const articles = (Array.isArray(data) ? data : []).map((item: any) => ({
       title: item.title || "",
-      text: item.text || "",
+      text: item.text || item.snippet || "",
       url: item.url || "",
-      image: item.image || "",
-      site: item.site || "",
-      publishedDate: item.publishedDate || "",
-      symbol: item.symbol || "",
+      image: item.image || item.bannerImage || "",
+      site: item.site || item.source || "",
+      publishedDate: item.publishedDate || item.date || "",
+      symbol: item.symbol || (item.symbols ? item.symbols[0] : "") || "",
     }));
 
     return new Response(JSON.stringify({ articles }), {

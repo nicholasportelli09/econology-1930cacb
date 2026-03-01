@@ -74,13 +74,13 @@ const TipArticle = () => {
           </ul>
         </section>
 
-        {/* Ask Claude */}
+        {/* Ask Ekon */}
         <Button
           onClick={() => navigate("/ask")}
           className="w-full gap-2"
           size="lg"
         >
-          <MessageCircle size={18} /> Ask Claude About This Topic
+          <MessageCircle size={18} /> Ask Ekon About This Topic
         </Button>
       </div>
     </div>
