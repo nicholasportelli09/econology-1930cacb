@@ -17,7 +17,7 @@ import Learn from "./pages/Learn";
 import MarketIdeas from "./pages/MarketIdeas";
 import InvestmentDetail from "./pages/InvestmentDetail";
 import EconomicNews from "./pages/EconomicNews";
-import AskClaude from "./pages/AskClaude";
+import AskEkon from "./pages/AskEkon";
 import Progress from "./pages/Progress";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -47,7 +47,7 @@ const App = () => (
             <Route path="/market" element={<ProtectedRoute><MarketIdeas /></ProtectedRoute>} />
             <Route path="/investment" element={<ProtectedRoute><InvestmentDetail /></ProtectedRoute>} />
             <Route path="/news" element={<ProtectedRoute><EconomicNews /></ProtectedRoute>} />
-            <Route path="/ask" element={<ProtectedRoute><AskClaude /></ProtectedRoute>} />
+            <Route path="/ask" element={<ProtectedRoute><AskEkon /></ProtectedRoute>} />
             <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
 

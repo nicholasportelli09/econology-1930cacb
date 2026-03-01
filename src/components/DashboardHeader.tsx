@@ -26,7 +26,7 @@ const NAV_ITEMS = [
   { to: "/learn", label: "Learn", icon: BookOpen },
   { to: "/market", label: "Market Ideas", icon: TrendingUp },
   { to: "/news", label: "Economic News", icon: Newspaper },
-  { to: "/ask", label: "Ask Claude", icon: MessageCircle },
+  { to: "/ask", label: "Ask Ekon", icon: MessageCircle },
 ];
 
 interface Props {

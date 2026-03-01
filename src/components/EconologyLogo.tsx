@@ -1,23 +1,54 @@
-import { Brain, DollarSign } from "lucide-react";
-
 const EconologyLogo = ({ size = 64 }: { size?: number }) => {
-  const iconSize = size * 0.4;
+  const s = size;
+  const half = s / 2;
 
   return (
-    <div
-      className="relative rounded-full gradient-border flex items-center justify-center glow-shadow"
-      style={{ width: size, height: size }}
+    <svg
+      width={s}
+      height={s}
+      viewBox={`0 0 ${s} ${s}`}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="shrink-0"
     >
-      <div className="absolute inset-0 rounded-full gradient-bg opacity-10" />
-      <div className="relative">
-        <Brain size={iconSize} className="text-primary" strokeWidth={1.5} />
-        <DollarSign
-          size={iconSize * 0.5}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-accent"
-          strokeWidth={2.5}
-        />
-      </div>
-    </div>
+      <defs>
+        <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="hsl(270 70% 55%)" />
+          <stop offset="50%" stopColor="hsl(220 70% 50%)" />
+          <stop offset="100%" stopColor="hsl(155 60% 45%)" />
+        </linearGradient>
+      </defs>
+      {/* Outer ring */}
+      <circle
+        cx={half}
+        cy={half}
+        r={half - 2}
+        stroke="url(#logo-grad)"
+        strokeWidth={2}
+        fill="none"
+      />
+      {/* Inner filled circle */}
+      <circle
+        cx={half}
+        cy={half}
+        r={half - 6}
+        fill="url(#logo-grad)"
+        opacity={0.12}
+      />
+      {/* "E" letter as monogram */}
+      <text
+        x={half}
+        y={half}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="url(#logo-grad)"
+        fontSize={s * 0.45}
+        fontWeight={700}
+        fontFamily="'Space Grotesk', sans-serif"
+      >
+        E
+      </text>
+    </svg>
   );
 };
 
