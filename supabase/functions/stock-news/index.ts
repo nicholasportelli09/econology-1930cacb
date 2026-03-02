@@ -6,45 +6,48 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const FMP_BASE = "https://financialmodelingprep.com/stable";
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const FMP_API_KEY = Deno.env.get("FMP_API_KEY");
-    if (!FMP_API_KEY) throw new Error("FMP_API_KEY is not configured");
+    const MARKETAUX_API_KEY = Deno.env.get("MARKETAUX_API_KEY");
+    if (!MARKETAUX_API_KEY) throw new Error("MARKETAUX_API_KEY is not configured");
 
     const { type = "general", tickers, limit = 10 } = await req.json();
 
-    let url: string;
+    const params = new URLSearchParams({
+      api_token: MARKETAUX_API_KEY,
+      language: "en",
+      limit: String(limit),
+      filter_entities: "true",
+    });
+
     if (type === "ticker" && tickers) {
       const tickerStr = Array.isArray(tickers) ? tickers.join(",") : tickers;
-      url = `${FMP_BASE}/news/stock?symbols=${encodeURIComponent(tickerStr)}&limit=${limit}&apikey=${FMP_API_KEY}`;
-    } else {
-      url = `${FMP_BASE}/news/stock-latest?page=0&limit=${limit}&apikey=${FMP_API_KEY}`;
+      params.set("symbols", tickerStr);
     }
 
+    const url = `https://api.marketaux.com/v1/news/all?${params.toString()}`;
     const response = await fetch(url);
 
     if (!response.ok) {
       const text = await response.text();
-      console.error("FMP API error:", response.status, text);
-      throw new Error(`FMP API returned ${response.status}`);
+      console.error("Marketaux API error:", response.status, text);
+      throw new Error(`Marketaux API returned ${response.status}`);
     }
 
     const data = await response.json();
 
-    const articles = (Array.isArray(data) ? data : []).map((item: any) => ({
+    const articles = (Array.isArray(data.data) ? data.data : []).map((item: any) => ({
       title: item.title || "",
-      text: item.text || item.snippet || "",
+      text: item.description || item.snippet || "",
       url: item.url || "",
-      image: item.image || item.bannerImage || "",
-      site: item.site || item.source || "",
-      publishedDate: item.publishedDate || item.date || "",
-      symbol: item.symbol || (item.symbols ? item.symbols[0] : "") || "",
+      image: item.image_url || "",
+      site: item.source || "",
+      publishedDate: item.published_at || "",
+      symbol: item.entities?.[0]?.symbol || "",
     }));
 
     return new Response(JSON.stringify({ articles }), {

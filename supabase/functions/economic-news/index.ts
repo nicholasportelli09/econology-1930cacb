@@ -16,27 +16,28 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    // Step 1: Fetch real headlines from FMP for grounding
+    // Step 1: Fetch real headlines from NewsAPI.org for grounding
     let realHeadlines = "";
-    const FMP_API_KEY = Deno.env.get("FMP_API_KEY");
-    if (FMP_API_KEY) {
+    const NEWSAPI_API_KEY = Deno.env.get("NEWSAPI_API_KEY");
+    if (NEWSAPI_API_KEY) {
       try {
-        const fmpResp = await fetch(
-          `https://financialmodelingprep.com/stable/news/stock-latest?page=0&limit=10&apikey=${FMP_API_KEY}`
+        const newsResp = await fetch(
+          `https://newsapi.org/v2/everything?q=economy OR inflation OR "interest rates" OR jobs OR markets&language=en&sortBy=publishedAt&pageSize=10&apiKey=${NEWSAPI_API_KEY}`
         );
-        if (fmpResp.ok) {
-          const articles = await fmpResp.json();
-          if (Array.isArray(articles) && articles.length > 0) {
+        if (newsResp.ok) {
+          const newsData = await newsResp.json();
+          const articles = newsData.articles || [];
+          if (articles.length > 0) {
             realHeadlines = articles
-              .map((a: any, i: number) => `${i + 1}. "${a.title}" (${a.site || "unknown"}, ${a.publishedDate || "recent"})${a.text ? ": " + a.text.slice(0, 150) : ""}`)
+              .map((a: any, i: number) => `${i + 1}. "${a.title}" (${a.source?.name || "unknown"}, ${a.publishedAt || "recent"})${a.description ? ": " + a.description.slice(0, 150) : ""}`)
               .join("\n");
           }
         } else {
-          const t = await fmpResp.text();
-          console.error("FMP fetch failed:", fmpResp.status, t);
+          const t = await newsResp.text();
+          console.error("NewsAPI fetch failed:", newsResp.status, t);
         }
-      } catch (fmpErr) {
-        console.error("FMP fetch error:", fmpErr);
+      } catch (err) {
+        console.error("NewsAPI fetch error:", err);
       }
     }
 
