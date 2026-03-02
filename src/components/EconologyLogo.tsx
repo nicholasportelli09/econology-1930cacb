@@ -1,96 +1,107 @@
 const EconologyLogo = ({ size = 64 }: { size?: number }) => {
-  const s = size;
-  const half = s / 2;
-
   return (
     <svg
-      width={s}
-      height={s}
+      width={size}
+      height={size}
       viewBox="0 0 64 64"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="shrink-0"
     >
       <defs>
-        <linearGradient id="eco-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#5B2EFF" />
-          <stop offset="100%" stopColor="#A66CFF" />
+        <linearGradient id="eco-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#2E0EAD" />
+          <stop offset="50%" stopColor="#7B3FE4" />
+          <stop offset="100%" stopColor="#A855F7" />
         </linearGradient>
       </defs>
 
-      {/* Brain outline — left hemisphere */}
+      {/* Brain — left hemisphere outline */}
       <path
-        d="M32 14c-2.5 0-4.8.8-6.6 2.2-1.5-1-3.3-1.6-5.2-1.6C15 14.6 11 18.6 11 23.8c0 2 .6 3.8 1.6 5.3-.6 1.2-1 2.6-1 4.1 0 3.8 2.2 7 5.4 8.5.4 3 2.8 5.3 5.8 5.8.8 2.2 2.8 3.8 5.2 4.1V32"
+        d="M30 12
+           C24 12 19 14 16 18
+           C13 21 12 25 13 29
+           C11 32 10 36 12 40
+           C14 45 18 48 23 49
+           C25 52 28 53 30 54
+           L30 32"
         stroke="url(#eco-grad)"
-        strokeWidth="1.8"
+        strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
       />
-      {/* Brain outline — right hemisphere */}
+      {/* Brain — right hemisphere outline */}
       <path
-        d="M32 14c2.5 0 4.8.8 6.6 2.2 1.5-1 3.3-1.6 5.2-1.6C49 14.6 53 18.6 53 23.8c0 2-.6 3.8-1.6 5.3.6 1.2 1 2.6 1 4.1 0 3.8-2.2 7-5.4 8.5-.4 3-2.8 5.3-5.8 5.8-.8 2.2-2.8 3.8-5.2 4.1V32"
+        d="M34 12
+           C40 12 45 14 48 18
+           C51 21 52 25 51 29
+           C53 32 54 36 52 40
+           C50 45 46 48 41 49
+           C39 52 36 53 34 54
+           L34 32"
         stroke="url(#eco-grad)"
-        strokeWidth="1.8"
+        strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
       />
 
-      {/* Brain folds — left */}
+      {/* Brain fold — left upper */}
       <path
-        d="M22 24c3 1 6 1.5 10 1.5"
+        d="M18 24 C22 26 26 27 30 27"
         stroke="url(#eco-grad)"
-        strokeWidth="1.2"
+        strokeWidth="2"
         strokeLinecap="round"
-        opacity="0.5"
         fill="none"
+        opacity="0.6"
       />
+      {/* Brain fold — left lower */}
       <path
-        d="M18 33c4 .5 8 .8 14 .8"
+        d="M15 35 C20 37 25 38 30 38"
         stroke="url(#eco-grad)"
-        strokeWidth="1.2"
+        strokeWidth="2"
         strokeLinecap="round"
-        opacity="0.5"
         fill="none"
+        opacity="0.6"
+      />
+      {/* Brain fold — right upper */}
+      <path
+        d="M46 24 C42 26 38 27 34 27"
+        stroke="url(#eco-grad)"
+        strokeWidth="2"
+        strokeLinecap="round"
+        fill="none"
+        opacity="0.6"
+      />
+      {/* Brain fold — right lower */}
+      <path
+        d="M49 35 C44 37 39 38 34 38"
+        stroke="url(#eco-grad)"
+        strokeWidth="2"
+        strokeLinecap="round"
+        fill="none"
+        opacity="0.6"
       />
 
-      {/* Brain folds — right */}
-      <path
-        d="M42 24c-3 1-6 1.5-10 1.5"
-        stroke="url(#eco-grad)"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        opacity="0.5"
-        fill="none"
-      />
-      <path
-        d="M46 33c-4 .5-8 .8-14 .8"
-        stroke="url(#eco-grad)"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        opacity="0.5"
-        fill="none"
-      />
-
-      {/* Subtle dollar — vertical line */}
+      {/* Dollar sign — vertical bar */}
       <line
-        x1="32"
-        y1="22"
-        x2="32"
-        y2="42"
+        x1="32" y1="18" x2="32" y2="50"
         stroke="url(#eco-grad)"
-        strokeWidth="1.4"
+        strokeWidth="2.5"
         strokeLinecap="round"
-        opacity="0.35"
       />
-      {/* Subtle dollar — S curve */}
+      {/* Dollar sign — S curve */}
       <path
-        d="M36 25c-1.5-.8-3.2-1-4.5-.4-2 .8-1.6 3 .5 3.6 2.2.6 3 2.2 1.2 3.4-1.2.8-3 .6-4.5-.2"
+        d="M38 23
+           C36 21 33 20 31 21
+           C28 22 28 25 31 27
+           C34 29 36 31 35 34
+           C34 37 31 38 28 37"
         stroke="url(#eco-grad)"
-        strokeWidth="1.4"
+        strokeWidth="2.5"
         strokeLinecap="round"
-        opacity="0.35"
+        strokeLinejoin="round"
         fill="none"
       />
     </svg>
