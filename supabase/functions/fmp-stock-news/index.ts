@@ -19,9 +19,9 @@ serve(async (req) => {
 
     let url: string;
     if (tickers && tickers.trim()) {
-      url = `https://financialmodelingprep.com/api/v3/stock_news?tickers=${encodeURIComponent(tickers.trim().toUpperCase())}&limit=${limit}&apikey=${FMP_API_KEY}`;
+      url = `https://financialmodelingprep.com/stable/news/stock-latest?tickers=${encodeURIComponent(tickers.trim().toUpperCase())}&limit=${limit}&apikey=${FMP_API_KEY}`;
     } else {
-      url = `https://financialmodelingprep.com/api/v3/stock_news?limit=${limit}&apikey=${FMP_API_KEY}`;
+      url = `https://financialmodelingprep.com/stable/news/stock-latest?limit=${limit}&apikey=${FMP_API_KEY}`;
     }
 
     const response = await fetch(url);
