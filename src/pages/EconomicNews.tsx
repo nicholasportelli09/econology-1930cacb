@@ -213,7 +213,7 @@ const EconomicNews = () => {
               <Newspaper size={16} /> Market News
             </TabsTrigger>
             <TabsTrigger value="stock" className="flex items-center gap-2">
-              <BarChart3 size={16} /> Stock News
+              <BarChart3 size={16} /> Company News
             </TabsTrigger>
             <TabsTrigger value="ai" className="flex items-center gap-2">
               <Sparkles size={16} /> AI Insights

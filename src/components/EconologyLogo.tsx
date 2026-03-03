@@ -3,109 +3,84 @@ const EconologyLogo = ({ size = 64 }: { size?: number }) => {
     <svg
       width={size}
       height={size}
-      viewBox="0 0 64 64"
+      viewBox="0 0 100 100"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="shrink-0"
     >
       <defs>
         <linearGradient id="eco-grad" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#2E0EAD" />
+          <stop offset="0%" stopColor="#1a0066" />
           <stop offset="50%" stopColor="#7B3FE4" />
           <stop offset="100%" stopColor="#A855F7" />
         </linearGradient>
       </defs>
 
-      {/* Brain — left hemisphere */}
+      {/* Brain outline — left hemisphere */}
       <path
-        d="M30 14
-           C26 14 22 15 19 18
-           C16 21 14 25 14 29
-           C14 29 12 32 12 35
-           C12 39 14 42 17 44
-           C19 46 22 48 25 49
-           C27 50 29 51 30 52
-           L30 33"
+        d="M50 20
+           C44 20 38 22 34 26
+           C30 30 26 36 24 42
+           C22 48 22 52 24 56
+           C22 58 20 62 20 66
+           C20 72 24 76 30 78
+           C34 80 40 80 44 78
+           C46 77 48 76 50 74"
         stroke="url(#eco-grad)"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      {/* Brain — right hemisphere */}
-      <path
-        d="M34 14
-           C38 14 42 15 45 18
-           C48 21 50 25 50 29
-           C50 29 52 32 52 35
-           C52 39 50 42 47 44
-           C45 46 42 48 39 49
-           C37 50 35 51 34 52
-           L34 33"
-        stroke="url(#eco-grad)"
-        strokeWidth="2.5"
+        strokeWidth="4"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
       />
 
-      {/* Brain stem / corpus callosum */}
+      {/* Brain outline — right hemisphere */}
       <path
-        d="M30 33 Q32 30 34 33"
+        d="M50 20
+           C56 20 62 22 66 26
+           C70 30 74 36 76 42
+           C78 48 78 52 76 56
+           C78 58 80 62 80 66
+           C80 72 76 76 70 78
+           C66 80 60 80 56 78
+           C54 77 52 76 50 74"
         stroke="url(#eco-grad)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        fill="none"
-      />
-
-      {/* Left brain folds — sulci */}
-      <path d="M17 22 C20 23 24 24 28 23" stroke="url(#eco-grad)" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.7" />
-      <path d="M14 30 C18 32 23 33 28 32" stroke="url(#eco-grad)" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.6" />
-      <path d="M15 38 C19 40 23 41 28 40" stroke="url(#eco-grad)" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.5" />
-
-      {/* Right brain folds — sulci */}
-      <path d="M47 22 C44 23 40 24 36 23" stroke="url(#eco-grad)" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.7" />
-      <path d="M50 30 C46 32 41 33 36 32" stroke="url(#eco-grad)" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.6" />
-      <path d="M49 38 C45 40 41 41 36 40" stroke="url(#eco-grad)" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.5" />
-
-      {/* Brain top bumps — gyri */}
-      <path
-        d="M22 14 C24 11 28 10 30 12"
-        stroke="url(#eco-grad)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        fill="none"
-        opacity="0.8"
-      />
-      <path
-        d="M34 12 C36 10 40 11 42 14"
-        stroke="url(#eco-grad)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        fill="none"
-        opacity="0.8"
-      />
-
-      {/* Small dollar sign in center */}
-      <line
-        x1="32" y1="24" x2="32" y2="44"
-        stroke="url(#eco-grad)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.9"
-      />
-      <path
-        d="M36 28
-           C35 26 33 25.5 32 26
-           C30 27 30 29 32 30
-           C34 31 34.5 33 33 34.5
-           C32 35.5 30 35 29 34"
-        stroke="url(#eco-grad)"
-        strokeWidth="2"
+        strokeWidth="4"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
-        opacity="0.9"
+      />
+
+      {/* Left brain folds */}
+      <path d="M34 30 C38 34 42 36 48 34" stroke="url(#eco-grad)" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.8" />
+      <path d="M26 46 C32 50 38 52 48 50" stroke="url(#eco-grad)" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.7" />
+      <path d="M24 60 C30 64 38 66 48 64" stroke="url(#eco-grad)" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.6" />
+
+      {/* Right brain folds */}
+      <path d="M66 30 C62 34 58 36 52 34" stroke="url(#eco-grad)" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.8" />
+      <path d="M74 46 C68 50 62 52 52 50" stroke="url(#eco-grad)" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.7" />
+      <path d="M76 60 C70 64 62 66 52 64" stroke="url(#eco-grad)" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.6" />
+
+      {/* Brain top bumps */}
+      <path d="M36 22 C38 16 44 14 50 18" stroke="url(#eco-grad)" strokeWidth="3.5" strokeLinecap="round" fill="none" opacity="0.9" />
+      <path d="M64 22 C62 16 56 14 50 18" stroke="url(#eco-grad)" strokeWidth="3.5" strokeLinecap="round" fill="none" opacity="0.9" />
+
+      {/* Dollar sign — vertical bar woven through brain */}
+      <line x1="50" y1="12" x2="50" y2="88" stroke="url(#eco-grad)" strokeWidth="3.5" strokeLinecap="round" opacity="0.85" />
+
+      {/* Dollar sign — S curve */}
+      <path
+        d="M58 32
+           C56 28 52 26 50 27
+           C46 28 44 32 48 35
+           C52 38 56 40 56 44
+           C56 48 52 50 50 50
+           C48 50 44 48 42 44"
+        stroke="url(#eco-grad)"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+        opacity="0.85"
       />
     </svg>
   );
