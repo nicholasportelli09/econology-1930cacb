@@ -96,4 +96,238 @@ export const TIP_ARTICLES: Record<string, TipArticle> = {
       "Track all expenses related to your hustle for tax deductions",
     ],
   },
+  compound: {
+    id: "compound", title: "Compound Interest: The 8th Wonder of the World",
+    paragraphs: [
+      "Compound interest is what happens when your earnings generate their own earnings. $1,000 at 10% becomes $1,100. Next year you earn 10% on $1,100 — $110, not $100. This snowball accelerates over decades.",
+      "$100/month at 10% grows to ~$200,000 in 30 years, though you only contributed $36,000. The other $164,000 is pure compound growth.",
+      "Time matters more than amount. Someone investing $200/month from 25-35 then stopping often has MORE at 65 than someone investing $200/month from 35-65.",
+    ],
+    actionSteps: ["Use a compound interest calculator", "Start investing any amount today", "Reinvest all dividends", "Compare starting now vs. waiting 5 years"],
+  },
+  automate: {
+    id: "automate", title: "Automate Your Savings",
+    paragraphs: [
+      "The biggest savings obstacle isn't income — it's willpower. Automation removes the decision. Set up auto-transfers on payday.",
+      "Start with $50-100 auto-transferred to savings. After a month, you won't notice it's gone.",
+      "Automate investments too — most brokerages offer automatic monthly index fund purchases.",
+    ],
+    actionSteps: ["Set up automatic transfers on payday", "Start small", "Increase by $25 every quarter", "Automate investment contributions too"],
+  },
+  debtavalanche: {
+    id: "debtavalanche", title: "Debt Avalanche Method",
+    paragraphs: [
+      "Pay highest-interest debt first while making minimums on everything else. A $5,000 balance at 22% costs $1,100/year in interest.",
+      "This saves the most money mathematically but requires discipline if your highest-rate debt is also your largest.",
+      "Once the first debt is gone, roll that payment into the next highest-rate debt.",
+    ],
+    actionSteps: ["List all debts with interest rates", "Pay minimums on everything except the highest rate", "Attack the highest-rate debt aggressively", "Roll payments forward as debts are eliminated"],
+  },
+  debtsnowball: {
+    id: "debtsnowball", title: "Debt Snowball Method",
+    paragraphs: [
+      "Pay smallest debts first for quick psychological wins, regardless of interest rate.",
+      "Each eliminated debt frees up more cash for the next one, creating a snowball effect.",
+      "Studies show snowball users are more likely to become debt-free despite paying slightly more interest.",
+    ],
+    actionSteps: ["List debts smallest to largest", "Celebrate each payoff", "Roll payments into the next debt", "Switch to avalanche once you have momentum"],
+  },
+  roth: {
+    id: "roth", title: "Roth IRA: Tax-Free Retirement Growth",
+    paragraphs: [
+      "Contribute after-tax dollars now, withdraw tax-free in retirement. Perfect for young earners in low tax brackets.",
+      "Contribute up to $7,000/year. You can withdraw contributions (not gains) anytime without penalty.",
+      "Maxing out from age 22 to 65 at 10% return = over $3.5 million, all tax-free.",
+    ],
+    actionSteps: ["Open a Roth IRA at Fidelity, Vanguard, or Schwab", "Start with $50-100/month", "Invest in low-cost index funds", "Increase contributions as income grows"],
+  },
+  etf: {
+    id: "etf", title: "ETFs: Flexible Diversification",
+    paragraphs: [
+      "ETFs trade like stocks but hold baskets of securities. Low fees (0.03-0.20%) and instant diversification.",
+      "Popular picks: VTI (total U.S. market), VOO (S&P 500), VXUS (international), BND (bonds).",
+      "Most brokerages offer commission-free ETF trading, making them perfect for beginners.",
+    ],
+    actionSteps: ["Learn ETF vs. mutual fund differences", "Start with VTI or VOO", "Add international exposure with VXUS", "Set up automatic monthly purchases"],
+  },
+  cryptobasics: {
+    id: "cryptobasics", title: "Crypto 101",
+    paragraphs: [
+      "Cryptocurrency is digital money on blockchain. Bitcoin was first; Ethereum added smart contracts.",
+      "Unlike stocks, crypto doesn't represent company ownership. Value comes from supply/demand, making it highly volatile.",
+      "Treat crypto as a small speculative allocation. Never invest what you can't afford to lose.",
+    ],
+    actionSteps: ["Learn blockchain basics first", "Limit crypto to 5-10% of portfolio", "Use established exchanges with 2FA", "Ignore social media hype"],
+  },
+  cryptorisk: {
+    id: "cryptorisk", title: "Crypto Risk Management",
+    paragraphs: [
+      "Crypto can swing 10-20% in a single day. Without risk management, losses can be severe.",
+      "Never invest more than you can afford to lose completely. Keep crypto at 5% or less of your portfolio.",
+      "Avoid FOMO buying during spikes and panic selling during dips. Use dollar-cost averaging.",
+    ],
+    actionSteps: ["Set a max portfolio percentage for crypto", "Use DCA instead of lump-sum buying", "Never use leverage for crypto", "Use a hardware wallet for large holdings"],
+  },
+  studentloans: {
+    id: "studentloans", title: "Student Loan Strategy",
+    paragraphs: [
+      "Federal loans offer income-driven repayment, forgiveness programs, and deferment. Always exhaust federal options first.",
+      "Income-driven plans cap payments at 10-20% of discretionary income. PSLF forgives after 10 years for government/nonprofit work.",
+      "Pay minimums on federal (better protections) and attack private loans aggressively.",
+    ],
+    actionSteps: ["Review loans at studentaid.gov", "Apply for income-driven repayment if needed", "Research PSLF eligibility", "Prioritize private loan payoff"],
+  },
+  creditcard: {
+    id: "creditcard", title: "Your First Credit Card",
+    paragraphs: [
+      "Treat credit cards like debit cards — never charge more than you can pay off monthly.",
+      "Start with a secured card. One small recurring purchase + autopay = steadily growing score.",
+      "Keep utilization under 10%, pay full balance, and upgrade to unsecured after 6-12 months.",
+    ],
+    actionSteps: ["Get a secured card if no credit history", "Set up one charge + autopay", "Keep utilization under 10%", "Request upgrade after 6-12 months"],
+  },
+  cashback: {
+    id: "cashback", title: "Cashback Rewards",
+    paragraphs: [
+      "1-5% back on purchases. $1,000/month at 2% = $240/year free money.",
+      "Only works if you pay in full monthly. 20%+ APR on a balance erases all cashback gains.",
+      "Good starters: Discover it (doubles first year), Chase Freedom Flex, Citi Double Cash.",
+    ],
+    actionSteps: ["Find your top spending categories", "Choose a matching cashback card", "Always pay the full balance", "Redirect cashback to savings"],
+  },
+  negotiate: {
+    id: "negotiate", title: "Salary Negotiation",
+    paragraphs: [
+      "First offers have 10-20% room. Not negotiating costs $500K+ over a career.",
+      "Research market rates on Glassdoor, Levels.fyi, LinkedIn Salary. Bring specific numbers.",
+      "Frame it collaboratively and practice beforehand. The worst answer is 'no.'",
+    ],
+    actionSteps: ["Research salary ranges", "Prepare value examples", "Practice the conversation", "Remember: they won't rescind the offer"],
+  },
+  taxbasics: {
+    id: "taxbasics", title: "Tax Basics",
+    paragraphs: [
+      "Progressive brackets mean only income above each threshold is taxed higher. A raise never costs you money.",
+      "Your W-2 shows earnings and withholdings. Filing reconciles what you owe vs. what was withheld.",
+      "Standard deduction ($14,600 single, 2024) is subtracted before taxes. Earn $30K = taxed on $15,400.",
+    ],
+    actionSteps: ["File even with low income — you may get a refund", "Use free filing services", "Adjust W-4 if refunds are large", "Keep education expense records"],
+  },
+  taxdeductions: {
+    id: "taxdeductions", title: "Tax Deductions & Credits",
+    paragraphs: [
+      "Deductions reduce taxable income; credits reduce your tax bill directly. Credits are more valuable dollar-for-dollar.",
+      "Key credits: American Opportunity ($2,500/year), Lifetime Learning ($2,000/year), Earned Income Tax Credit.",
+      "Deductions: student loan interest ($2,500/year max), IRA contributions, self-employment expenses.",
+    ],
+    actionSteps: ["Check education credit eligibility", "Deduct student loan interest", "Track side hustle expenses year-round", "Use tax software to find all credits"],
+  },
+  moveout: {
+    id: "moveout", title: "Moving Out Checklist",
+    paragraphs: [
+      "Move-in costs: deposit + first/last rent + furniture + utilities setup = often 3-4x monthly rent.",
+      "True monthly costs: rent + utilities + renter's insurance + groceries + transport. First-timers underestimate by 30-40%.",
+      "Prepare 3-6 months ahead. Furnish gradually from thrift stores and Marketplace.",
+    ],
+    actionSteps: ["Calculate total move-in costs", "Budget ALL monthly living costs", "Save 3-4 months rent beforehand", "Get renter's insurance"],
+  },
+  rentbudget: {
+    id: "rentbudget", title: "The 30% Rent Rule",
+    paragraphs: [
+      "Keep rent under 30% of gross income. At $3,000/month, that's $900 max.",
+      "In expensive cities, get roommates or live further out. Each point above 30% comes from savings.",
+      "It's a guideline — adjust based on your debt load and savings goals.",
+    ],
+    actionSteps: ["Calculate 30% of gross income as rent ceiling", "Include utilities in the calculation", "Consider roommates if needed", "Cut elsewhere if rent exceeds 30%"],
+  },
+  realestate: {
+    id: "realestate", title: "Renting vs. Buying",
+    paragraphs: [
+      "Renting = flexibility and zero maintenance. Buying = equity but mortgage interest, taxes, insurance, and 1-2%/year maintenance.",
+      "Breakeven for buying is typically 5-7 years. Moving sooner? Renting is usually cheaper.",
+      "To prepare: credit above 740, save 20% down to avoid PMI, research first-time buyer programs.",
+    ],
+    actionSteps: ["Use a rent vs. buy calculator", "Build credit to 740+", "Save 20% down payment in HYSA", "Research first-time buyer programs"],
+  },
+  travelbudget: {
+    id: "travelbudget", title: "Budget Travel",
+    paragraphs: [
+      "Book 2-3 months ahead, travel shoulder season, use Google Flights price tracking.",
+      "Travel rewards cards earn 2-5x points. Strategic spending = 1-2 free flights/year.",
+      "$100/month in a travel fund = $1,200/year. Use budget airlines, hostels, local restaurants.",
+    ],
+    actionSteps: ["Create a dedicated travel fund", "Automate $50-100/month", "Track flight prices on Google Flights", "Only get rewards cards if paying in full"],
+  },
+  subscriptions: {
+    id: "subscriptions", title: "Subscription Audit",
+    paragraphs: [
+      "Average person spends $219/month on subscriptions, underestimating by 2-3x.",
+      "Check statements. 'Used in last 30 days? Would I sign up today?' If no, cancel.",
+      "Share family plans, use student discounts, switch to annual billing (15-20% savings).",
+    ],
+    actionSteps: ["Review 3 months of statements", "Cancel anything unused in 30 days", "Switch to annual billing", "Repeat audit every 3 months"],
+  },
+  highyield: {
+    id: "highyield", title: "High-Yield Savings",
+    paragraphs: [
+      "Traditional savings: 0.01%. High-yield: 4-5%. On $5,000, that's $0.50 vs. $250/year.",
+      "Online banks (Marcus, Ally, Capital One 360) offer FDIC-insured HYSA. Same safety, 100x more interest.",
+      "Use for emergency funds and short-term goals. Long-term wealth still needs the stock market.",
+    ],
+    actionSteps: ["Open a HYSA at Marcus, Ally, or Capital One", "Transfer your emergency fund", "Set up auto-transfers", "Compare rates quarterly"],
+  },
+  rule72: {
+    id: "rule72", title: "The Rule of 72",
+    paragraphs: [
+      "72 ÷ return rate = years to double. At 8%: 9 years. At 10%: 7.2 years. At 2%: 36 years.",
+      "Works in reverse too: 3% inflation halves purchasing power in 24 years. 2% fees vs. 0.03% dramatically slows growth.",
+      "Quick mental math for comparing options and setting realistic expectations.",
+    ],
+    actionSteps: ["Calculate your doubling time at current rates", "Compare HYSA vs. stock market doubling", "Check how fees affect doubling time", "Set timeline goals using this rule"],
+  },
+  dca: {
+    id: "dca", title: "Dollar-Cost Averaging",
+    paragraphs: [
+      "Invest a fixed amount at regular intervals. High prices = fewer shares. Low prices = more shares. Averages out your cost.",
+      "Removes the impossible task of market timing. Even pros can't do it consistently.",
+      "Automate it and ignore daily noise. Time in the market beats timing the market.",
+    ],
+    actionSteps: ["Choose a fixed monthly amount", "Set up automatic investments", "Don't skip down months — they're your best buys", "Increase amount annually"],
+  },
+  diversify: {
+    id: "diversify", title: "Diversification 101",
+    paragraphs: [
+      "Spread across asset types, industries, and geographies. One loss gets cushioned by others.",
+      "Simple portfolio: 60-70% U.S. stocks (VTI), 20-30% international (VXUS), 10% bonds (BND).",
+      "Doesn't eliminate risk but a diversified portfolio loses less and recovers faster in crashes.",
+    ],
+    actionSteps: ["Audit for concentration in one stock/sector", "Research the three-fund portfolio", "Rebalance annually", "5 tech stocks ≠ diversified"],
+  },
+  freelance: {
+    id: "freelance", title: "Freelancing Income",
+    paragraphs: [
+      "Monetize writing, design, coding, tutoring on Upwork and Fiverr.",
+      "Build 5-10 reviews first, then raise rates. Specialists earn $30-100+/hour.",
+      "Builds transferable skills: client communication, time management, self-marketing.",
+    ],
+    actionSteps: ["Identify 1-2 marketable skills", "Create profiles with a portfolio", "Start competitive, raise rates with reviews", "Track income/expenses for taxes"],
+  },
+  networking: {
+    id: "networking", title: "Networking = Net Worth",
+    paragraphs: [
+      "70-80% of jobs come through networking. Build genuine relationships early.",
+      "Attend meetups, join LinkedIn groups, do informational interviews. Help others before asking for help.",
+      "Connect with professors, classmates, and industry pros. Most people are happy to advise motivated young people.",
+    ],
+    actionSteps: ["Optimize your LinkedIn profile", "Connect with 5 new pros weekly", "Attend one industry event monthly", "Offer value first"],
+  },
+  carbudget: {
+    id: "carbudget", title: "Buying Your First Car",
+    paragraphs: [
+      "20/4/10 rule: 20% down, max 4-year loan, total car costs under 10% of gross income.",
+      "New cars lose 20-30% in 2 years. Certified pre-owned saves big on depreciation.",
+      "Hidden costs: insurance ($100-300/month for young drivers), maintenance, gas, parking. A $15K car = $25K+ over 4 years.",
+    ],
+    actionSteps: ["Get pre-approved before dealership visits", "Research total cost of ownership", "Consider 2-3 year old CPO cars", "Get insurance quotes before buying"],
+  },
 };
