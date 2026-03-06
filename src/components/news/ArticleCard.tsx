@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { ExternalLink, Sparkles, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { ExternalLink, Sparkles, Loader2, ChevronDown, ChevronUp, Pin, PinOff } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { type UserProfile } from "@/types/profile";
 import ReactMarkdown from "react-markdown";
 
-interface Article {
+export interface Article {
   title: string;
   text: string;
   url: string;
@@ -19,9 +19,12 @@ interface ArticleCardProps {
   article: Article;
   profile: UserProfile;
   formatDate: (d: string) => string;
+  isPinned?: boolean;
+  onPin?: (article: Article) => void;
+  onUnpin?: (url: string) => void;
 }
 
-export function ArticleCard({ article, profile, formatDate }: ArticleCardProps) {
+export function ArticleCard({ article, profile, formatDate, isPinned, onPin, onUnpin }: ArticleCardProps) {
   const [summary, setSummary] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -82,8 +85,8 @@ export function ArticleCard({ article, profile, formatDate }: ArticleCardProps) 
         </div>
       </a>
 
-      {/* Summary button */}
-      <div className="border-t border-border px-4 py-2">
+      {/* Action buttons */}
+      <div className="border-t border-border px-4 py-2 flex items-center justify-between">
         <button
           onClick={handleSummarize}
           disabled={loading}
@@ -99,6 +102,23 @@ export function ArticleCard({ article, profile, formatDate }: ArticleCardProps) 
             </>
           )}
         </button>
+        {(onPin || onUnpin) && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (isPinned && onUnpin) onUnpin(article.url);
+              else if (!isPinned && onPin) onPin(article);
+            }}
+            className={`flex items-center gap-1 text-xs font-medium transition-colors ${
+              isPinned ? "text-primary hover:text-destructive" : "text-muted-foreground hover:text-primary"
+            }`}
+            title={isPinned ? "Unpin" : "Pin article"}
+          >
+            {isPinned ? <PinOff size={14} /> : <Pin size={14} />}
+            {isPinned ? "Unpin" : "Pin"}
+          </button>
+        )}
       </div>
 
       {/* Summary content */}

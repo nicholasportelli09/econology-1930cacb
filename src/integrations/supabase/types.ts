@@ -44,6 +44,66 @@ export type Database = {
         }
         Relationships: []
       }
+      pinned_articles: {
+        Row: {
+          created_at: string
+          id: string
+          image: string | null
+          published_date: string | null
+          site: string | null
+          snippet: string | null
+          symbol: string | null
+          title: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          published_date?: string | null
+          site?: string | null
+          snippet?: string | null
+          symbol?: string | null
+          title: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          published_date?: string | null
+          site?: string | null
+          snippet?: string | null
+          symbol?: string | null
+          title?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_portfolio: {
+        Row: {
+          created_at: string
+          id: string
+          ticker: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ticker: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ticker?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
