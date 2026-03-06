@@ -40,7 +40,7 @@ export function DashboardHeader({ initials = "U" }: Props) {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-8 h-16">
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0 cursor-pointer" onClick={() => navigate("/dashboard")}>
           <EconologyLogo size={36} />
           <span className="font-display text-lg font-bold gradient-text hidden sm:inline">
             Econology
