@@ -1,13 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import {
-  Newspaper,
-  Loader2,
-  CheckCircle2,
-  Sparkles,
-  TrendingUp,
-  Search,
-  BarChart3,
+  Newspaper, Loader2, CheckCircle2, Sparkles, TrendingUp, Search, BarChart3,
 } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import { Badge } from "@/components/ui/badge";
@@ -15,38 +9,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ArticleCard } from "@/components/news/ArticleCard";
+import { ArticleCard, type Article } from "@/components/news/ArticleCard";
 import { NewsDigest } from "@/components/news/NewsDigest";
+import { PortfolioManager } from "@/components/news/PortfolioManager";
+import { PinnedArticles } from "@/components/news/PinnedArticles";
+import { useAuth } from "@/contexts/AuthContext";
 
 /* ── Types ── */
-interface AiNewsItem {
-  title: string;
-  summary: string;
-  impact: string;
-  action: string;
-  category: string;
-}
-interface AiNewsData {
-  news: AiNewsItem[];
-  lastUpdated: string;
-}
-interface Article {
-  title: string;
-  text: string;
-  url: string;
-  image: string;
-  site: string;
-  publishedDate: string;
-  symbol: string;
+interface AiNewsItem { title: string; summary: string; impact: string; action: string; category: string; }
+interface AiNewsData { news: AiNewsItem[]; lastUpdated: string; }
+interface PinnedArticleRow {
+  id: string; title: string; url: string; image: string; site: string;
+  symbol: string; published_date: string; snippet: string;
 }
 
 function getProfile(): UserProfile {
   try {
     const stored = localStorage.getItem("econology_profile");
     return stored ? JSON.parse(stored) : defaultProfile;
-  } catch {
-    return defaultProfile;
-  }
+  } catch { return defaultProfile; }
 }
 
 const categoryColor = (cat: string) => {
@@ -63,23 +44,33 @@ const categoryColor = (cat: string) => {
 const EconomicNews = () => {
   const profile = useMemo(getProfile, []);
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  /* Market news (Finnhub) */
+  const [marketLoading, setMarketLoading] = useState(false);
+  const [marketArticles, setMarketArticles] = useState<Article[]>([]);
+  const [marketError, setMarketError] = useState<string | null>(null);
+  const [marketSearch, setMarketSearch] = useState("");
+
+  /* Stock/company news (Finnhub via fmp-stock-news) */
+  const [stockLoading, setStockLoading] = useState(false);
+  const [stockArticles, setStockArticles] = useState<Article[]>([]);
+  const [stockError, setStockError] = useState<string | null>(null);
+  const [tickerSearch, setTickerSearch] = useState("");
 
   /* AI news */
   const [aiLoading, setAiLoading] = useState(false);
   const [aiData, setAiData] = useState<AiNewsData | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
 
-  /* Market news (Marketaux) */
-  const [marketLoading, setMarketLoading] = useState(false);
-  const [marketArticles, setMarketArticles] = useState<Article[]>([]);
-  const [marketError, setMarketError] = useState<string | null>(null);
-  const [marketSearch, setMarketSearch] = useState("");
+  /* Portfolio */
+  const [portfolioTickers, setPortfolioTickers] = useState<string[]>([]);
+  const [portfolioLoading, setPortfolioLoading] = useState(true);
 
-  /* Stock news (FMP) */
-  const [stockLoading, setStockLoading] = useState(false);
-  const [stockArticles, setStockArticles] = useState<Article[]>([]);
-  const [stockError, setStockError] = useState<string | null>(null);
-  const [tickerSearch, setTickerSearch] = useState("");
+  /* Pinned articles */
+  const [pinnedArticles, setPinnedArticles] = useState<PinnedArticleRow[]>([]);
+  const [pinnedLoading, setPinnedLoading] = useState(true);
+  const pinnedUrls = useMemo(() => new Set(pinnedArticles.map(a => a.url)), [pinnedArticles]);
 
   const initials = profile.name
     ? profile.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)
@@ -88,20 +79,36 @@ const EconomicNews = () => {
   const formatDate = (dateStr: string) => {
     try {
       return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
-    } catch {
-      return dateStr;
-    }
+    } catch { return dateStr; }
   };
 
-  /* ── Fetch Market News (Marketaux) ── */
-  const fetchMarketNews = async (search?: string) => {
+  /* ── Load portfolio & pins ── */
+  useEffect(() => {
+    if (!user) { setPortfolioLoading(false); setPinnedLoading(false); return; }
+    const loadData = async () => {
+      const [portfolioRes, pinnedRes] = await Promise.all([
+        supabase.from("user_portfolio").select("ticker").eq("user_id", user.id),
+        supabase.from("pinned_articles").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+      ]);
+      setPortfolioTickers((portfolioRes.data || []).map((r: any) => r.ticker));
+      setPinnedArticles((pinnedRes.data || []) as PinnedArticleRow[]);
+      setPortfolioLoading(false);
+      setPinnedLoading(false);
+    };
+    loadData();
+  }, [user]);
+
+  /* ── Fetch Market News (Finnhub via stock-news) ── */
+  const fetchMarketNews = useCallback(async (search?: string) => {
     setMarketLoading(true);
     setMarketError(null);
     try {
-      const body: any = { limit: 15 };
+      const body: any = { limit: 20 };
       if (search?.trim()) {
-        body.type = "ticker";
         body.tickers = search.trim().toUpperCase();
+      } else if (portfolioTickers.length > 0) {
+        // Auto-fetch portfolio tickers
+        body.tickers = portfolioTickers.join(",");
       }
       const { data, error } = await supabase.functions.invoke("stock-news", { body });
       if (error) throw error;
@@ -111,12 +118,10 @@ const EconomicNews = () => {
       const msg = e?.message || "Failed to fetch market news";
       setMarketError(msg);
       toast({ title: "Error", description: msg, variant: "destructive" });
-    } finally {
-      setMarketLoading(false);
-    }
-  };
+    } finally { setMarketLoading(false); }
+  }, [portfolioTickers, toast]);
 
-  /* ── Fetch Stock News (FMP) ── */
+  /* ── Fetch Stock News (Finnhub via fmp-stock-news) ── */
   const fetchStockNews = async (tickers?: string) => {
     setStockLoading(true);
     setStockError(null);
@@ -131,9 +136,7 @@ const EconomicNews = () => {
       const msg = e?.message || "Failed to fetch stock news";
       setStockError(msg);
       toast({ title: "Error", description: msg, variant: "destructive" });
-    } finally {
-      setStockLoading(false);
-    }
+    } finally { setStockLoading(false); }
   };
 
   /* ── Fetch AI Insights ── */
@@ -149,18 +152,53 @@ const EconomicNews = () => {
       const msg = e?.message || "Failed to fetch economic news";
       setAiError(msg);
       toast({ title: "Error", description: msg, variant: "destructive" });
-    } finally {
-      setAiLoading(false);
+    } finally { setAiLoading(false); }
+  };
+
+  /* ── Pin / Unpin ── */
+  const pinArticle = async (article: Article) => {
+    if (!user) { toast({ title: "Sign in required", description: "Log in to pin articles." }); return; }
+    try {
+      const { data, error } = await supabase.from("pinned_articles").insert({
+        user_id: user.id,
+        title: article.title,
+        url: article.url,
+        image: article.image || "",
+        site: article.site || "",
+        symbol: article.symbol || "",
+        published_date: article.publishedDate || "",
+        snippet: article.text?.slice(0, 300) || "",
+      }).select().single();
+      if (error) throw error;
+      setPinnedArticles(prev => [data as PinnedArticleRow, ...prev]);
+      toast({ title: "Pinned!", description: "Article saved to your pins." });
+    } catch (e: any) {
+      toast({ title: "Error", description: e.message || "Failed to pin", variant: "destructive" });
+    }
+  };
+
+  const unpinByUrl = async (url: string) => {
+    if (!user) return;
+    const pin = pinnedArticles.find(a => a.url === url);
+    if (!pin) return;
+    await unpinById(pin.id);
+  };
+
+  const unpinById = async (id: string) => {
+    if (!user) return;
+    try {
+      const { error } = await supabase.from("pinned_articles").delete().eq("id", id).eq("user_id", user.id);
+      if (error) throw error;
+      setPinnedArticles(prev => prev.filter(a => a.id !== id));
+      toast({ title: "Unpinned", description: "Article removed from pins." });
+    } catch (e: any) {
+      toast({ title: "Error", description: e.message || "Failed to unpin", variant: "destructive" });
     }
   };
 
   /* ── Shared article list renderer ── */
   const renderArticleList = (
-    articles: Article[],
-    loading: boolean,
-    error: string | null,
-    onRetry: () => void,
-    emptyText: string
+    articles: Article[], loading: boolean, error: string | null, onRetry: () => void, emptyText: string
   ) => (
     <>
       {loading && (
@@ -179,7 +217,15 @@ const EconomicNews = () => {
         <>
           <div className="grid gap-4 animate-fade-in">
             {articles.map((article, i) => (
-              <ArticleCard key={i} article={article} profile={profile} formatDate={formatDate} />
+              <ArticleCard
+                key={i}
+                article={article}
+                profile={profile}
+                formatDate={formatDate}
+                isPinned={pinnedUrls.has(article.url)}
+                onPin={user ? pinArticle : undefined}
+                onUnpin={user ? unpinByUrl : undefined}
+              />
             ))}
           </div>
           <NewsDigest articles={articles} profile={profile} />
@@ -207,6 +253,22 @@ const EconomicNews = () => {
           <p className="text-muted-foreground mt-1">Real-time market headlines, stock news & AI-personalized insights.</p>
         </div>
 
+        {/* Portfolio & Pins row */}
+        <div className="grid md:grid-cols-2 gap-4">
+          <PortfolioManager
+            userId={user?.id}
+            tickers={portfolioTickers}
+            onUpdate={setPortfolioTickers}
+            loading={portfolioLoading}
+          />
+          <PinnedArticles
+            articles={pinnedArticles}
+            loading={pinnedLoading}
+            onUnpin={unpinById}
+            formatDate={formatDate}
+          />
+        </div>
+
         <Tabs defaultValue="market" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="market" className="flex items-center gap-2">
@@ -220,13 +282,15 @@ const EconomicNews = () => {
             </TabsTrigger>
           </TabsList>
 
-          {/* ═══════ Market News Tab (Marketaux) ═══════ */}
+          {/* ═══════ Market News Tab (Finnhub) ═══════ */}
           <TabsContent value="market" className="space-y-4 mt-4">
             <form onSubmit={(e) => { e.preventDefault(); fetchMarketNews(marketSearch); }} className="flex gap-2">
               <div className="relative flex-1">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search by keyword or ticker (e.g. AAPL, inflation)"
+                  placeholder={portfolioTickers.length > 0
+                    ? `Search ticker or press Fetch for portfolio news (${portfolioTickers.join(", ")})`
+                    : "Search by ticker (e.g. AAPL, TSLA)"}
                   value={marketSearch}
                   onChange={(e) => setMarketSearch(e.target.value)}
                   className="pl-9"
@@ -241,10 +305,10 @@ const EconomicNews = () => {
                 {marketLoading ? "Loading..." : "Fetch News"}
               </button>
             </form>
-            {renderArticleList(marketArticles, marketLoading, marketError, () => fetchMarketNews(marketSearch), 'Click "Fetch News" for the latest market headlines.')}
+            {renderArticleList(marketArticles, marketLoading, marketError, () => fetchMarketNews(marketSearch), portfolioTickers.length > 0 ? 'Click "Fetch News" to load headlines for your portfolio.' : 'Click "Fetch News" for the latest market headlines.')}
           </TabsContent>
 
-          {/* ═══════ Stock News Tab (FMP) ═══════ */}
+          {/* ═══════ Stock News Tab ═══════ */}
           <TabsContent value="stock" className="space-y-4 mt-4">
             <form onSubmit={(e) => { e.preventDefault(); fetchStockNews(tickerSearch); }} className="flex gap-2">
               <div className="relative flex-1">
