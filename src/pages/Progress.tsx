@@ -69,15 +69,66 @@ const Progress = () => {
   const quizLevel =
     quizScore === null ? "Not taken" : quizScore >= 4 ? "Advanced" : quizScore >= 2 ? "Intermediate" : "Beginner";
 
+  const [showMethodology, setShowMethodology] = useState(false);
+
   return (
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
       <main className="max-w-4xl mx-auto px-4 md:px-8 py-8 space-y-8">
-        <section>
-          <h1 className="text-3xl font-display font-bold text-foreground mb-2">My Progress</h1>
-          <p className="text-muted-foreground">Track your financial learning journey</p>
+        <section className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-display font-bold text-foreground mb-2">Progress Overview</h1>
+            <p className="text-muted-foreground">Your financial literacy development at a glance</p>
+          </div>
+          <button
+            onClick={() => setShowMethodology(true)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          >
+            <HelpCircle size={16} />
+            <span className="hidden sm:inline">How it works</span>
+          </button>
         </section>
+
+        {/* Methodology Dialog */}
+        <Dialog open={showMethodology} onOpenChange={setShowMethodology}>
+          <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-display">How Your Progress is Measured</DialogTitle>
+              <DialogDescription>
+                Understanding the metrics behind your financial literacy journey.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-5 text-sm text-foreground">
+              <div>
+                <h3 className="font-semibold mb-1.5">Experience Points (XP)</h3>
+                <p className="text-muted-foreground mb-2">XP measures your overall engagement with the platform. You earn XP through consistent usage and completing educational activities.</p>
+                <ul className="space-y-1 text-muted-foreground">
+                  <li className="flex justify-between"><span>Daily login</span><span className="font-medium text-foreground">+15 XP</span></li>
+                  <li className="flex justify-between"><span>Complete an assessment</span><span className="font-medium text-foreground">+30 XP</span></li>
+                  <li className="flex justify-between"><span>Perfect assessment score</span><span className="font-medium text-foreground">+50 XP</span></li>
+                  <li className="flex justify-between"><span>Study a financial insight</span><span className="font-medium text-foreground">+10 XP</span></li>
+                  <li className="flex justify-between"><span>Use Budget Simulator</span><span className="font-medium text-foreground">+20 XP</span></li>
+                  <li className="flex justify-between"><span>Consult Ekon AI</span><span className="font-medium text-foreground">+10 XP</span></li>
+                </ul>
+              </div>
+              <div className="border-t border-border pt-4">
+                <h3 className="font-semibold mb-1.5">Financial Health Score (0–100)</h3>
+                <p className="text-muted-foreground mb-2">A composite metric reflecting four key dimensions of your financial development:</p>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li><span className="font-medium text-foreground">Knowledge (25 pts)</span> — Based on your best assessment score. Higher scores indicate stronger foundational understanding.</li>
+                  <li><span className="font-medium text-foreground">Engagement (25 pts)</span> — Measures consistency: insights studied, login streak, simulator usage, and assessments completed.</li>
+                  <li><span className="font-medium text-foreground">Goals (25 pts)</span> — Reflects how clearly you've defined your financial objectives. Setting 3+ goals earns full marks.</li>
+                  <li><span className="font-medium text-foreground">Diversification (25 pts)</span> — Tracks breadth of topics explored. Selecting 4+ interest areas earns full marks.</li>
+                </ul>
+              </div>
+              <div className="border-t border-border pt-4">
+                <h3 className="font-semibold mb-1.5">Levels & Achievements</h3>
+                <p className="text-muted-foreground">As you accumulate XP, you advance through 8 proficiency levels — from <span className="font-medium text-foreground">Foundation</span> to <span className="font-medium text-foreground">Authority</span>. Achievements are awarded for specific milestones such as maintaining engagement streaks or completing a set number of assessments.</p>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* XP & Level Bar */}
         <div className="rounded-xl border border-border bg-card p-6 card-shadow">
