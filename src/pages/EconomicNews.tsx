@@ -352,7 +352,6 @@ const EconomicNews = () => {
                   {aiLoading ? <><Loader2 size={16} className="animate-spin" /> Analyzing...</> : <><Sparkles size={16} /> Get AI Insights</>}
                 </button>
               </div>
-              </button>
             </div>
 
             {aiLoading && (
