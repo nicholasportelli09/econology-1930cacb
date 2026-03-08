@@ -110,9 +110,16 @@ const MarketIdeas = () => {
             </h1>
             <p className="text-muted-foreground mt-1">AI-powered investment recommendations personalized for you.</p>
           </div>
-          <button onClick={fetchInsights} disabled={loading} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
-            {loading ? <><Loader2 size={18} className="animate-spin" /> Analyzing...</> : <><Sparkles size={18} /> Get Latest Investment Ideas</>}
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={fetchInsights} disabled={loading} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+              {loading ? <><Loader2 size={18} className="animate-spin" /> Analyzing...</> : <><Sparkles size={18} /> Get Latest Investment Ideas</>}
+            </button>
+            {data && !loading && (
+              <button onClick={fetchInsights} title="Refresh ideas" className="p-2.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                <RefreshCw size={16} />
+              </button>
+            )}
+          </div>
         </div>
 
         {loading && (
