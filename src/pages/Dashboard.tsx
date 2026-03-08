@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import {
@@ -9,8 +9,10 @@ import {
   TrendingUp,
   Newspaper,
   Trophy,
+  Calculator,
 } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
+import { recordDailyLogin, getGamification, getLevel } from "@/lib/gamification";
 
 interface Tip {
   id: string;
