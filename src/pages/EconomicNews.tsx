@@ -290,9 +290,7 @@ const EconomicNews = () => {
               <div className="relative flex-1">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder={portfolioTickers.length > 0
-                    ? `Search ticker or press Fetch for portfolio news (${portfolioTickers.join(", ")})`
-                    : "Search by ticker (e.g. AAPL, TSLA)"}
+                  placeholder="Filter by category (e.g. general, forex, crypto, merger)"
                   value={marketSearch}
                   onChange={(e) => setMarketSearch(e.target.value)}
                   className="pl-9"
@@ -307,7 +305,7 @@ const EconomicNews = () => {
                 {marketLoading ? "Loading..." : "Fetch News"}
               </button>
             </form>
-            {renderArticleList(marketArticles, marketLoading, marketError, () => fetchMarketNews(marketSearch), portfolioTickers.length > 0 ? 'Click "Fetch News" to load headlines for your portfolio.' : 'Click "Fetch News" for the latest market headlines.')}
+            {renderArticleList(marketArticles, marketLoading, marketError, () => fetchMarketNews(marketSearch), 'Click "Fetch News" for the latest general market headlines.')}
           </TabsContent>
 
           {/* ═══════ Stock News Tab ═══════ */}
