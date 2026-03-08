@@ -330,4 +330,184 @@ export const TIP_ARTICLES: Record<string, TipArticle> = {
     ],
     actionSteps: ["Get pre-approved before dealership visits", "Research total cost of ownership", "Consider 2-3 year old CPO cars", "Get insurance quotes before buying"],
   },
+  insurance: {
+    id: "insurance", title: "Insurance Basics",
+    paragraphs: [
+      "Insurance is a safety net that protects you from financial catastrophe. The key types: health insurance covers medical bills, auto insurance is legally required to drive, and renters insurance protects your belongings for as little as $15/month.",
+      "The trick is understanding deductibles vs premiums. A higher deductible means lower monthly payments but more out-of-pocket when something happens. For young, healthy people, a high-deductible health plan paired with an HSA can save thousands.",
+      "Skip insurance you don't need: extended warranties, phone insurance (just use a case), and life insurance if nobody depends on your income yet.",
+    ],
+    actionSteps: ["Review your current coverage gaps", "Get renters insurance if you rent", "Compare health plan options during open enrollment", "Understand your deductibles and out-of-pocket maximums"],
+  },
+  "401k": {
+    id: "401k", title: "401(k) Match = Free Money",
+    paragraphs: [
+      "If your employer offers a 401(k) match, not contributing enough to get the full match is literally leaving free money on the table. A typical match is 50% of your contributions up to 6% of salary — that's an instant 50% return!",
+      "Even if you have debt, the employer match usually beats the interest you're paying. Contribute at least enough to max the match, then tackle high-interest debt, then increase 401(k) contributions.",
+      "The money grows tax-deferred, meaning you don't pay taxes until withdrawal in retirement when you'll likely be in a lower tax bracket.",
+    ],
+    actionSteps: ["Check if your employer offers a 401(k) match", "Contribute at least enough to get the full match", "Choose low-cost index funds in your plan", "Increase contributions by 1% each year"],
+  },
+  "needs-wants": {
+    id: "needs-wants", title: "Needs vs Wants",
+    paragraphs: [
+      "The 24-hour rule is simple: before any non-essential purchase, wait a day. You'd be surprised how many 'must-haves' become 'meh' after sleeping on it.",
+      "A need keeps you alive, safe, and employed. A want makes life enjoyable. Both matter — but knowing the difference prevents impulse spending from derailing your goals.",
+      "Try the 'cost per use' framework: a $100 jacket worn 100 times = $1/wear. A $30 trendy top worn 3 times = $10/wear. The expensive option is actually cheaper.",
+    ],
+    actionSteps: ["Implement the 24-hour rule for purchases over $25", "Categorize last month's spending into needs vs wants", "Calculate cost-per-use for big purchases", "Unsubscribe from marketing emails that trigger impulse buys"],
+  },
+  paylater: {
+    id: "paylater", title: "Buy Now Pay Later Trap",
+    paragraphs: [
+      "BNPL services like Klarna, Afterpay, and Affirm make spending feel painless by splitting payments into installments. But they encourage overspending — studies show BNPL users spend 20-30% more than they would otherwise.",
+      "Miss a payment? Late fees stack up fast, and some BNPL providers now report to credit bureaus, meaning missed payments can tank your credit score.",
+      "If you can't afford to buy it outright, BNPL doesn't make it affordable — it just delays the pain. Use it only for planned purchases you've already budgeted for.",
+    ],
+    actionSteps: ["Audit any active BNPL plans you have", "Set calendar reminders for every payment date", "Never use BNPL for impulse purchases", "If you can't pay cash, you can't afford it"],
+  },
+  passiveincome: {
+    id: "passiveincome", title: "Passive Income Streams",
+    paragraphs: [
+      "Passive income isn't truly passive at first — it requires upfront work or capital. But once established, it generates money with minimal ongoing effort. Dividend stocks pay you quarterly just for owning them.",
+      "Digital products (eBooks, templates, courses) can earn while you sleep. Create once, sell forever. Platforms like Gumroad and Teachable make it easy to start.",
+      "Start small: a high-yield savings account earning 4-5% APY is the simplest passive income. $10,000 saved = $400-500/year doing nothing.",
+    ],
+    actionSteps: ["Open a high-yield savings account as your first passive stream", "Research dividend ETFs like SCHD or VYM", "Brainstorm one digital product you could create", "Reinvest all passive income for compound growth"],
+  },
+  "inflation-hedge": {
+    id: "inflation-hedge", title: "Inflation-Proof Assets",
+    paragraphs: [
+      "Inflation erodes purchasing power — $100 today buys less next year. Holding only cash guarantees you lose value. The solution: own assets that historically rise with or above inflation.",
+      "TIPS (Treasury Inflation-Protected Securities) adjust their value with CPI. Real estate tends to appreciate with inflation. Commodities like gold are traditional hedges.",
+      "Stocks, especially those of companies with pricing power (think Apple, Costco), can pass costs to consumers, protecting profit margins and your investment.",
+    ],
+    actionSteps: ["Check if your savings are losing value to inflation", "Consider TIPS or I-Bonds for safe inflation protection", "Diversify into real assets alongside stocks", "Avoid holding too much cash long-term"],
+  },
+  bonds: {
+    id: "bonds", title: "Bonds for Beginners",
+    paragraphs: [
+      "Bonds are essentially IOUs — you lend money to a government or company, and they pay you interest over time, then return your principal. They're generally safer than stocks but offer lower returns.",
+      "Treasury bonds (T-bills, T-notes) are backed by the US government — virtually risk-free. Corporate bonds pay higher interest but carry default risk. Municipal bonds offer tax-free interest.",
+      "For beginners, bond ETFs like BND or AGG offer instant diversification across thousands of bonds. They're great for balancing a stock-heavy portfolio.",
+    ],
+    actionSteps: ["Understand the bond-stock balance for your age", "Look into I-Bonds for inflation protection", "Consider a bond ETF like BND for easy diversification", "Use bonds to reduce portfolio volatility"],
+  },
+  budgetapps: {
+    id: "budgetapps", title: "Best Budgeting Apps",
+    paragraphs: [
+      "The best budget is one you actually use. YNAB (You Need A Budget) follows a zero-based approach — every dollar gets a job. It costs $14.99/month but users save $600+ in the first two months on average.",
+      "Mint (now Credit Karma) is free and auto-categorizes transactions. Copilot is a sleek iOS app with AI-powered insights. Monarch Money is great for couples managing money together.",
+      "The key is picking ONE app and sticking with it for at least 3 months. Don't app-hop — consistency beats perfection.",
+    ],
+    actionSteps: ["Try YNAB's free trial for 34 days", "Connect your bank accounts to auto-track spending", "Review your spending categories weekly", "Set up bill reminders and savings goals"],
+  },
+  sidehustletax: {
+    id: "sidehustletax", title: "Side Hustle Taxes",
+    paragraphs: [
+      "If you earn over $400 from freelancing or side hustles, you owe self-employment tax (15.3%) on top of income tax. This catches many first-time freelancers off guard.",
+      "Set aside 25-30% of every payment for taxes. Open a separate savings account just for tax money. Pay quarterly estimated taxes to avoid penalties.",
+      "Track ALL business expenses — they reduce your taxable income. Home office, equipment, software, mileage, and even a portion of your phone bill can be deducted.",
+    ],
+    actionSteps: ["Set aside 25-30% of side hustle income for taxes", "Track all business expenses with an app", "Pay quarterly estimated taxes if you owe $1,000+", "Consider hiring a CPA for your first freelance tax return"],
+  },
+  gratification: {
+    id: "gratification", title: "Delayed Gratification",
+    paragraphs: [
+      "The ability to delay gratification is the #1 predictor of financial success. It's the difference between spending $5/day on coffee ($1,825/year) and investing it ($50,000+ in 20 years).",
+      "This doesn't mean never enjoy anything — it means being intentional. Save up for what you truly want instead of impulse buying things you'll forget about in a week.",
+      "Trick your brain: visualize your future self enjoying the goal. Studies show people who vividly imagine their future save 2x more than those who don't.",
+    ],
+    actionSteps: ["Identify one current spending habit to delay", "Create a vision board for your financial goals", "Use the 30-day list for non-essential wants", "Celebrate milestones to reward patience"],
+  },
+  recession: {
+    id: "recession", title: "Recession-Proof Your Finances",
+    paragraphs: [
+      "Recessions are inevitable — they happen every 7-10 years on average. The key isn't predicting them but preparing for them. A 6-month emergency fund is your #1 defense.",
+      "During downturns, keep investing if you can. Stocks go on sale — buying during a recession has historically led to the biggest gains. Dollar-cost averaging removes emotion from the equation.",
+      "Reduce fixed costs now: negotiate bills, eliminate subscriptions, build skills that are recession-resistant (healthcare, tech, government).",
+    ],
+    actionSteps: ["Build your emergency fund to 6 months of expenses", "Diversify income sources — don't rely on one job", "Keep investing during market dips", "Reduce fixed monthly expenses where possible"],
+  },
+  scholarships: {
+    id: "scholarships", title: "Scholarship Hunting",
+    paragraphs: [
+      "Billions in scholarship money goes unclaimed every year because students don't apply. It's not just for straight-A students — there are scholarships for hobbies, heritage, community service, and even being left-handed.",
+      "Use platforms like Fastweb, Scholarships.com, and your school's financial aid office. Apply to many small scholarships ($500-2,000) — less competition and they add up fast.",
+      "Treat applications like a part-time job. Dedicate 5 hours/week during application season. One $2,000 scholarship for 5 hours of work = $400/hour effective pay.",
+    ],
+    actionSteps: ["Create profiles on Fastweb and Scholarships.com", "Apply to at least 5 scholarships per month", "Reuse and adapt essays across applications", "Check your school's financial aid office for local scholarships"],
+  },
+  internships: {
+    id: "internships", title: "Paid Internship Strategy",
+    paragraphs: [
+      "Paid internships are the gateway to full-time offers. Companies convert 50-70% of interns to full-time employees. Start applying 6 months before you want to start.",
+      "Negotiate your internship pay — many companies have ranges. Research Glassdoor and Levels.fyi for benchmarks. Even $2/hour more adds up over a summer.",
+      "Maximize the experience: ask for real projects, build relationships with managers, and document your accomplishments. These become resume gold and reference sources.",
+    ],
+    actionSteps: ["Start applying 6 months before your target start date", "Research pay ranges on Glassdoor", "Prepare 3 STAR-method stories for interviews", "Ask for a full-time offer conversation before the internship ends"],
+  },
+  financialliteracy: {
+    id: "financialliteracy", title: "Financial Literacy Gap",
+    paragraphs: [
+      "Only 57% of adults worldwide are financially literate. Schools rarely teach personal finance. By actively learning, you're already ahead of nearly half the population.",
+      "The basics that matter most: compound interest, budgeting, debt management, investing fundamentals, and understanding taxes. Master these five and you'll outperform most adults financially.",
+      "Make it a habit: read one finance article per day, follow money-focused creators, and discuss money openly with friends. Financial literacy is a skill that compounds like interest.",
+    ],
+    actionSteps: ["Commit to learning one financial concept per week", "Follow 3 reputable finance educators", "Teach someone else what you learn — it reinforces knowledge", "Take a free financial literacy course online"],
+  },
+  minimalism: {
+    id: "minimalism", title: "Financial Minimalism",
+    paragraphs: [
+      "Financial minimalism isn't about deprivation — it's about spending intentionally on what truly matters to you and cutting everything else. Fewer possessions = less to maintain, insure, and worry about.",
+      "The average American household has 300,000 items. Decluttering and selling unused stuff can generate $1,000+ while simplifying your life. Use proceeds to start investing.",
+      "Apply minimalism to finances too: one checking account, one savings, one credit card, one investment account. Simplicity reduces decision fatigue and fees.",
+    ],
+    actionSteps: ["Sell 10 items you haven't used in 6 months", "Consolidate to fewer bank accounts", "Unsubscribe from all non-essential subscriptions", "Before buying, ask: does this add real value to my life?"],
+  },
+  dividends: {
+    id: "dividends", title: "Dividend Investing",
+    paragraphs: [
+      "Dividend stocks pay you a portion of company profits — usually quarterly. It's like getting a paycheck just for owning shares. Companies like Coca-Cola have paid dividends for 60+ years straight.",
+      "The power is in reinvestment: DRIP (Dividend Reinvestment Plan) automatically buys more shares with your dividends, creating a snowball effect. $10,000 in a 3% dividend stock becomes $18,000+ in 20 years from dividends alone.",
+      "Look for 'Dividend Aristocrats' — S&P 500 companies that have increased dividends for 25+ consecutive years. They're battle-tested through recessions.",
+    ],
+    actionSteps: ["Research dividend ETFs like SCHD, VYM, or DGRO", "Enable DRIP in your brokerage account", "Look up the Dividend Aristocrats list", "Start with $100 and reinvest all dividends"],
+  },
+  "peer-lending": {
+    id: "peer-lending", title: "Peer-to-Peer Lending",
+    paragraphs: [
+      "P2P lending platforms connect borrowers directly with individual lenders, cutting out the bank. You earn interest rates of 5-12% depending on risk level — much higher than savings accounts.",
+      "Platforms like Prosper and LendingClub let you start with as little as $25 per loan. Diversify across many loans to reduce the impact of any single default.",
+      "The risk: borrowers can default. Stick to higher-grade loans (A-B rated) for lower risk, or mix in some C-D grade for higher returns. Never invest money you can't afford to lose.",
+    ],
+    actionSteps: ["Research P2P platforms and their track records", "Start with $200-500 spread across multiple loans", "Stick to A-B grade loans initially", "Reinvest returns to compound growth"],
+  },
+  "meal-prep": {
+    id: "meal-prep", title: "Meal Prep Saves Thousands",
+    paragraphs: [
+      "The average American spends $3,500/year eating out. Cooking at home costs roughly $2,000/year — that's $1,500+ in annual savings, or $125/month you could invest instead.",
+      "Sunday meal prep is the secret: spend 2-3 hours cooking 5 days of lunches and dinners. Batch cooking staples like rice, proteins, and roasted vegetables makes it easy.",
+      "Start simple: 3-4 rotating recipes you enjoy. You don't need to be a chef — sheet pan meals, slow cooker recipes, and one-pot dishes are beginner-friendly and budget-friendly.",
+    ],
+    actionSteps: ["Calculate how much you currently spend on eating out", "Pick 3 simple recipes to rotate weekly", "Invest in meal prep containers", "Redirect food savings to investing"],
+  },
+  "credit-utilization": {
+    id: "credit-utilization", title: "Credit Utilization Secret",
+    paragraphs: [
+      "Credit utilization — the percentage of your credit limit you're using — is the second most important factor in your credit score (after payment history). Under 30% is good, under 10% is excellent.",
+      "If your limit is $1,000, keep your balance under $100 for the best score impact. Pro tip: pay your balance BEFORE the statement date, not just before the due date. This reports a lower utilization to credit bureaus.",
+      "Request credit limit increases every 6 months — it lowers your utilization ratio without changing your spending. Most issuers allow this online with a soft pull.",
+    ],
+    actionSteps: ["Check your current utilization ratio", "Pay balances before statement closing date", "Request a credit limit increase", "Set up autopay to never miss a payment"],
+  },
+  hsa: {
+    id: "hsa", title: "HSA Triple Tax Advantage",
+    paragraphs: [
+      "A Health Savings Account (HSA) is the only account with a TRIPLE tax advantage: contributions are tax-deductible, growth is tax-free, and withdrawals for medical expenses are tax-free.",
+      "The secret power move: pay medical expenses out of pocket now, let your HSA invest and grow, then reimburse yourself tax-free years later. There's no time limit on reimbursement.",
+      "After age 65, you can withdraw HSA funds for any purpose (not just medical) penalty-free — it becomes like a traditional IRA. It's the ultimate stealth retirement account.",
+    ],
+    actionSteps: ["Check if your health plan qualifies for an HSA", "Contribute at least enough to cover your deductible", "Invest HSA funds in index funds instead of leaving as cash", "Save medical receipts for future tax-free reimbursement"],
+  },
 };
