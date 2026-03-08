@@ -131,7 +131,7 @@ const Dashboard = () => {
             {tips.map((tip, i) => (
               <div
                 key={tip.id}
-                className="relative group rounded-xl border border-border bg-card p-5 card-shadow transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 animate-fade-in"
+                className="relative group rounded-xl border border-border bg-card p-5 card-shadow flex flex-col transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 animate-fade-in"
                 style={{ animationDelay: `${i * 100}ms` }}
               >
                 <button
