@@ -89,11 +89,13 @@ async function streamChat({ messages, profile, onDelta, onDone, onError }: {
 
 export default function AskEkon() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const topicSentRef = useRef(false);
 
   const profile: UserProfile = (() => {
     try {
