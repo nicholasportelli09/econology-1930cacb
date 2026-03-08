@@ -112,6 +112,15 @@ export default function AskEkon() {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
 
+  // Auto-send topic-related prompt from TipArticle
+  useEffect(() => {
+    const topic = searchParams.get("topic");
+    if (topic && !topicSentRef.current && messages.length === 0) {
+      topicSentRef.current = true;
+      send(`I just read about "${topic}". Can you explain this topic in more detail and give me practical tips?`);
+    }
+  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const send = async (text: string) => {
     if (!text.trim() || isLoading) return;
     const userMsg: Msg = { role: "user", content: text.trim() };
