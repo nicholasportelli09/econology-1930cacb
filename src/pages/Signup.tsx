@@ -36,9 +36,9 @@ export default function Signup() {
     } else {
       toast({
         title: "Check your email",
-        description: "We sent you a verification link. Please confirm your email to sign in.",
+        description: "We sent you a 6-digit verification code.",
       });
-      navigate("/login");
+      navigate(`/verify-email?email=${encodeURIComponent(email)}`);
     }
   };
 

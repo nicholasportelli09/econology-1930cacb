@@ -9,6 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import VerifyEmail from "./pages/VerifyEmail";
 import Onboarding from "./pages/Onboarding";
 import Quiz from "./pages/Quiz";
 import Dashboard from "./pages/Dashboard";
