@@ -107,6 +107,13 @@ const Dashboard = () => {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [tips, setTips] = useState(() => pickTips(profile, new Set()));
 
+  // Record daily login for streak tracking
+  const gam = useMemo(() => {
+    const { state } = recordDailyLogin();
+    return state;
+  }, []);
+  const level = useMemo(() => getLevel(gam.xp), [gam.xp]);
+
   const dismissTip = useCallback(
     (id: string) => {
       setDismissed((prev) => {
