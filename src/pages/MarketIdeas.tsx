@@ -55,6 +55,7 @@ const MarketIdeas = () => {
   const profile = useMemo(getProfile, []);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<MarketData | null>(null);
+  const [dismissed, setDismissed] = useState<Set<number>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
