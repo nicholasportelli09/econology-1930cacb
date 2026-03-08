@@ -145,7 +145,7 @@ const Dashboard = () => {
                 <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{tip.description}</p>
                 <button
                   onClick={() => navigate(`/tip/${tip.id}`)}
-                  className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+                  className="mt-auto flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
                 >
                   Explore Further <ArrowRight size={14} />
                 </button>
