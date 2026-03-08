@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { HealthScoreRing } from "@/components/HealthScoreRing";
@@ -10,7 +10,14 @@ import {
   recordDailyLogin,
   computeHealthScore,
 } from "@/lib/gamification";
-import { BookOpen, Brain, Flame, Lightbulb, Star, Trophy, Zap, Target } from "lucide-react";
+import { BookOpen, Brain, Flame, Lightbulb, Star, Trophy, Zap, Target, HelpCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 function getProfile(): UserProfile {
   try {
