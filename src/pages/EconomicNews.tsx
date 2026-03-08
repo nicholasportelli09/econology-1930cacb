@@ -314,7 +314,9 @@ const EconomicNews = () => {
               <div className="relative flex-1">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search by ticker (e.g. AAPL, TSLA, MSFT)"
+                  placeholder={portfolioTickers.length > 0
+                    ? `Search ticker or press Fetch for portfolio (${portfolioTickers.join(", ")})`
+                    : "Enter a ticker (e.g. AAPL, TSLA, MSFT)"}
                   value={tickerSearch}
                   onChange={(e) => setTickerSearch(e.target.value)}
                   className="pl-9"
@@ -326,10 +328,10 @@ const EconomicNews = () => {
                 className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {stockLoading ? <Loader2 size={16} className="animate-spin" /> : <BarChart3 size={16} />}
-                {stockLoading ? "Loading..." : "Fetch Stock News"}
+                {stockLoading ? "Loading..." : "Fetch Company News"}
               </button>
             </form>
-            {renderArticleList(stockArticles, stockLoading, stockError, () => fetchStockNews(tickerSearch), 'Click "Fetch Stock News" for the latest stock-specific headlines.')}
+            {renderArticleList(stockArticles, stockLoading, stockError, () => fetchStockNews(tickerSearch), 'Enter a company ticker (e.g. AAPL) to see company-specific news and earnings updates.')}
           </TabsContent>
 
           {/* ═══════ AI Insights Tab ═══════ */}
