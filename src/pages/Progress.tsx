@@ -298,8 +298,8 @@ const Progress = () => {
             <span className="text-2xl">💰</span>
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-display font-semibold text-foreground">Try the Budget Simulator</h3>
-            <p className="text-sm text-muted-foreground">Drag sliders to plan your spending and see savings projections!</p>
+            <h3 className="text-lg font-display font-semibold text-foreground">Budget Simulator</h3>
+            <p className="text-sm text-muted-foreground">Model your spending allocation and visualize long-term savings projections.</p>
           </div>
         </button>
       </main>
