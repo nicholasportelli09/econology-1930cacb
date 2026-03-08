@@ -145,24 +145,44 @@ const MarketIdeas = () => {
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {data.investments?.map((inv, i) => (
-                <div key={i} className="rounded-xl border border-border bg-card p-6 card-shadow flex flex-col transition-all hover:-translate-y-0.5 hover:border-primary/30">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-lg font-display font-bold text-foreground pr-2">{inv.name}</h3>
-                    <Badge className={`shrink-0 text-xs border ${riskColor(inv.riskLevel)}`}>{inv.riskLevel}</Badge>
+              {data.investments?.map((inv, i) => {
+                if (dismissed.has(i)) return null;
+                return (
+                  <div key={i} className="relative group rounded-xl border border-border bg-card p-6 card-shadow flex flex-col transition-all hover:-translate-y-0.5 hover:border-primary/30">
+                    {/* Dismiss actions */}
+                    <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => dismissInvestment(i, "already_invested")}
+                        title="Already invested"
+                        className="p-1.5 rounded-lg text-muted-foreground hover:bg-accent/20 hover:text-accent transition-colors"
+                      >
+                        <Check size={14} />
+                      </button>
+                      <button
+                        onClick={() => dismissInvestment(i, "not_interested")}
+                        title="Not interested"
+                        className="p-1.5 rounded-lg text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                    <div className="flex items-start justify-between mb-3 pr-16">
+                      <h3 className="text-lg font-display font-bold text-foreground">{inv.name}</h3>
+                      <Badge className={`shrink-0 text-xs border ${riskColor(inv.riskLevel)}`}>{inv.riskLevel}</Badge>
+                    </div>
+                    {inv.ticker && inv.ticker !== "N/A" && <span className="text-xs font-mono text-primary mb-3">{inv.ticker}</span>}
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">{inv.description}</p>
+                    <div className="space-y-3 mb-5 flex-1">
+                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Starting Amount</span><p className="text-sm text-foreground font-medium">{inv.startingAmount}</p></div>
+                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Why It's Good</span><p className="text-sm text-foreground">{inv.whyGood}</p></div>
+                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">For You</span><p className="text-sm text-primary/90 italic">{inv.personalizedNote}</p></div>
+                    </div>
+                    <button onClick={() => navigate("/investment", { state: { investment: inv } })} className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80 mt-auto">
+                      Explore Further <ArrowRight size={14} />
+                    </button>
                   </div>
-                  {inv.ticker && inv.ticker !== "N/A" && <span className="text-xs font-mono text-primary mb-3">{inv.ticker}</span>}
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{inv.description}</p>
-                  <div className="space-y-3 mb-5 flex-1">
-                    <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Starting Amount</span><p className="text-sm text-foreground font-medium">{inv.startingAmount}</p></div>
-                    <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Why It's Good</span><p className="text-sm text-foreground">{inv.whyGood}</p></div>
-                    <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">For You</span><p className="text-sm text-primary/90 italic">{inv.personalizedNote}</p></div>
-                  </div>
-                  <button onClick={() => navigate("/investment", { state: { investment: inv } })} className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80 mt-auto">
-                    Explore Further <ArrowRight size={14} />
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
             {data.disclaimer && <p className="text-xs text-muted-foreground text-center italic">{data.disclaimer}</p>}
           </div>
