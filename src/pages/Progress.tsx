@@ -278,7 +278,7 @@ const Progress = () => {
         {/* Tips Explored */}
         {tipsExplored.length > 0 && (
           <div className="rounded-xl border border-border bg-card p-6 card-shadow">
-            <h2 className="text-lg font-display font-semibold text-foreground mb-3">Tips Explored</h2>
+            <h2 className="text-lg font-display font-semibold text-foreground mb-3">Insights Studied</h2>
             <div className="flex flex-wrap gap-2">
               {tipsExplored.map((tip) => (
                 <span key={tip} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-accent/20 text-accent border border-accent/30 capitalize">
