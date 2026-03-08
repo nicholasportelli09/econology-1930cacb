@@ -88,7 +88,7 @@ const Learn = () => {
           {topics.map((topic) => (
             <div
               key={topic.id}
-              className="group rounded-xl border border-border bg-card p-6 card-shadow flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_hsl(270_70%_55%/0.15)]"
+              className="group rounded-xl border border-border bg-card p-6 card-shadow flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_12px_40px_hsl(270_70%_55%/0.15)]"
             >
               <div className="space-y-3">
                 <Badge

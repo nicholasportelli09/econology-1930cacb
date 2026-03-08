@@ -1,6 +1,7 @@
+import { memo } from "react";
 import logoSrc from "@/assets/econology-logo.png";
 
-const EconologyLogo = ({ size = 64 }: { size?: number }) => {
+const EconologyLogo = memo(({ size = 64 }: { size?: number }) => {
   return (
     <img
       src={logoSrc}
@@ -8,8 +9,11 @@ const EconologyLogo = ({ size = 64 }: { size?: number }) => {
       width={size}
       height={size}
       className="shrink-0 object-contain"
+      loading="eager"
     />
   );
-};
+});
+
+EconologyLogo.displayName = "EconologyLogo";
 
 export default EconologyLogo;
