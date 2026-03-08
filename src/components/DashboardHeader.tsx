@@ -60,7 +60,14 @@ export function DashboardHeader({ initials = "U" }: Props) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => navigate("/progress")}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
+          >
+            <BarChart3 size={16} />
+            <span className="hidden sm:inline">Progress</span>
+          </button>
           <ThemeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

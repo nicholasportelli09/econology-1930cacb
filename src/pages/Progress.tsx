@@ -281,8 +281,8 @@ const Progress = () => {
             <h2 className="text-lg font-display font-semibold text-foreground mb-3">Insights Studied</h2>
             <div className="flex flex-wrap gap-2">
               {tipsExplored.map((tip) => (
-                <span key={tip} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-accent/20 text-accent border border-accent/30 capitalize">
-                  {tip.replace(/-/g, " ")}
+                <span key={tip} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-accent/20 text-accent border border-accent/30">
+                  {tip.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
                 </span>
               ))}
             </div>
