@@ -215,7 +215,7 @@ const Progress = () => {
 
         {/* Badges */}
         <div className="rounded-xl border border-border bg-card p-6 card-shadow">
-          <h2 className="text-lg font-display font-semibold text-foreground mb-4">Badges</h2>
+          <h2 className="text-lg font-display font-semibold text-foreground mb-4">Achievements</h2>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
             {ALL_BADGES.map((badge) => {
               const earned = gam.badges.includes(badge.id);
