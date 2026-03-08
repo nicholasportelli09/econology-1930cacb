@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import {
-  Newspaper, Loader2, CheckCircle2, Sparkles, TrendingUp, Search, BarChart3,
+  Newspaper, Loader2, CheckCircle2, Sparkles, TrendingUp, Search, BarChart3, RefreshCw,
 } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import { Badge } from "@/components/ui/badge";
