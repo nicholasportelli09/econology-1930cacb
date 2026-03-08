@@ -1,15 +1,12 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import EconologyLogo from "@/components/EconologyLogo";
-import { NavLink } from "@/components/NavLink";
+import { DashboardHeader } from "@/components/DashboardHeader";
 import {
   ArrowRight,
   RefreshCw,
-  User,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 
 interface TopicCard {
@@ -58,37 +55,13 @@ const Learn = () => {
 
   const topics = useMemo(() => order.map((i) => ALL_TOPICS[i]), [order]);
 
+  const initials = profile.name
+    ? profile.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)
+    : "U";
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-8 h-16">
-          <EconologyLogo />
-          <nav className="hidden md:flex items-center gap-1">
-            {[
-              { to: "/dashboard", label: "Dashboard" },
-              { to: "/learn", label: "Learn" },
-              { to: "/market", label: "Market Ideas" },
-              { to: "/news", label: "Economic News" },
-              { to: "/ask", label: "Ask Ekon" },
-            ].map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className="px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
-                activeClassName="text-foreground bg-muted"
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-          <Avatar className="h-9 w-9 cursor-pointer">
-            <AvatarFallback className="bg-muted text-muted-foreground text-sm font-semibold">
-              {profile.name?.[0]?.toUpperCase() ?? <User size={16} />}
-            </AvatarFallback>
-          </Avatar>
-        </div>
-      </header>
+      <DashboardHeader initials={initials} />
 
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-10 space-y-8">
@@ -115,7 +88,7 @@ const Learn = () => {
           {topics.map((topic) => (
             <div
               key={topic.id}
-              className="group rounded-xl border border-border bg-card p-6 card-shadow flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_hsl(270_70%_55%/0.15)]"
+              className="group rounded-xl border border-border bg-card p-6 card-shadow flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_12px_40px_hsl(270_70%_55%/0.15)]"
             >
               <div className="space-y-3">
                 <Badge
@@ -133,7 +106,7 @@ const Learn = () => {
               </div>
               <Button
                 variant="ghost"
-                className="mt-5 justify-start px-0 text-primary hover:text-primary/80 gap-1"
+                className="mt-5 justify-start px-0 text-primary hover:text-primary/80 gap-1 hover:bg-primary/10"
                 onClick={() => navigate(`/tip/${topic.id}`)}
               >
                 Learn More <ArrowRight size={16} />
