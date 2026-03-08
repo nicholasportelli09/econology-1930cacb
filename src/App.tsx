@@ -55,6 +55,7 @@ const App = () => (
             <Route path="/ask" element={<ProtectedRoute><AskEkon /></ProtectedRoute>} />
             <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/budget" element={<ProtectedRoute><BudgetSimulator /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
