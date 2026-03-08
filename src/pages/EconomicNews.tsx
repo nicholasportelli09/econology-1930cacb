@@ -119,19 +119,23 @@ const EconomicNews = () => {
     } finally { setMarketLoading(false); }
   }, [toast]);
 
-  /* ── Fetch Stock News (Finnhub via fmp-stock-news) ── */
+  /* ── Fetch Company News (Finnhub company-specific, requires ticker) ── */
   const fetchStockNews = async (tickers?: string) => {
+    const query = tickers?.trim() || portfolioTickers.join(",");
+    if (!query) {
+      toast({ title: "Enter a ticker", description: "Search for a company ticker like AAPL, TSLA, or MSFT to see company-specific news.", variant: "destructive" });
+      return;
+    }
     setStockLoading(true);
     setStockError(null);
     try {
-      const body: any = { limit: 15 };
-      if (tickers?.trim()) body.tickers = tickers.trim().toUpperCase();
+      const body: any = { limit: 15, tickers: query.toUpperCase() };
       const { data, error } = await supabase.functions.invoke("fmp-stock-news", { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setStockArticles(data.articles || []);
     } catch (e: any) {
-      const msg = e?.message || "Failed to fetch stock news";
+      const msg = e?.message || "Failed to fetch company news";
       setStockError(msg);
       toast({ title: "Error", description: msg, variant: "destructive" });
     } finally { setStockLoading(false); }
