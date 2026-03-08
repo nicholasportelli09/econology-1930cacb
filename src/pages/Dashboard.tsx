@@ -210,18 +210,19 @@ const Dashboard = () => {
         </section>
 
         {/* Hub links */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {[
-            { to: "/learn", icon: BookOpen, title: "Learning Hub", desc: "Deep dives & interactive lessons", accent: "hsl(var(--secondary))", accentBg: "bg-secondary/10", accentBorder: "hover:border-secondary/40", accentShadow: "hover:shadow-[0_12px_40px_hsl(220_70%_50%/0.1)]", accentText: "group-hover:text-secondary" },
-            { to: "/market", icon: TrendingUp, title: "Market Ideas", desc: "Trends & investment insights", accent: "hsl(var(--accent))", accentBg: "bg-accent/10", accentBorder: "hover:border-accent/40", accentShadow: "hover:shadow-[0_12px_40px_hsl(155_60%_45%/0.1)]", accentText: "group-hover:text-accent" },
-            { to: "/news", icon: Newspaper, title: "Economic News", desc: "Current events, simplified", accent: "hsl(var(--primary))", accentBg: "bg-primary/10", accentBorder: "hover:border-primary/40", accentShadow: "hover:shadow-[0_12px_40px_hsl(270_70%_55%/0.1)]", accentText: "group-hover:text-primary" },
+            { to: "/learn", icon: BookOpen, title: "Learning Hub", desc: "Deep dives & interactive lessons", accentBg: "bg-secondary/10", accentBorder: "hover:border-secondary/40", accentText: "group-hover:text-secondary", accent: "hsl(var(--secondary))" },
+            { to: "/market", icon: TrendingUp, title: "Market Ideas", desc: "Trends & investment insights", accentBg: "bg-accent/10", accentBorder: "hover:border-accent/40", accentText: "group-hover:text-accent", accent: "hsl(var(--accent))" },
+            { to: "/news", icon: Newspaper, title: "Economic News", desc: "Current events, simplified", accentBg: "bg-primary/10", accentBorder: "hover:border-primary/40", accentText: "group-hover:text-primary", accent: "hsl(var(--primary))" },
+            { to: "/budget", icon: Calculator, title: "Budget Simulator", desc: "Plan your spending visually", accentBg: "bg-destructive/10", accentBorder: "hover:border-destructive/40", accentText: "group-hover:text-destructive", accent: "hsl(var(--destructive))" },
           ].map((hub, i) => {
             const Icon = hub.icon;
             return (
               <button
                 key={hub.to}
                 onClick={() => navigate(hub.to)}
-                className={`rounded-xl p-6 text-left border border-border bg-card card-shadow transition-all duration-300 hover:-translate-y-1 ${hub.accentBorder} ${hub.accentShadow} animate-fade-in group`}
+                className={`rounded-xl p-6 text-left border border-border bg-card card-shadow transition-all duration-300 hover:-translate-y-1 ${hub.accentBorder} animate-fade-in group`}
                 style={{ animationDelay: `${i * 100}ms` }}
               >
                 <div className={`w-10 h-10 rounded-lg ${hub.accentBg} flex items-center justify-center mb-3`}>
