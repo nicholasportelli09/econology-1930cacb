@@ -55,37 +55,13 @@ const Learn = () => {
 
   const topics = useMemo(() => order.map((i) => ALL_TOPICS[i]), [order]);
 
+  const initials = profile.name
+    ? profile.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)
+    : "U";
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-8 h-16">
-          <EconologyLogo />
-          <nav className="hidden md:flex items-center gap-1">
-            {[
-              { to: "/dashboard", label: "Dashboard" },
-              { to: "/learn", label: "Learn" },
-              { to: "/market", label: "Market Ideas" },
-              { to: "/news", label: "Economic News" },
-              { to: "/ask", label: "Ask Ekon" },
-            ].map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className="px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
-                activeClassName="text-foreground bg-muted"
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-          <Avatar className="h-9 w-9 cursor-pointer">
-            <AvatarFallback className="bg-muted text-muted-foreground text-sm font-semibold">
-              {profile.name?.[0]?.toUpperCase() ?? <User size={16} />}
-            </AvatarFallback>
-          </Avatar>
-        </div>
-      </header>
+      <DashboardHeader initials={initials} />
 
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-10 space-y-8">
