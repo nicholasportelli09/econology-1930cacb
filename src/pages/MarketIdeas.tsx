@@ -7,6 +7,9 @@ import {
   AlertTriangle,
   ArrowRight,
   Sparkles,
+  RefreshCw,
+  X,
+  Check,
 } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import { Badge } from "@/components/ui/badge";
