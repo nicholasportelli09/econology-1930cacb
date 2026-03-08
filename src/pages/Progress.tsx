@@ -141,7 +141,7 @@ const Progress = () => {
                 <h2 className="text-lg font-display font-bold text-foreground">
                   Level {level.level} — {level.title}
                 </h2>
-                <p className="text-sm text-muted-foreground">{gam.xp} XP total</p>
+                <p className="text-sm text-muted-foreground">{gam.xp} XP accumulated</p>
               </div>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/10 border border-destructive/20">
