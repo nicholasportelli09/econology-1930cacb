@@ -76,7 +76,7 @@ const TipArticle = () => {
 
         {/* Ask Ekon */}
         <Button
-          onClick={() => navigate("/ask")}
+          onClick={() => navigate(`/ask?topic=${encodeURIComponent(article.title)}`)}
           className="w-full gap-2"
           size="lg"
         >

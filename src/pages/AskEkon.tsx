@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { Send, MessageCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -89,11 +89,13 @@ async function streamChat({ messages, profile, onDelta, onDone, onError }: {
 
 export default function AskEkon() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const topicSentRef = useRef(false);
 
   const profile: UserProfile = (() => {
     try {
@@ -109,6 +111,15 @@ export default function AskEkon() {
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
+
+  // Auto-send topic-related prompt from TipArticle
+  useEffect(() => {
+    const topic = searchParams.get("topic");
+    if (topic && !topicSentRef.current && messages.length === 0) {
+      topicSentRef.current = true;
+      send(`I just read about "${topic}". Can you explain this topic in more detail and give me practical tips?`);
+    }
+  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const send = async (text: string) => {
     if (!text.trim() || isLoading) return;
