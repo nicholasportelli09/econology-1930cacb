@@ -171,26 +171,28 @@ export function computeHealthScore(profile: UserProfile, gam: GamificationState)
   score: number;
   breakdown: { label: string; value: number; max: number }[];
 } {
-  // Quiz knowledge (0-25)
+  // Quiz knowledge (0-25) — requires strong quiz performance across multiple attempts
   const quizMax = 25;
   const bestQuiz = Math.max(profile.quizScore ?? 0, profile.quizScore2 ?? 0);
-  const quizPoints = Math.round((bestQuiz / 5) * quizMax);
+  const quizBase = Math.round((bestQuiz / 5) * 15); // best score worth up to 15
+  const quizRepeat = Math.round(Math.min(1, gam.totalQuizzesTaken / 3) * 10); // repeat assessments worth up to 10
+  const quizPoints = Math.min(quizMax, quizBase + quizRepeat);
 
-  // Engagement (0-25) — tips explored, streak, budget sim
+  // Engagement (0-25) — tips explored, streak, budget sim, quizzes
   const engageMax = 25;
-  const tipScore = Math.min(10, gam.totalTipsExplored);
-  const streakScore = Math.min(7, gam.streak);
-  const simScore = Math.min(3, gam.budgetSimUses);
+  const tipScore = Math.min(15, gam.totalTipsExplored); // need 15 tips
+  const streakScore = Math.min(10, gam.streak); // need 10-day streak
+  const simScore = Math.min(5, gam.budgetSimUses); // need 5 sim uses
   const quizCount = Math.min(5, gam.totalQuizzesTaken);
-  const engagePoints = Math.round(((tipScore + streakScore + simScore + quizCount) / 25) * engageMax);
+  const engagePoints = Math.round(((tipScore + streakScore + simScore + quizCount) / 35) * engageMax);
 
-  // Goals clarity (0-25) — financial goals set
+  // Goals clarity (0-25) — need more goals for full marks
   const goalsMax = 25;
-  const goalsPoints = Math.round(Math.min(1, profile.financialGoals.length / 3) * goalsMax);
+  const goalsPoints = Math.round(Math.min(1, profile.financialGoals.length / 5) * goalsMax);
 
-  // Diversification (0-25) — topics selected
+  // Diversification (0-25) — need broader topic coverage
   const divMax = 25;
-  const divPoints = Math.round(Math.min(1, profile.topicsOfInterest.length / 4) * divMax);
+  const divPoints = Math.round(Math.min(1, profile.topicsOfInterest.length / 7) * divMax);
 
   const score = quizPoints + engagePoints + goalsPoints + divPoints;
 
