@@ -7,6 +7,9 @@ import {
   AlertTriangle,
   ArrowRight,
   Sparkles,
+  RefreshCw,
+  X,
+  Check,
 } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +55,7 @@ const MarketIdeas = () => {
   const profile = useMemo(getProfile, []);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<MarketData | null>(null);
+  const [dismissed, setDismissed] = useState<Set<number>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -62,6 +66,7 @@ const MarketIdeas = () => {
   const fetchInsights = async () => {
     setLoading(true);
     setError(null);
+    setDismissed(new Set());
     try {
       const { data: result, error: fnError } = await supabase.functions.invoke("market-insights", { body: { profile } });
       if (fnError) throw fnError;
@@ -74,6 +79,14 @@ const MarketIdeas = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const dismissInvestment = (index: number, reason: "not_interested" | "already_invested") => {
+    setDismissed(prev => new Set(prev).add(index));
+    toast({
+      title: reason === "already_invested" ? "Marked as invested" : "Dismissed",
+      description: reason === "already_invested" ? "Nice move! We'll note that." : "We'll try different ideas next time.",
+    });
   };
 
   return (
@@ -97,9 +110,16 @@ const MarketIdeas = () => {
             </h1>
             <p className="text-muted-foreground mt-1">AI-powered investment recommendations personalized for you.</p>
           </div>
-          <button onClick={fetchInsights} disabled={loading} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
-            {loading ? <><Loader2 size={18} className="animate-spin" /> Analyzing...</> : <><Sparkles size={18} /> Get Latest Investment Ideas</>}
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={fetchInsights} disabled={loading} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+              {loading ? <><Loader2 size={18} className="animate-spin" /> Analyzing...</> : <><Sparkles size={18} /> Get Latest Investment Ideas</>}
+            </button>
+            {data && !loading && (
+              <button onClick={fetchInsights} title="Refresh ideas" className="p-2.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                <RefreshCw size={16} />
+              </button>
+            )}
+          </div>
         </div>
 
         {loading && (
@@ -125,24 +145,44 @@ const MarketIdeas = () => {
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {data.investments?.map((inv, i) => (
-                <div key={i} className="rounded-xl border border-border bg-card p-6 card-shadow flex flex-col transition-all hover:-translate-y-0.5 hover:border-primary/30">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-lg font-display font-bold text-foreground pr-2">{inv.name}</h3>
-                    <Badge className={`shrink-0 text-xs border ${riskColor(inv.riskLevel)}`}>{inv.riskLevel}</Badge>
+              {data.investments?.map((inv, i) => {
+                if (dismissed.has(i)) return null;
+                return (
+                  <div key={i} className="relative group rounded-xl border border-border bg-card p-6 card-shadow flex flex-col transition-all hover:-translate-y-0.5 hover:border-primary/30">
+                    {/* Dismiss actions */}
+                    <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => dismissInvestment(i, "already_invested")}
+                        title="Already invested"
+                        className="p-1.5 rounded-lg text-muted-foreground hover:bg-accent/20 hover:text-accent transition-colors"
+                      >
+                        <Check size={14} />
+                      </button>
+                      <button
+                        onClick={() => dismissInvestment(i, "not_interested")}
+                        title="Not interested"
+                        className="p-1.5 rounded-lg text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                    <div className="flex items-start justify-between mb-3 pr-16">
+                      <h3 className="text-lg font-display font-bold text-foreground">{inv.name}</h3>
+                      <Badge className={`shrink-0 text-xs border ${riskColor(inv.riskLevel)}`}>{inv.riskLevel}</Badge>
+                    </div>
+                    {inv.ticker && inv.ticker !== "N/A" && <span className="text-xs font-mono text-primary mb-3">{inv.ticker}</span>}
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">{inv.description}</p>
+                    <div className="space-y-3 mb-5 flex-1">
+                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Starting Amount</span><p className="text-sm text-foreground font-medium">{inv.startingAmount}</p></div>
+                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Why It's Good</span><p className="text-sm text-foreground">{inv.whyGood}</p></div>
+                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">For You</span><p className="text-sm text-primary/90 italic">{inv.personalizedNote}</p></div>
+                    </div>
+                    <button onClick={() => navigate("/investment", { state: { investment: inv } })} className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80 mt-auto">
+                      Explore Further <ArrowRight size={14} />
+                    </button>
                   </div>
-                  {inv.ticker && inv.ticker !== "N/A" && <span className="text-xs font-mono text-primary mb-3">{inv.ticker}</span>}
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{inv.description}</p>
-                  <div className="space-y-3 mb-5 flex-1">
-                    <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Starting Amount</span><p className="text-sm text-foreground font-medium">{inv.startingAmount}</p></div>
-                    <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Why It's Good</span><p className="text-sm text-foreground">{inv.whyGood}</p></div>
-                    <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">For You</span><p className="text-sm text-primary/90 italic">{inv.personalizedNote}</p></div>
-                  </div>
-                  <button onClick={() => navigate("/investment", { state: { investment: inv } })} className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80 mt-auto">
-                    Explore Further <ArrowRight size={14} />
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
             {data.disclaimer && <p className="text-xs text-muted-foreground text-center italic">{data.disclaimer}</p>}
           </div>
