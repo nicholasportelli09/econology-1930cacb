@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { HealthScoreRing } from "@/components/HealthScoreRing";
@@ -10,7 +10,14 @@ import {
   recordDailyLogin,
   computeHealthScore,
 } from "@/lib/gamification";
-import { BookOpen, Brain, Flame, Lightbulb, Star, Trophy, Zap, Target } from "lucide-react";
+import { BookOpen, Brain, Flame, Lightbulb, Star, Trophy, Zap, Target, HelpCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 function getProfile(): UserProfile {
   try {
@@ -62,15 +69,66 @@ const Progress = () => {
   const quizLevel =
     quizScore === null ? "Not taken" : quizScore >= 4 ? "Advanced" : quizScore >= 2 ? "Intermediate" : "Beginner";
 
+  const [showMethodology, setShowMethodology] = useState(false);
+
   return (
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
       <main className="max-w-4xl mx-auto px-4 md:px-8 py-8 space-y-8">
-        <section>
-          <h1 className="text-3xl font-display font-bold text-foreground mb-2">My Progress</h1>
-          <p className="text-muted-foreground">Track your financial learning journey</p>
+        <section className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-display font-bold text-foreground mb-2">Progress Overview</h1>
+            <p className="text-muted-foreground">Your financial literacy development at a glance</p>
+          </div>
+          <button
+            onClick={() => setShowMethodology(true)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          >
+            <HelpCircle size={16} />
+            <span className="hidden sm:inline">How it works</span>
+          </button>
         </section>
+
+        {/* Methodology Dialog */}
+        <Dialog open={showMethodology} onOpenChange={setShowMethodology}>
+          <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-display">How Your Progress is Measured</DialogTitle>
+              <DialogDescription>
+                Understanding the metrics behind your financial literacy journey.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-5 text-sm text-foreground">
+              <div>
+                <h3 className="font-semibold mb-1.5">Experience Points (XP)</h3>
+                <p className="text-muted-foreground mb-2">XP measures your overall engagement with the platform. You earn XP through consistent usage and completing educational activities.</p>
+                <ul className="space-y-1 text-muted-foreground">
+                  <li className="flex justify-between"><span>Daily login</span><span className="font-medium text-foreground">+15 XP</span></li>
+                  <li className="flex justify-between"><span>Complete an assessment</span><span className="font-medium text-foreground">+30 XP</span></li>
+                  <li className="flex justify-between"><span>Perfect assessment score</span><span className="font-medium text-foreground">+50 XP</span></li>
+                  <li className="flex justify-between"><span>Study a financial insight</span><span className="font-medium text-foreground">+10 XP</span></li>
+                  <li className="flex justify-between"><span>Use Budget Simulator</span><span className="font-medium text-foreground">+20 XP</span></li>
+                  <li className="flex justify-between"><span>Consult Ekon AI</span><span className="font-medium text-foreground">+10 XP</span></li>
+                </ul>
+              </div>
+              <div className="border-t border-border pt-4">
+                <h3 className="font-semibold mb-1.5">Financial Health Score (0–100)</h3>
+                <p className="text-muted-foreground mb-2">A composite metric reflecting four key dimensions of your financial development:</p>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li><span className="font-medium text-foreground">Knowledge (25 pts)</span> — Based on your best assessment score. Higher scores indicate stronger foundational understanding.</li>
+                  <li><span className="font-medium text-foreground">Engagement (25 pts)</span> — Measures consistency: insights studied, login streak, simulator usage, and assessments completed.</li>
+                  <li><span className="font-medium text-foreground">Goals (25 pts)</span> — Reflects how clearly you've defined your financial objectives. Setting 3+ goals earns full marks.</li>
+                  <li><span className="font-medium text-foreground">Diversification (25 pts)</span> — Tracks breadth of topics explored. Selecting 4+ interest areas earns full marks.</li>
+                </ul>
+              </div>
+              <div className="border-t border-border pt-4">
+                <h3 className="font-semibold mb-1.5">Levels & Achievements</h3>
+                <p className="text-muted-foreground">As you accumulate XP, you advance through 8 proficiency levels — from <span className="font-medium text-foreground">Foundation</span> to <span className="font-medium text-foreground">Authority</span>. Achievements are awarded for specific milestones such as maintaining engagement streaks or completing a set number of assessments.</p>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* XP & Level Bar */}
         <div className="rounded-xl border border-border bg-card p-6 card-shadow">
@@ -83,13 +141,13 @@ const Progress = () => {
                 <h2 className="text-lg font-display font-bold text-foreground">
                   Level {level.level} — {level.title}
                 </h2>
-                <p className="text-sm text-muted-foreground">{gam.xp} XP total</p>
+                <p className="text-sm text-muted-foreground">{gam.xp} XP accumulated</p>
               </div>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/10 border border-destructive/20">
               <Flame size={16} className="text-destructive" />
               <span className="text-sm font-display font-bold text-destructive">{gam.streak}</span>
-              <span className="text-xs text-muted-foreground">day streak</span>
+              <span className="text-xs text-muted-foreground">day{gam.streak !== 1 ? "s" : ""}</span>
             </div>
           </div>
           <div className="h-3 rounded-full bg-muted overflow-hidden">
@@ -139,9 +197,9 @@ const Progress = () => {
               { icon: Flame, label: "Days Active", value: daysActive, color: "text-destructive" },
               { icon: Brain, label: "Quiz Score", value: quizScore !== null ? `${quizScore}/5` : "N/A", color: "text-primary" },
               { icon: BookOpen, label: "Topics Selected", value: `${profile.topicsOfInterest.length}/${TOPICS_OF_INTEREST.length}`, color: "text-secondary" },
-              { icon: Lightbulb, label: "Tips Explored", value: tipsExplored.length, color: "text-accent" },
+              { icon: Lightbulb, label: "Insights Studied", value: tipsExplored.length, color: "text-accent" },
               { icon: Zap, label: "Total XP", value: gam.xp, color: "text-primary" },
-              { icon: Trophy, label: "Badges", value: `${gam.badges.length}/${ALL_BADGES.length}`, color: "text-accent" },
+              { icon: Trophy, label: "Achievements", value: `${gam.badges.length}/${ALL_BADGES.length}`, color: "text-accent" },
             ].map((s) => {
               const Icon = s.icon;
               return (
@@ -157,7 +215,7 @@ const Progress = () => {
 
         {/* Badges */}
         <div className="rounded-xl border border-border bg-card p-6 card-shadow">
-          <h2 className="text-lg font-display font-semibold text-foreground mb-4">Badges</h2>
+          <h2 className="text-lg font-display font-semibold text-foreground mb-4">Achievements</h2>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
             {ALL_BADGES.map((badge) => {
               const earned = gam.badges.includes(badge.id);
@@ -220,7 +278,7 @@ const Progress = () => {
         {/* Tips Explored */}
         {tipsExplored.length > 0 && (
           <div className="rounded-xl border border-border bg-card p-6 card-shadow">
-            <h2 className="text-lg font-display font-semibold text-foreground mb-3">Tips Explored</h2>
+            <h2 className="text-lg font-display font-semibold text-foreground mb-3">Insights Studied</h2>
             <div className="flex flex-wrap gap-2">
               {tipsExplored.map((tip) => (
                 <span key={tip} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-accent/20 text-accent border border-accent/30 capitalize">
@@ -240,8 +298,8 @@ const Progress = () => {
             <span className="text-2xl">💰</span>
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-display font-semibold text-foreground">Try the Budget Simulator</h3>
-            <p className="text-sm text-muted-foreground">Drag sliders to plan your spending and see savings projections!</p>
+            <h3 className="text-lg font-display font-semibold text-foreground">Budget Simulator</h3>
+            <p className="text-sm text-muted-foreground">Model your spending allocation and visualize long-term savings projections.</p>
           </div>
         </button>
       </main>

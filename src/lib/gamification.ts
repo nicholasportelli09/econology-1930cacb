@@ -115,14 +115,14 @@ export interface Level {
 }
 
 export const LEVELS: Level[] = [
-  { level: 1, title: "Newbie", minXP: 0 },
-  { level: 2, title: "Learner", minXP: 50 },
-  { level: 3, title: "Explorer", minXP: 150 },
-  { level: 4, title: "Saver", minXP: 300 },
-  { level: 5, title: "Investor", minXP: 500 },
+  { level: 1, title: "Foundation", minXP: 0 },
+  { level: 2, title: "Informed", minXP: 50 },
+  { level: 3, title: "Practitioner", minXP: 150 },
+  { level: 4, title: "Disciplined", minXP: 300 },
+  { level: 5, title: "Proficient", minXP: 500 },
   { level: 6, title: "Strategist", minXP: 800 },
-  { level: 7, title: "Expert", minXP: 1200 },
-  { level: 8, title: "Master", minXP: 1800 },
+  { level: 7, title: "Advanced", minXP: 1200 },
+  { level: 8, title: "Authority", minXP: 1800 },
 ];
 
 export function getLevel(xp: number): Level & { progress: number; nextLevel: Level | null } {
@@ -148,18 +148,18 @@ export interface Badge {
 }
 
 export const ALL_BADGES: Badge[] = [
-  { id: "first_login", name: "Welcome!", emoji: "👋", description: "Log in for the first time", condition: (s) => s.xp > 0 },
-  { id: "streak_3", name: "On Fire", emoji: "🔥", description: "3-day login streak", condition: (s) => s.streak >= 3 },
-  { id: "streak_7", name: "Dedicated", emoji: "⚡", description: "7-day login streak", condition: (s) => s.streak >= 7 },
-  { id: "streak_30", name: "Unstoppable", emoji: "🏆", description: "30-day login streak", condition: (s) => s.streak >= 30 },
-  { id: "tips_5", name: "Curious Mind", emoji: "🔍", description: "Explore 5 tips", condition: (s) => s.totalTipsExplored >= 5 },
-  { id: "tips_20", name: "Knowledge Seeker", emoji: "📚", description: "Explore 20 tips", condition: (s) => s.totalTipsExplored >= 20 },
-  { id: "tips_50", name: "Tip Master", emoji: "🎓", description: "Explore 50 tips", condition: (s) => s.totalTipsExplored >= 50 },
-  { id: "quiz_1", name: "Test Taker", emoji: "📝", description: "Complete your first quiz", condition: (s) => s.totalQuizzesTaken >= 1 },
-  { id: "quiz_5", name: "Quiz Pro", emoji: "🧠", description: "Complete 5 quizzes", condition: (s) => s.totalQuizzesTaken >= 5 },
-  { id: "budget_1", name: "Budget Planner", emoji: "💰", description: "Use the Budget Simulator", condition: (s) => s.budgetSimUses >= 1 },
-  { id: "xp_500", name: "Rising Star", emoji: "⭐", description: "Earn 500 XP", condition: (s) => s.xp >= 500 },
-  { id: "xp_1000", name: "Financial Guru", emoji: "🌟", description: "Earn 1,000 XP", condition: (s) => s.xp >= 1000 },
+  { id: "first_login", name: "First Step", emoji: "✓", description: "Complete your first session", condition: (s) => s.xp > 0 },
+  { id: "streak_3", name: "Consistent", emoji: "📈", description: "Maintain a 3-day engagement streak", condition: (s) => s.streak >= 3 },
+  { id: "streak_7", name: "Committed", emoji: "⚡", description: "Maintain a 7-day engagement streak", condition: (s) => s.streak >= 7 },
+  { id: "streak_30", name: "Disciplined", emoji: "🏆", description: "Maintain a 30-day engagement streak", condition: (s) => s.streak >= 30 },
+  { id: "tips_5", name: "Researcher", emoji: "🔍", description: "Study 5 financial insights", condition: (s) => s.totalTipsExplored >= 5 },
+  { id: "tips_20", name: "Analyst", emoji: "📊", description: "Study 20 financial insights", condition: (s) => s.totalTipsExplored >= 20 },
+  { id: "tips_50", name: "Scholar", emoji: "🎓", description: "Study 50 financial insights", condition: (s) => s.totalTipsExplored >= 50 },
+  { id: "quiz_1", name: "Assessed", emoji: "📝", description: "Complete your first assessment", condition: (s) => s.totalQuizzesTaken >= 1 },
+  { id: "quiz_5", name: "Well-Tested", emoji: "🧠", description: "Complete 5 assessments", condition: (s) => s.totalQuizzesTaken >= 5 },
+  { id: "budget_1", name: "Planner", emoji: "💼", description: "Use the Budget Simulator", condition: (s) => s.budgetSimUses >= 1 },
+  { id: "xp_500", name: "Progressing", emoji: "⭐", description: "Accumulate 500 XP", condition: (s) => s.xp >= 500 },
+  { id: "xp_1000", name: "Distinguished", emoji: "🌟", description: "Accumulate 1,000 XP", condition: (s) => s.xp >= 1000 },
 ];
 
 function computeBadges(state: GamificationState): string[] {
