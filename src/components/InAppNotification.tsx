@@ -10,34 +10,23 @@ interface Notification {
   body: string;
 }
 
-const DIGEST_TIPS = [
-  { title: "Market Update", body: "S&P 500 futures are up — tech stocks leading gains today." },
-  { title: "Savings Tip", body: "Automate your savings: even $25/week adds up to $1,300/year." },
-  { title: "Economic Insight", body: "The Fed held rates steady — here's what it means for your wallet." },
-  { title: "Student Finance", body: "Tax season is here — students can claim education credits." },
-  { title: "Investing 101", body: "Dollar-cost averaging reduces risk — invest a fixed amount regularly." },
-];
-
-const MARKET_ALERTS = [
-  { title: "Market Alert", body: "Volatility index (VIX) spiked 8% — markets may see turbulence." },
-  { title: "Earnings Season", body: "Big tech earnings this week could move the market significantly." },
-  { title: "Rate Watch", body: "Bond yields are rising — keep an eye on interest rate-sensitive stocks." },
-];
-
-function getRandomItem<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
 function getStorageKey(type: string) {
   return `econology_notif_dismissed_${type}`;
+}
+
+function getCacheKey() {
+  return `econology_notif_cache_${new Date().toDateString()}`;
 }
 
 function wasDismissedToday(type: string): boolean {
   const val = localStorage.getItem(getStorageKey(type));
   if (!val) return false;
-  const dismissed = new Date(val);
-  const now = new Date();
-  return dismissed.toDateString() === now.toDateString();
+  return new Date(val).toDateString() === new Date().toDateString();
+}
+
+interface CachedNotifs {
+  digest: { title: string; body: string };
+  market: { title: string; body: string };
 }
 
 export function InAppNotification() {
@@ -49,36 +38,61 @@ export function InAppNotification() {
 
     let cancelled = false;
 
-    supabase
-      .from("notification_preferences")
-      .select("daily_digest, market_news_alerts")
-      .eq("user_id", user.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (cancelled) return;
-        const notifs: Notification[] = [];
+    async function load() {
+      // Check user preferences
+      const { data: prefs } = await supabase
+        .from("notification_preferences")
+        .select("daily_digest, market_news_alerts")
+        .eq("user_id", user!.id)
+        .maybeSingle();
 
-        if ((data?.daily_digest ?? true) && !wasDismissedToday("digest")) {
-          const tip = getRandomItem(DIGEST_TIPS);
-          notifs.push({ id: "digest", type: "digest", ...tip });
-        }
+      const wantsDigest = (prefs?.daily_digest ?? true) && !wasDismissedToday("digest");
+      const wantsMarket = (prefs?.market_news_alerts ?? true) && !wasDismissedToday("market");
 
-        if ((data?.market_news_alerts ?? true) && !wasDismissedToday("market")) {
-          const alert = getRandomItem(MARKET_ALERTS);
-          notifs.push({ id: "market", type: "market", ...alert });
-        }
+      if (!wantsDigest && !wantsMarket) return;
 
-        // Stagger: show first immediately, second after delay
-        if (notifs.length > 0) {
-          setNotifications([notifs[0]]);
-          if (notifs.length > 1) {
-            setTimeout(() => {
-              if (!cancelled) setNotifications((prev) => [...prev, notifs[1]]);
-            }, 3000);
+      // Check cache first
+      let cached: CachedNotifs | null = null;
+      try {
+        const raw = localStorage.getItem(getCacheKey());
+        if (raw) cached = JSON.parse(raw);
+      } catch { /* ignore */ }
+
+      if (!cached) {
+        try {
+          const { data, error } = await supabase.functions.invoke("daily-notifications");
+          if (error) throw error;
+          if (data?.digest && data?.market) {
+            cached = data as CachedNotifs;
+            localStorage.setItem(getCacheKey(), JSON.stringify(cached));
           }
+        } catch (e) {
+          console.error("Failed to fetch notifications:", e);
+          return;
         }
-      });
+      }
 
+      if (cancelled || !cached) return;
+
+      const notifs: Notification[] = [];
+      if (wantsDigest && cached.digest) {
+        notifs.push({ id: "digest", type: "digest", ...cached.digest });
+      }
+      if (wantsMarket && cached.market) {
+        notifs.push({ id: "market", type: "market", ...cached.market });
+      }
+
+      if (notifs.length > 0) {
+        setNotifications([notifs[0]]);
+        if (notifs.length > 1) {
+          setTimeout(() => {
+            if (!cancelled) setNotifications((prev) => [...prev, notifs[1]]);
+          }, 2000);
+        }
+      }
+    }
+
+    load();
     return () => { cancelled = true; };
   }, [user]);
 
