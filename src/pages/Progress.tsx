@@ -147,7 +147,7 @@ const Progress = () => {
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/10 border border-destructive/20">
               <Flame size={16} className="text-destructive" />
               <span className="text-sm font-display font-bold text-destructive">{gam.streak}</span>
-              <span className="text-xs text-muted-foreground">day streak</span>
+              <span className="text-xs text-muted-foreground">day{gam.streak !== 1 ? "s" : ""}</span>
             </div>
           </div>
           <div className="h-3 rounded-full bg-muted overflow-hidden">
