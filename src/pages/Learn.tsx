@@ -1,15 +1,12 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import EconologyLogo from "@/components/EconologyLogo";
-import { NavLink } from "@/components/NavLink";
+import { DashboardHeader } from "@/components/DashboardHeader";
 import {
   ArrowRight,
   RefreshCw,
-  User,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 
 interface TopicCard {
