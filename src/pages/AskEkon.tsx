@@ -186,9 +186,17 @@ export default function AskEkon() {
             <div className="space-y-4 pb-4">
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${msg.role === "user" ? "bg-primary text-primary-foreground rounded-br-md" : "bg-muted text-foreground rounded-bl-md"}`}>
-                    {msg.content}
-                  </div>
+                  {msg.role === "user" ? (
+                    <div className="max-w-[80%] rounded-2xl rounded-br-md px-4 py-3 text-sm bg-primary text-primary-foreground whitespace-pre-wrap">
+                      {msg.content}
+                    </div>
+                  ) : (
+                    <div className="max-w-[80%] rounded-2xl rounded-bl-md px-4 py-3 bg-muted text-foreground">
+                      <div className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
               {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
