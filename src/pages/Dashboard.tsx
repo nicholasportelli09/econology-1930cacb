@@ -182,21 +182,23 @@ const Dashboard = () => {
         {/* Hub links */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {[
-            { to: "/learn", icon: BookOpen, title: "Learning Hub", desc: "Deep dives & interactive lessons", gradient: "linear-gradient(135deg, hsl(220 70% 50%), hsl(220 70% 35%))" },
-            { to: "/market", icon: TrendingUp, title: "Market Ideas", desc: "Trends & investment insights", gradient: "linear-gradient(135deg, hsl(155 60% 45%), hsl(155 60% 30%))" },
-            { to: "/news", icon: Newspaper, title: "Economic News", desc: "Current events, simplified", gradient: "linear-gradient(135deg, hsl(30 80% 55%), hsl(30 80% 40%))" },
+            { to: "/learn", icon: BookOpen, title: "Learning Hub", desc: "Deep dives & interactive lessons" },
+            { to: "/market", icon: TrendingUp, title: "Market Ideas", desc: "Trends & investment insights" },
+            { to: "/news", icon: Newspaper, title: "Economic News", desc: "Current events, simplified" },
           ].map((hub, i) => {
             const Icon = hub.icon;
             return (
               <button
                 key={hub.to}
                 onClick={() => navigate(hub.to)}
-                className="rounded-xl p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-lg animate-fade-in"
-                style={{ background: hub.gradient, animationDelay: `${i * 100}ms` }}
+                className="rounded-xl p-6 text-left border border-border bg-card card-shadow transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_12px_40px_hsl(270_70%_55%/0.12)] animate-fade-in group"
+                style={{ animationDelay: `${i * 100}ms` }}
               >
-                <Icon size={28} className="text-primary-foreground mb-3" />
-                <h3 className="text-xl font-display font-bold text-primary-foreground mb-1">{hub.title}</h3>
-                <p className="text-sm text-primary-foreground/70">{hub.desc}</p>
+                <div className="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center mb-3">
+                  <Icon size={20} className="text-primary-foreground" />
+                </div>
+                <h3 className="text-lg font-display font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{hub.title}</h3>
+                <p className="text-sm text-muted-foreground">{hub.desc}</p>
               </button>
             );
           })}

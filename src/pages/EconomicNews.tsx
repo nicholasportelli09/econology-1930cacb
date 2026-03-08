@@ -98,18 +98,16 @@ const EconomicNews = () => {
     loadData();
   }, [user]);
 
-  /* ── Fetch Market News (Finnhub via stock-news) ── */
+  /* ── Fetch Market News (Finnhub general news) ── */
   const fetchMarketNews = useCallback(async (search?: string) => {
     setMarketLoading(true);
     setMarketError(null);
     try {
       const body: any = { limit: 20 };
       if (search?.trim()) {
-        body.tickers = search.trim().toUpperCase();
-      } else if (portfolioTickers.length > 0) {
-        // Auto-fetch portfolio tickers
-        body.tickers = portfolioTickers.join(",");
+        body.category = search.trim().toLowerCase();
       }
+      // Always use general market news endpoint (no tickers)
       const { data, error } = await supabase.functions.invoke("stock-news", { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -119,21 +117,25 @@ const EconomicNews = () => {
       setMarketError(msg);
       toast({ title: "Error", description: msg, variant: "destructive" });
     } finally { setMarketLoading(false); }
-  }, [portfolioTickers, toast]);
+  }, [toast]);
 
-  /* ── Fetch Stock News (Finnhub via fmp-stock-news) ── */
+  /* ── Fetch Company News (Finnhub company-specific, requires ticker) ── */
   const fetchStockNews = async (tickers?: string) => {
+    const query = tickers?.trim() || portfolioTickers.join(",");
+    if (!query) {
+      toast({ title: "Enter a ticker", description: "Search for a company ticker like AAPL, TSLA, or MSFT to see company-specific news.", variant: "destructive" });
+      return;
+    }
     setStockLoading(true);
     setStockError(null);
     try {
-      const body: any = { limit: 15 };
-      if (tickers?.trim()) body.tickers = tickers.trim().toUpperCase();
+      const body: any = { limit: 15, tickers: query.toUpperCase() };
       const { data, error } = await supabase.functions.invoke("fmp-stock-news", { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setStockArticles(data.articles || []);
     } catch (e: any) {
-      const msg = e?.message || "Failed to fetch stock news";
+      const msg = e?.message || "Failed to fetch company news";
       setStockError(msg);
       toast({ title: "Error", description: msg, variant: "destructive" });
     } finally { setStockLoading(false); }
@@ -288,9 +290,7 @@ const EconomicNews = () => {
               <div className="relative flex-1">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder={portfolioTickers.length > 0
-                    ? `Search ticker or press Fetch for portfolio news (${portfolioTickers.join(", ")})`
-                    : "Search by ticker (e.g. AAPL, TSLA)"}
+                  placeholder="Filter by category (e.g. general, forex, crypto, merger)"
                   value={marketSearch}
                   onChange={(e) => setMarketSearch(e.target.value)}
                   className="pl-9"
@@ -305,7 +305,7 @@ const EconomicNews = () => {
                 {marketLoading ? "Loading..." : "Fetch News"}
               </button>
             </form>
-            {renderArticleList(marketArticles, marketLoading, marketError, () => fetchMarketNews(marketSearch), portfolioTickers.length > 0 ? 'Click "Fetch News" to load headlines for your portfolio.' : 'Click "Fetch News" for the latest market headlines.')}
+            {renderArticleList(marketArticles, marketLoading, marketError, () => fetchMarketNews(marketSearch), 'Click "Fetch News" for the latest general market headlines.')}
           </TabsContent>
 
           {/* ═══════ Stock News Tab ═══════ */}
@@ -314,7 +314,9 @@ const EconomicNews = () => {
               <div className="relative flex-1">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search by ticker (e.g. AAPL, TSLA, MSFT)"
+                  placeholder={portfolioTickers.length > 0
+                    ? `Search ticker or press Fetch for portfolio (${portfolioTickers.join(", ")})`
+                    : "Enter a ticker (e.g. AAPL, TSLA, MSFT)"}
                   value={tickerSearch}
                   onChange={(e) => setTickerSearch(e.target.value)}
                   className="pl-9"
@@ -326,10 +328,10 @@ const EconomicNews = () => {
                 className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {stockLoading ? <Loader2 size={16} className="animate-spin" /> : <BarChart3 size={16} />}
-                {stockLoading ? "Loading..." : "Fetch Stock News"}
+                {stockLoading ? "Loading..." : "Fetch Company News"}
               </button>
             </form>
-            {renderArticleList(stockArticles, stockLoading, stockError, () => fetchStockNews(tickerSearch), 'Click "Fetch Stock News" for the latest stock-specific headlines.')}
+            {renderArticleList(stockArticles, stockLoading, stockError, () => fetchStockNews(tickerSearch), 'Enter a company ticker (e.g. AAPL) to see company-specific news and earnings updates.')}
           </TabsContent>
 
           {/* ═══════ AI Insights Tab ═══════ */}
