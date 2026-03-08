@@ -34,6 +34,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <OfflineBanner />
+          <InAppNotification />
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Index />} />
