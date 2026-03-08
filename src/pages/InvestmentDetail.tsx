@@ -166,7 +166,7 @@ const InvestmentDetail = () => {
 
         {/* Ask Ekon */}
         <Button
-          onClick={() => navigate("/ask")}
+          onClick={() => navigate(`/ask?topic=${encodeURIComponent(investment.name + (investment.ticker && investment.ticker !== "N/A" ? ` (${investment.ticker})` : ""))}`)}
           className="w-full gap-2"
           size="lg"
         >
