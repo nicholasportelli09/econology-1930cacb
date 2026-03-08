@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { TIP_ARTICLES } from "@/data/tipArticles";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { HealthScoreRing } from "@/components/HealthScoreRing";
