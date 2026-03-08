@@ -55,7 +55,20 @@ serve(async (req) => {
       ? `\n\nHere are REAL current market headlines for context:\n${marketHeadlines}\n\nUse these to inform your recommendations with up-to-date market awareness.`
       : "";
 
-    const systemPrompt = `You are a financial advisor for students. Based on this user profile: ${userData}, provide 3 beginner-friendly investment options suitable for their situation.${headlinesContext}
+    // Add randomization seed to prevent identical responses
+    const categories = ["ETFs", "individual stocks", "bonds", "REITs", "crypto", "mutual funds", "commodities", "savings products", "fractional shares", "dividend stocks", "growth stocks", "international markets", "sector ETFs", "treasury bills", "robo-advisors"];
+    const shuffled = categories.sort(() => Math.random() - 0.5);
+    const focusCategories = shuffled.slice(0, 5).join(", ");
+    const randomSeed = Math.random().toString(36).slice(2, 8);
+
+    const systemPrompt = `You are a creative financial advisor for students. Based on this user profile: ${userData}, provide 3 UNIQUE and SPECIFIC investment options suitable for their situation.${headlinesContext}
+
+IMPORTANT: Be CREATIVE and VARIED. Focus on these categories this time: ${focusCategories}. Seed: ${randomSeed}.
+- Do NOT always suggest the same generic options like "S&P 500 index fund" or "high-yield savings"
+- Include SPECIFIC fund names, ETF tickers, or platform names
+- Mix different asset classes and risk levels
+- Consider trending sectors, thematic ETFs, or niche opportunities appropriate for beginners
+- Each recommendation should feel fresh and different from typical generic advice
 
 For EACH investment, include a detailed step-by-step execution guide with 5-7 specific, actionable steps that a complete beginner can follow. Steps should include exact platform names, what to click, what documents are needed, and how to place the first order.
 
@@ -63,7 +76,7 @@ Return ONLY valid JSON in this format:
 {
   "investments": [
     {
-      "name": "Investment name",
+      "name": "Specific Investment Name",
       "ticker": "TICKER or N/A",
       "description": "2-3 sentence description",
       "startingAmount": "$X",
@@ -93,12 +106,13 @@ Return ONLY valid JSON in this format:
         },
         body: JSON.stringify({
           model: "google/gemini-3-flash-preview",
+          temperature: 1.0,
           messages: [
             { role: "system", content: systemPrompt },
             {
               role: "user",
               content:
-                "Please provide personalized investment recommendations with detailed step-by-step execution guides. Include current market context.",
+                `Generate 3 FRESH and UNIQUE investment recommendations I haven't seen before. Be creative and specific — avoid the most obvious generic suggestions. Surprise me with interesting options that still suit a beginner. (variation key: ${randomSeed})`,
             },
           ],
         }),
