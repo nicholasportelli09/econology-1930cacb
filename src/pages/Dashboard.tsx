@@ -182,22 +182,22 @@ const Dashboard = () => {
         {/* Hub links */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {[
-            { to: "/learn", icon: BookOpen, title: "Learning Hub", desc: "Deep dives & interactive lessons" },
-            { to: "/market", icon: TrendingUp, title: "Market Ideas", desc: "Trends & investment insights" },
-            { to: "/news", icon: Newspaper, title: "Economic News", desc: "Current events, simplified" },
+            { to: "/learn", icon: BookOpen, title: "Learning Hub", desc: "Deep dives & interactive lessons", accent: "hsl(var(--secondary))", accentBg: "bg-secondary/10", accentBorder: "hover:border-secondary/40", accentShadow: "hover:shadow-[0_12px_40px_hsl(220_70%_50%/0.1)]", accentText: "group-hover:text-secondary" },
+            { to: "/market", icon: TrendingUp, title: "Market Ideas", desc: "Trends & investment insights", accent: "hsl(var(--accent))", accentBg: "bg-accent/10", accentBorder: "hover:border-accent/40", accentShadow: "hover:shadow-[0_12px_40px_hsl(155_60%_45%/0.1)]", accentText: "group-hover:text-accent" },
+            { to: "/news", icon: Newspaper, title: "Economic News", desc: "Current events, simplified", accent: "hsl(var(--primary))", accentBg: "bg-primary/10", accentBorder: "hover:border-primary/40", accentShadow: "hover:shadow-[0_12px_40px_hsl(270_70%_55%/0.1)]", accentText: "group-hover:text-primary" },
           ].map((hub, i) => {
             const Icon = hub.icon;
             return (
               <button
                 key={hub.to}
                 onClick={() => navigate(hub.to)}
-                className="rounded-xl p-6 text-left border border-border bg-card card-shadow transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_12px_40px_hsl(270_70%_55%/0.12)] animate-fade-in group"
+                className={`rounded-xl p-6 text-left border border-border bg-card card-shadow transition-all duration-300 hover:-translate-y-1 ${hub.accentBorder} ${hub.accentShadow} animate-fade-in group`}
                 style={{ animationDelay: `${i * 100}ms` }}
               >
-                <div className="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center mb-3">
-                  <Icon size={20} className="text-primary-foreground" />
+                <div className={`w-10 h-10 rounded-lg ${hub.accentBg} flex items-center justify-center mb-3`}>
+                  <Icon size={20} style={{ color: hub.accent }} />
                 </div>
-                <h3 className="text-lg font-display font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{hub.title}</h3>
+                <h3 className={`text-lg font-display font-bold text-foreground mb-1 ${hub.accentText} transition-colors`}>{hub.title}</h3>
                 <p className="text-sm text-muted-foreground">{hub.desc}</p>
               </button>
             );
