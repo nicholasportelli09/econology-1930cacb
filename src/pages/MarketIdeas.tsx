@@ -66,6 +66,7 @@ const MarketIdeas = () => {
   const fetchInsights = async () => {
     setLoading(true);
     setError(null);
+    setDismissed(new Set());
     try {
       const { data: result, error: fnError } = await supabase.functions.invoke("market-insights", { body: { profile } });
       if (fnError) throw fnError;
@@ -78,6 +79,14 @@ const MarketIdeas = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const dismissInvestment = (index: number, reason: "not_interested" | "already_invested") => {
+    setDismissed(prev => new Set(prev).add(index));
+    toast({
+      title: reason === "already_invested" ? "Marked as invested" : "Dismissed",
+      description: reason === "already_invested" ? "Nice move! We'll note that." : "We'll try different ideas next time.",
+    });
   };
 
   return (
