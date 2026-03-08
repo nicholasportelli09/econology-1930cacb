@@ -22,6 +22,7 @@ import EconomicNews from "./pages/EconomicNews";
 import AskEkon from "./pages/AskEkon";
 import Progress from "./pages/Progress";
 import Settings from "./pages/Settings";
+import BudgetSimulator from "./pages/BudgetSimulator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
