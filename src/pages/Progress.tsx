@@ -197,7 +197,7 @@ const Progress = () => {
               { icon: Flame, label: "Days Active", value: daysActive, color: "text-destructive" },
               { icon: Brain, label: "Quiz Score", value: quizScore !== null ? `${quizScore}/5` : "N/A", color: "text-primary" },
               { icon: BookOpen, label: "Topics Selected", value: `${profile.topicsOfInterest.length}/${TOPICS_OF_INTEREST.length}`, color: "text-secondary" },
-              { icon: Lightbulb, label: "Tips Explored", value: tipsExplored.length, color: "text-accent" },
+              { icon: Lightbulb, label: "Insights Studied", value: tipsExplored.length, color: "text-accent" },
               { icon: Zap, label: "Total XP", value: gam.xp, color: "text-primary" },
               { icon: Trophy, label: "Achievements", value: `${gam.badges.length}/${ALL_BADGES.length}`, color: "text-accent" },
             ].map((s) => {
