@@ -115,14 +115,14 @@ export interface Level {
 }
 
 export const LEVELS: Level[] = [
-  { level: 1, title: "Newbie", minXP: 0 },
-  { level: 2, title: "Learner", minXP: 50 },
-  { level: 3, title: "Explorer", minXP: 150 },
-  { level: 4, title: "Saver", minXP: 300 },
-  { level: 5, title: "Investor", minXP: 500 },
+  { level: 1, title: "Foundation", minXP: 0 },
+  { level: 2, title: "Informed", minXP: 50 },
+  { level: 3, title: "Practitioner", minXP: 150 },
+  { level: 4, title: "Disciplined", minXP: 300 },
+  { level: 5, title: "Proficient", minXP: 500 },
   { level: 6, title: "Strategist", minXP: 800 },
-  { level: 7, title: "Expert", minXP: 1200 },
-  { level: 8, title: "Master", minXP: 1800 },
+  { level: 7, title: "Advanced", minXP: 1200 },
+  { level: 8, title: "Authority", minXP: 1800 },
 ];
 
 export function getLevel(xp: number): Level & { progress: number; nextLevel: Level | null } {
