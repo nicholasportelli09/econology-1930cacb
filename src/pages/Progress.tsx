@@ -283,7 +283,7 @@ const Progress = () => {
             <div className="flex flex-wrap gap-2">
               {tipsExplored.map((tip) => (
                 <span key={tip} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-accent/20 text-accent border border-accent/30">
-                  {tip.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                  {TIP_ARTICLES[tip]?.title ?? tip}
                 </span>
               ))}
             </div>

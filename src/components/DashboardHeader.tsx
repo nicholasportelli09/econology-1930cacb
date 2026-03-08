@@ -80,10 +80,6 @@ export function DashboardHeader({ initials = "U" }: Props) {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-44">
-              <DropdownMenuItem onClick={() => navigate("/progress")}>
-                <BarChart3 className="h-4 w-4 mr-2" />
-                My Progress
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => navigate("/settings")}>
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
