@@ -149,7 +149,8 @@ const Dashboard = () => {
             Welcome back, {profile.name || "Explorer"}! 👋
           </h1>
           <p className="text-muted-foreground">
-            {profile.studentStatus || "Student"} • {firstGoal} • Quiz Score: {profile.quizScore !== null ? `${profile.quizScore}/5` : "N/A"}
+            {profile.studentStatus || "Student"} • Level {level.level} {level.title} • {gam.xp} XP
+            {gam.streak > 1 && ` • 🔥 ${gam.streak}-day streak`}
           </p>
         </section>
 
