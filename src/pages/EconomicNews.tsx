@@ -98,18 +98,16 @@ const EconomicNews = () => {
     loadData();
   }, [user]);
 
-  /* ── Fetch Market News (Finnhub via stock-news) ── */
+  /* ── Fetch Market News (Finnhub general news) ── */
   const fetchMarketNews = useCallback(async (search?: string) => {
     setMarketLoading(true);
     setMarketError(null);
     try {
       const body: any = { limit: 20 };
       if (search?.trim()) {
-        body.tickers = search.trim().toUpperCase();
-      } else if (portfolioTickers.length > 0) {
-        // Auto-fetch portfolio tickers
-        body.tickers = portfolioTickers.join(",");
+        body.category = search.trim().toLowerCase();
       }
+      // Always use general market news endpoint (no tickers)
       const { data, error } = await supabase.functions.invoke("stock-news", { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -119,7 +117,7 @@ const EconomicNews = () => {
       setMarketError(msg);
       toast({ title: "Error", description: msg, variant: "destructive" });
     } finally { setMarketLoading(false); }
-  }, [portfolioTickers, toast]);
+  }, [toast]);
 
   /* ── Fetch Stock News (Finnhub via fmp-stock-news) ── */
   const fetchStockNews = async (tickers?: string) => {
