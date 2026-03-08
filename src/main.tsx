@@ -14,3 +14,4 @@ if (!localStorage.getItem("econology_first_visit")) {
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
+
