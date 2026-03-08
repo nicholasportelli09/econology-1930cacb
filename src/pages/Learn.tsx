@@ -106,7 +106,7 @@ const Learn = () => {
               </div>
               <Button
                 variant="ghost"
-                className="mt-5 justify-start px-0 text-primary hover:text-primary/80 gap-1"
+                className="mt-5 justify-start px-0 text-primary hover:text-primary/80 gap-1 hover:bg-primary/10"
                 onClick={() => navigate(`/tip/${topic.id}`)}
               >
                 Learn More <ArrowRight size={16} />
