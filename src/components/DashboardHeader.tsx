@@ -12,6 +12,7 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  Youtube,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
   { to: "/learn", label: "Learn", icon: BookOpen },
   { to: "/market", label: "Market Ideas", icon: TrendingUp },
   { to: "/news", label: "Economic News", icon: Newspaper },
+  { to: "/videos", label: "Videos", icon: Youtube },
   { to: "/ask", label: "Ask Ekon", icon: MessageCircle },
 ];
 
