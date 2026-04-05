@@ -12,6 +12,7 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  Youtube,
 } from "lucide-react";
 import {
   DropdownMenu,
