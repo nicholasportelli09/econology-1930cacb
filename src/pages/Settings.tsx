@@ -266,6 +266,112 @@ const Settings = () => {
           </Button>
         </div>
 
+        {/* YouTube Creators */}
+        <div className="rounded-xl border border-border bg-card p-6 card-shadow space-y-5">
+          <div className="flex items-center gap-2">
+            <Youtube size={20} className="text-destructive" />
+            <h2 className="text-lg font-display font-semibold text-foreground">YouTube Creators</h2>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Manage the trusted financial educators whose videos appear on your Videos page.
+          </p>
+
+          <div className="space-y-2">
+            {creators.map((c) => (
+              <div
+                key={c.channelId}
+                className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg border border-border bg-muted/30"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{c.name}</p>
+                  <p className="text-xs text-muted-foreground font-mono truncate">{c.channelId}</p>
+                </div>
+                <button
+                  onClick={() => {
+                    const updated = creators.filter((cr) => cr.channelId !== c.channelId);
+                    setCreatorsState(updated);
+                    saveCreators(updated);
+                    toast({ title: "Creator removed", description: `${c.name} has been removed.` });
+                  }}
+                  className="shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Add creator */}
+          {addingCreator ? (
+            <div className="space-y-3 border border-border rounded-lg p-4">
+              <div className="space-y-2">
+                <Label>Channel Name</Label>
+                <Input
+                  placeholder="e.g. Graham Stephan"
+                  value={newChannelName}
+                  onChange={(e) => setNewChannelName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Channel ID</Label>
+                <Input
+                  placeholder="e.g. UCVjlpEjEY9GpksqbEesJnNA"
+                  value={newChannelId}
+                  onChange={(e) => setNewChannelId(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Find the channel ID: go to the YouTube channel → View Page Source → search for "channelId"
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    if (!newChannelId.trim() || !newChannelName.trim()) {
+                      toast({ title: "Fill in both fields", variant: "destructive" });
+                      return;
+                    }
+                    if (creators.some((c) => c.channelId === newChannelId.trim())) {
+                      toast({ title: "Creator already exists", variant: "destructive" });
+                      return;
+                    }
+                    const updated = [...creators, { channelId: newChannelId.trim(), name: newChannelName.trim(), tags: [] }];
+                    setCreatorsState(updated);
+                    saveCreators(updated);
+                    setNewChannelId("");
+                    setNewChannelName("");
+                    setAddingCreator(false);
+                    toast({ title: "Creator added!", description: `${newChannelName.trim()} will now appear in your Videos feed.` });
+                  }}
+                  className="flex-1"
+                >
+                  <Plus size={14} /> Add
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => { setAddingCreator(false); setNewChannelId(""); setNewChannelName(""); }}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button variant="outline" onClick={() => setAddingCreator(true)} className="w-full">
+              <Plus size={16} /> Add Creator
+            </Button>
+          )}
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setCreatorsState(DEFAULT_CREATORS);
+              saveCreators(DEFAULT_CREATORS);
+              toast({ title: "Creators reset", description: "Restored to default creator list." });
+            }}
+            className="text-xs"
+          >
+            <RotateCcw size={14} /> Reset to Defaults
+          </Button>
+        </div>
+
         {/* Actions */}
         <div className="rounded-xl border border-border bg-card p-6 card-shadow space-y-4">
           <h2 className="text-lg font-display font-semibold text-foreground">Actions</h2>
