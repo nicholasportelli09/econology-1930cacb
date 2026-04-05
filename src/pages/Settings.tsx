@@ -30,6 +30,10 @@ const Settings = () => {
   const [dailyDigest, setDailyDigest] = useState(true);
   const [marketAlerts, setMarketAlerts] = useState(true);
   const [notifLoading, setNotifLoading] = useState(false);
+  const [creators, setCreatorsState] = useState<YouTubeCreator[]>(getCreators);
+  const [newChannelId, setNewChannelId] = useState("");
+  const [newChannelName, setNewChannelName] = useState("");
+  const [addingCreator, setAddingCreator] = useState(false);
   const initials = profile.name
     ? profile.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)
     : "U";
