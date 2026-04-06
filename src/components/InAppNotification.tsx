@@ -104,7 +104,7 @@ export function InAppNotification() {
   if (notifications.length === 0) return null;
 
   return (
-    <div className="fixed top-16 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none">
+    <div className="fixed top-20 right-4 z-50 flex flex-col gap-2 max-w-[320px] w-full pointer-events-none">
       {notifications.map((n) => (
         <div
           key={n.id}

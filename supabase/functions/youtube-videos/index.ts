@@ -84,7 +84,33 @@ serve(async (req) => {
     allVideos.sort(
       (a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()
     );
-    const recentVideos = allVideos.slice(0, 30);
+
+    // Interleave videos from different channels to ensure variety
+    function interleave(videos: VideoEntry[]): VideoEntry[] {
+      const byChannel = new Map<string, VideoEntry[]>();
+      for (const v of videos) {
+        const list = byChannel.get(v.channelId) || [];
+        list.push(v);
+        byChannel.set(v.channelId, list);
+      }
+      const channels = Array.from(byChannel.values());
+      const result: VideoEntry[] = [];
+      let idx = 0;
+      let added = true;
+      while (added) {
+        added = false;
+        for (const ch of channels) {
+          if (idx < ch.length) {
+            result.push(ch[idx]);
+            added = true;
+          }
+        }
+        idx++;
+      }
+      return result;
+    }
+
+    const recentVideos = interleave(allVideos).slice(0, 30);
 
     // Use AI to rank if profile available and API key exists
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
