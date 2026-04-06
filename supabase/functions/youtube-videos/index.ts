@@ -85,15 +85,29 @@ serve(async (req) => {
       (a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()
     );
 
-    // Interleave videos from different channels to ensure variety
-    function interleave(videos: VideoEntry[]): VideoEntry[] {
+    // Interleave videos from different channels with shuffle for variety on refresh
+    function interleaveAndShuffle(videos: VideoEntry[]): VideoEntry[] {
       const byChannel = new Map<string, VideoEntry[]>();
       for (const v of videos) {
         const list = byChannel.get(v.channelId) || [];
         list.push(v);
         byChannel.set(v.channelId, list);
       }
+      // Shuffle channel order so different creators lead each time
       const channels = Array.from(byChannel.values());
+      for (let i = channels.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [channels[i], channels[j]] = [channels[j], channels[i]];
+      }
+      // Also shuffle within each channel's videos (keeping some recency bias)
+      for (const ch of channels) {
+        // Light shuffle: swap adjacent pairs randomly
+        for (let i = 0; i < ch.length - 1; i++) {
+          if (Math.random() > 0.5) {
+            [ch[i], ch[i + 1]] = [ch[i + 1], ch[i]];
+          }
+        }
+      }
       const result: VideoEntry[] = [];
       let idx = 0;
       let added = true;
@@ -110,7 +124,7 @@ serve(async (req) => {
       return result;
     }
 
-    const recentVideos = interleave(allVideos).slice(0, 30);
+    const recentVideos = interleaveAndShuffle(allVideos).slice(0, 30);
 
     // Use AI to rank if profile available and API key exists
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
