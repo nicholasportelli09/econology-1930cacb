@@ -15,7 +15,7 @@ const EconologyLogo = memo(({ size = 64, responsive = false }: EconologyLogoProp
       height={responsive ? undefined : size}
       className={
         responsive
-          ? "shrink-0 object-contain w-8 h-8 md:w-10 md:h-10"
+          ? "shrink-0 object-contain w-9 h-9 md:w-11 md:h-11"
           : "shrink-0 object-contain"
       }
       style={responsive ? undefined : { width: size, height: size }}
