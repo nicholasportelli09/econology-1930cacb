@@ -9,12 +9,12 @@ const Index = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-background">
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(260 40% 95%), hsl(230 50% 93%), hsl(250 35% 96%))" }}>
       {/* Animated gradient orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary/20 blur-[120px] animate-pulse" />
-        <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full bg-secondary/20 blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
-        <div className="absolute -bottom-40 left-1/3 w-[500px] h-[500px] rounded-full bg-accent/20 blur-[120px] animate-pulse" style={{ animationDelay: "2s" }} />
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
+        <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full bg-secondary/10 blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
+        <div className="absolute -bottom-40 left-1/3 w-[500px] h-[500px] rounded-full bg-accent/10 blur-[120px] animate-pulse" style={{ animationDelay: "2s" }} />
       </div>
 
       {/* Nav */}
@@ -42,15 +42,16 @@ const Index = () => {
 
       {/* Hero */}
       <section className="relative z-10 flex flex-col items-center text-center px-6 pt-16 pb-20 md:pt-24 md:pb-28 w-full max-w-7xl mx-auto">
-        <div className="mb-8 glow-shadow rounded-full">
-          <EconologyLogo size={100} />
+        <div className="mb-6">
+          <EconologyLogo size={160} />
         </div>
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-5 leading-tight">
-          <span className="gradient-text">A daily system for mastering</span>
-          <br />
-          <span className="gradient-text">money and markets</span>
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-4 leading-tight">
+          <span className="gradient-text">Econology</span>
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl leading-relaxed">
+        <p className="text-lg md:text-2xl text-muted-foreground mb-3 max-w-2xl font-medium">
+          A daily system for mastering money and markets
+        </p>
+        <p className="text-base md:text-lg text-muted-foreground/80 mb-10 max-w-2xl leading-relaxed">
           Learn faster with simple explanations, real examples, and daily progress.
         </p>
         <button
