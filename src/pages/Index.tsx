@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import EconologyLogo from "@/components/EconologyLogo";
-import { FeatureCard } from "@/components/FeatureCard";
+import FeatureCard from "@/components/FeatureCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowRight, Lightbulb, BookOpen, Newspaper } from "lucide-react";
 
