@@ -162,16 +162,15 @@ export default function DailyLesson() {
         <p className="text-sm font-medium text-foreground">{lesson.question}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {lesson.options.map((opt, i) => {
-            let variant = "outline" as "outline" | "default" | "destructive";
             let extraClass = "justify-start text-left h-auto py-3 px-4";
             
             if (showInsight) {
               if (i === lesson.correctIndex) {
-                extraClass += " border-primary bg-primary/5 text-foreground";
+                extraClass += " border-green-500 bg-green-500/10 text-green-700 dark:text-green-400";
               } else if (i === selectedAnswer && !isCorrect) {
-                extraClass += " border-destructive/50 bg-destructive/5 text-muted-foreground";
+                extraClass += " border-red-500 bg-red-500/10 text-red-700 dark:text-red-400";
               } else {
-                extraClass += " opacity-50";
+                extraClass += " opacity-40";
               }
             } else {
               extraClass += " hover:border-primary/40 hover:bg-muted";
@@ -180,7 +179,7 @@ export default function DailyLesson() {
             return (
               <Button
                 key={i}
-                variant={variant}
+                variant="outline"
                 className={extraClass}
                 onClick={() => handleAnswer(i)}
                 disabled={showInsight}

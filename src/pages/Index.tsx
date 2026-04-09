@@ -66,17 +66,17 @@ const Index = () => {
       <section className="relative z-10 px-6 md:px-12 pb-24 w-full max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           <FeatureCard
-            icon={Lightbulb}
+            icon={<Lightbulb size={24} />}
             title="Daily Tips"
             description="Bite-sized financial wisdom personalized to your goals. Learn one concept every day."
           />
           <FeatureCard
-            icon={BookOpen}
+            icon={<BookOpen size={24} />}
             title="Deep Dives"
             description="Comprehensive guides with real examples and actionable steps you can take today."
           />
           <FeatureCard
-            icon={Newspaper}
+            icon={<Newspaper size={24} />}
             title="Economic News"
             description="Current events explained simply and tailored to your situation and interests."
           />
