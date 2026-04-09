@@ -154,19 +154,21 @@ const Dashboard = () => {
         {/* Hub links */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { to: "/learn", icon: BookOpen, title: "Learn", desc: "Deep dives & lessons" },
-            { to: "/market", icon: TrendingUp, title: "Markets", desc: "Trends & insights" },
-            { to: "/news", icon: Newspaper, title: "News", desc: "Events simplified" },
-            { to: "/budget", icon: Calculator, title: "Budget", desc: "Plan spending" },
+            { to: "/learn", icon: BookOpen, title: "Learn", desc: "Deep dives & lessons", color: "text-primary", bg: "bg-primary/10" },
+            { to: "/market", icon: TrendingUp, title: "Markets", desc: "Trends & insights", color: "text-secondary", bg: "bg-secondary/10" },
+            { to: "/news", icon: Newspaper, title: "News", desc: "Events simplified", color: "text-accent", bg: "bg-accent/10" },
+            { to: "/budget", icon: Calculator, title: "Budget", desc: "Plan spending", color: "text-primary", bg: "bg-primary/10" },
           ].map((hub) => {
             const Icon = hub.icon;
             return (
               <button
                 key={hub.to}
                 onClick={() => navigate(hub.to)}
-                className="rounded-xl p-5 text-left border border-border bg-card transition-colors hover:border-primary/20 group"
+                className="rounded-xl p-5 text-left border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-lg hover:border-primary/20 group"
               >
-                <Icon size={18} className="text-muted-foreground mb-3 group-hover:text-primary transition-colors" />
+                <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg ${hub.bg} mb-3`}>
+                  <Icon size={18} className={hub.color} />
+                </div>
                 <h3 className="text-sm font-display font-semibold text-foreground mb-0.5">{hub.title}</h3>
                 <p className="text-xs text-muted-foreground">{hub.desc}</p>
               </button>

@@ -192,9 +192,9 @@ export default function DailyLesson() {
       </div>
 
       {showInsight && (
-        <div className={`rounded-lg p-4 border ${isCorrect ? "bg-primary/5 border-primary/20" : "bg-muted border-border"}`}>
-          <p className="text-xs font-medium uppercase tracking-wide mb-1.5" style={{ color: isCorrect ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }}>
-            {isCorrect ? "Correct" : "Not quite"} — Here's why
+        <div className={`rounded-lg p-4 border ${isCorrect ? "bg-green-500/5 border-green-500/20" : "bg-red-500/5 border-red-500/20"}`}>
+          <p className={`text-xs font-medium uppercase tracking-wide mb-1.5 ${isCorrect ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+            {isCorrect ? "✓ Correct" : "✗ Not quite"} — Here's why
           </p>
           <p className="text-sm text-foreground leading-relaxed">{lesson.insight}</p>
         </div>
