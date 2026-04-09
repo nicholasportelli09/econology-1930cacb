@@ -103,12 +103,18 @@ const Dashboard = () => {
         {/* Welcome */}
         <section>
           <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-1">
-            Welcome back, {profile.name || "Explorer"}
+            Welcome back, <span className="gradient-text">{profile.name || "Explorer"}</span>
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Level {level.level} {level.title} · {gam.xp} XP
-            {gam.streak > 1 && ` · ${gam.streak}-day streak`}
-          </p>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <span>Level {level.level} {level.title} · {gam.xp} XP</span>
+            {gam.streak > 1 && <span>· 🔥 {gam.streak}-day streak</span>}
+            <button
+              onClick={() => navigate("/settings")}
+              className="text-primary hover:underline text-xs ml-1"
+            >
+              Edit Topics
+            </button>
+          </div>
         </section>
 
         {/* Daily Lesson */}
