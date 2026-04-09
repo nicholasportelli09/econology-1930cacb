@@ -99,16 +99,22 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
-      <main className="max-w-4xl mx-auto px-4 md:px-8 py-8 space-y-8">
+      <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-8">
         {/* Welcome */}
         <section>
           <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-1">
-            Welcome back, {profile.name || "Explorer"}
+            Welcome back, <span className="gradient-text">{profile.name || "Explorer"}</span>
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Level {level.level} {level.title} · {gam.xp} XP
-            {gam.streak > 1 && ` · ${gam.streak}-day streak`}
-          </p>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <span>Level {level.level} {level.title} · {gam.xp} XP</span>
+            {gam.streak > 1 && <span>· 🔥 {gam.streak}-day streak</span>}
+            <button
+              onClick={() => navigate("/settings")}
+              className="text-primary hover:underline text-xs ml-1"
+            >
+              Edit Topics
+            </button>
+          </div>
         </section>
 
         {/* Daily Lesson */}
@@ -129,7 +135,7 @@ const Dashboard = () => {
             {tips.map((tip) => (
               <div
                 key={tip.id}
-                className="group relative rounded-xl border border-border bg-card p-5 flex flex-col transition-colors hover:border-primary/20"
+                className="group relative rounded-xl border border-border bg-card p-5 flex flex-col transition-all gradient-border hover:-translate-y-0.5 hover:shadow-lg"
               >
                 <button
                   onClick={() => dismissTip(tip.id)}
@@ -154,19 +160,21 @@ const Dashboard = () => {
         {/* Hub links */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { to: "/learn", icon: BookOpen, title: "Learn", desc: "Deep dives & lessons" },
-            { to: "/market", icon: TrendingUp, title: "Markets", desc: "Trends & insights" },
-            { to: "/news", icon: Newspaper, title: "News", desc: "Events simplified" },
-            { to: "/budget", icon: Calculator, title: "Budget", desc: "Plan spending" },
+            { to: "/learn", icon: BookOpen, title: "Learn", desc: "Deep dives & lessons", color: "text-primary", bg: "bg-primary/10" },
+            { to: "/market", icon: TrendingUp, title: "Markets", desc: "Trends & insights", color: "text-secondary", bg: "bg-secondary/10" },
+            { to: "/news", icon: Newspaper, title: "News", desc: "Events simplified", color: "text-accent", bg: "bg-accent/10" },
+            { to: "/budget", icon: Calculator, title: "Budget", desc: "Plan spending", color: "text-primary", bg: "bg-primary/10" },
           ].map((hub) => {
             const Icon = hub.icon;
             return (
               <button
                 key={hub.to}
                 onClick={() => navigate(hub.to)}
-                className="rounded-xl p-5 text-left border border-border bg-card transition-colors hover:border-primary/20 group"
+                className="rounded-xl p-5 text-left border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-lg hover:border-primary/20 group"
               >
-                <Icon size={18} className="text-muted-foreground mb-3 group-hover:text-primary transition-colors" />
+                <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg ${hub.bg} mb-3`}>
+                  <Icon size={18} className={hub.color} />
+                </div>
                 <h3 className="text-sm font-display font-semibold text-foreground mb-0.5">{hub.title}</h3>
                 <p className="text-xs text-muted-foreground">{hub.desc}</p>
               </button>
