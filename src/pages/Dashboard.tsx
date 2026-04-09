@@ -99,7 +99,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
-      <main className="max-w-4xl mx-auto px-4 md:px-8 py-8 space-y-8">
+      <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-8">
         {/* Welcome */}
         <section>
           <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-1">
@@ -129,7 +129,7 @@ const Dashboard = () => {
             {tips.map((tip) => (
               <div
                 key={tip.id}
-                className="group relative rounded-xl border border-border bg-card p-5 flex flex-col transition-colors hover:border-primary/20"
+                className="group relative rounded-xl border border-border bg-card p-5 flex flex-col transition-all gradient-border hover:-translate-y-0.5 hover:shadow-lg"
               >
                 <button
                   onClick={() => dismissTip(tip.id)}
