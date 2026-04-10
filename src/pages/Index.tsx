@@ -18,7 +18,7 @@ const Index = () => {
       </div>
 
       {/* Nav */}
-      <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 lg:px-20 py-5 w-full max-w-7xl mx-auto">
+      <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 lg:px-20 py-5 w-full">
         <div className="flex items-center gap-3">
           <EconologyLogo size={40} />
           <span className="font-display text-xl font-bold gradient-text">Econology</span>
@@ -41,7 +41,7 @@ const Index = () => {
       </nav>
 
       {/* Hero */}
-      <section className="relative z-10 flex flex-col items-center text-center px-6 pt-6 pb-20 md:pt-10 md:pb-28 w-full max-w-7xl mx-auto">
+      <section className="relative z-10 flex flex-col items-center text-center px-6 pt-6 pb-20 md:pt-10 md:pb-28 w-full">
         <div className="-mb-6">
           <EconologyLogo size={180} />
         </div>
@@ -64,7 +64,7 @@ const Index = () => {
       </section>
 
       {/* Feature cards */}
-      <section className="relative z-10 px-6 md:px-12 pb-24 w-full max-w-7xl mx-auto">
+      <section className="relative z-10 px-6 md:px-12 lg:px-20 pb-24 w-full">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           <FeatureCard
             icon={<Lightbulb size={24} />}
