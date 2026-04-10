@@ -41,11 +41,11 @@ const Index = () => {
       </nav>
 
       {/* Hero */}
-      <section className="relative z-10 flex flex-col items-center text-center px-6 pt-16 pb-20 md:pt-24 md:pb-28 w-full max-w-7xl mx-auto">
-        <div className="-mb-2">
+      <section className="relative z-10 flex flex-col items-center text-center px-6 pt-6 pb-20 md:pt-10 md:pb-28 w-full max-w-7xl mx-auto">
+        <div className="-mb-6">
           <EconologyLogo size={180} />
         </div>
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-4 leading-tight">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
           <span className="gradient-text">Econology</span>
         </h1>
         <p className="text-lg md:text-2xl mb-3 max-w-2xl font-bold" style={{ color: "hsl(240 30% 25%)" }}>
