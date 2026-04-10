@@ -42,16 +42,16 @@ const Index = () => {
 
       {/* Hero */}
       <section className="relative z-10 flex flex-col items-center text-center px-6 pt-16 pb-20 md:pt-24 md:pb-28 w-full max-w-7xl mx-auto">
-        <div className="mb-2">
-          <EconologyLogo size={160} />
+        <div className="-mb-2">
+          <EconologyLogo size={180} />
         </div>
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-4 leading-tight">
           <span className="gradient-text">Econology</span>
         </h1>
-        <p className="text-lg md:text-2xl text-foreground mb-3 max-w-2xl font-bold">
+        <p className="text-lg md:text-2xl mb-3 max-w-2xl font-bold" style={{ color: "hsl(240 30% 25%)" }}>
           A daily system for mastering money and markets
         </p>
-        <p className="text-base md:text-lg text-foreground/70 mb-10 max-w-2xl leading-relaxed font-semibold">
+        <p className="text-base md:text-lg mb-10 max-w-2xl leading-relaxed font-semibold" style={{ color: "hsl(240 20% 40%)" }}>
           Learn faster with simple explanations, real examples, and daily progress.
         </p>
         <button
