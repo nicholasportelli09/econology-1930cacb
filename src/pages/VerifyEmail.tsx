@@ -48,23 +48,25 @@ export default function VerifyEmail() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse-glow" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/10 blur-[120px] animate-pulse-glow [animation-delay:1s]" />
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/10 blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
+      </div>
 
       <div className="relative z-10 w-full max-w-md space-y-8">
         <div className="flex flex-col items-center gap-3">
           <EconologyLogo size={64} />
           <h1 className="text-3xl font-display font-bold gradient-text">Verify Your Email</h1>
-          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <div className="flex items-center gap-2 text-sm" style={{ color: "hsl(240 15% 45%)" }}>
             <Mail className="h-4 w-4" />
-            <span>We sent a 6-digit code to <strong className="text-foreground">{email}</strong></span>
+            <span>We sent a 6-digit code to <strong style={{ color: "hsl(240 20% 25%)" }}>{email}</strong></span>
           </div>
         </div>
 
-        <div className="space-y-6 rounded-xl border border-border bg-card p-6 card-shadow">
+        <div className="space-y-6 rounded-xl border border-white/40 bg-white/60 backdrop-blur-sm p-6">
           <div className="flex flex-col items-center gap-4">
-            <p className="text-sm text-muted-foreground">Enter the verification code</p>
+            <p className="text-sm" style={{ color: "hsl(240 15% 50%)" }}>Enter the verification code</p>
             <InputOTP maxLength={6} value={code} onChange={setCode}>
               <InputOTPGroup>
                 <InputOTPSlot index={0} />
