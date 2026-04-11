@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import EconologyLogo from "@/components/EconologyLogo";
+import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, Shield } from "lucide-react";
