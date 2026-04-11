@@ -46,7 +46,7 @@ const Index = () => {
         <div className="-mb-4 md:-mb-6">
           <img src={logoSrc} alt="Econology logo" className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px]" loading="eager" />
         </div>
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
+        <h1 className="text-4xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
           <span className="gradient-text">Econology</span>
         </h1>
         <p className="text-lg md:text-2xl mb-3 max-w-2xl font-bold" style={{ color: "hsl(240 30% 25%)" }}>
