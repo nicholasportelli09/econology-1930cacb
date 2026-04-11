@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import EconologyLogo from "@/components/EconologyLogo";
 import FeatureCard from "@/components/FeatureCard";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowRight, Lightbulb, BookOpen, Newspaper } from "lucide-react";
+import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, Shield } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const Index = () => {
       </nav>
 
       {/* Hero */}
-      <section className="relative z-10 flex flex-col items-center text-center px-6 pt-6 pb-20 md:pt-10 md:pb-28 w-full">
+      <section className="relative z-10 flex flex-col items-center text-center px-6 pt-6 pb-16 md:pt-10 md:pb-20 w-full">
         <div className="-mb-6">
           <EconologyLogo size={180} />
         </div>
@@ -64,7 +64,7 @@ const Index = () => {
       </section>
 
       {/* Feature cards */}
-      <section className="relative z-10 px-6 md:px-12 lg:px-20 pb-24 w-full">
+      <section className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           <FeatureCard
             icon={<Lightbulb size={24} />}
@@ -84,8 +84,103 @@ const Index = () => {
         </div>
       </section>
 
+      {/* How it works */}
+      <section className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full">
+        <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-12" style={{ color: "hsl(240 30% 20%)" }}>
+          How It Works
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {[
+            { step: "1", title: "Tell us about you", desc: "Answer a few questions about your financial goals, situation, and what you want to learn.", icon: Brain },
+            { step: "2", title: "Get your daily plan", desc: "Receive personalized tips, lessons, and market insights matched to your interests.", icon: BarChart3 },
+            { step: "3", title: "Track your growth", desc: "Earn XP, level up, and watch your financial literacy score improve every week.", icon: Shield },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.step} className="flex flex-col items-center text-center">
+                <div className="w-14 h-14 rounded-2xl gradient-bg flex items-center justify-center mb-4">
+                  <Icon size={24} className="text-primary-foreground" />
+                </div>
+                <div className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "hsl(270 60% 50%)" }}>
+                  Step {item.step}
+                </div>
+                <h3 className="text-lg font-display font-bold mb-2" style={{ color: "hsl(240 30% 20%)" }}>{item.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: "hsl(240 15% 45%)" }}>{item.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* What you'll learn */}
+      <section className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full">
+        <div className="max-w-4xl mx-auto rounded-2xl p-8 md:p-12" style={{ background: "rgba(255,255,255,0.5)", backdropFilter: "blur(12px)" }}>
+          <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-8" style={{ color: "hsl(240 30% 20%)" }}>
+            What You'll Learn
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              "Budgeting strategies that actually work",
+              "How the stock market really works",
+              "Building & protecting your credit score",
+              "Investing with as little as $50/month",
+              "Understanding economic news & trends",
+              "Debt payoff strategies (avalanche vs snowball)",
+              "Emergency fund & savings automation",
+              "Retirement planning for young adults",
+            ].map((item) => (
+              <div key={item} className="flex items-start gap-3">
+                <CheckCircle size={18} className="text-accent shrink-0 mt-0.5" />
+                <span className="text-sm font-medium" style={{ color: "hsl(240 20% 30%)" }}>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Social proof */}
+      <section className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full">
+        <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-10" style={{ color: "hsl(240 30% 20%)" }}>
+          Built for Young Adults
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {[
+            { quote: "I finally understand how investing works. The daily tips make it feel manageable instead of overwhelming.", name: "Alex, 22", role: "College Senior" },
+            { quote: "The budget simulator helped me plan my first post-grad budget. I actually have a savings plan now.", name: "Jordan, 24", role: "Recent Graduate" },
+            { quote: "I love the AI-curated video recommendations. I've learned more here in a month than from years of random YouTube.", name: "Sam, 19", role: "Freshman" },
+          ].map((t) => (
+            <div key={t.name} className="rounded-xl p-6 border" style={{ background: "rgba(255,255,255,0.5)", borderColor: "rgba(255,255,255,0.4)" }}>
+              <p className="text-sm leading-relaxed mb-4 italic" style={{ color: "hsl(240 20% 35%)" }}>"{t.quote}"</p>
+              <div>
+                <p className="text-sm font-semibold" style={{ color: "hsl(240 25% 20%)" }}>{t.name}</p>
+                <p className="text-xs" style={{ color: "hsl(240 15% 50%)" }}>{t.role}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-display font-bold mb-4" style={{ color: "hsl(240 30% 20%)" }}>
+            Ready to take control of your finances?
+          </h2>
+          <p className="text-base mb-8" style={{ color: "hsl(240 15% 45%)" }}>
+            Join thousands of young adults building financial confidence — one day at a time.
+          </p>
+          <button
+            onClick={() => navigate("/signup")}
+            className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow"
+          >
+            Get Started — It's Free
+            <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+          </button>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="relative z-10 border-t border-border py-8 text-center text-sm text-muted-foreground">
+      <footer className="relative z-10 border-t py-8 text-center text-sm" style={{ borderColor: "rgba(0,0,0,0.08)", color: "hsl(240 15% 50%)" }}>
         <p>© 2026 Econology · The science of smart money</p>
       </footer>
     </div>
