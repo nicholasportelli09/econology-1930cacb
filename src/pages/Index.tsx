@@ -43,8 +43,7 @@ const Index = () => {
       {/* Hero */}
       <section className="relative z-10 flex flex-col items-center text-center px-6 pt-6 pb-16 md:pt-10 md:pb-20 w-full">
         <div className="-mb-4 md:-mb-6">
-          <EconologyLogo size={120} className="md:hidden" />
-          <EconologyLogo size={180} className="hidden md:block" />
+          <img src={logoSrc} alt="Econology logo" className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px]" loading="eager" />
         </div>
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
           <span className="gradient-text">Econology</span>
