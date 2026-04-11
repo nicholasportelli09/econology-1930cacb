@@ -76,7 +76,7 @@ const Quiz = () => {
   // Intro screen
   if (phase === "intro") {
     return (
-      <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
+      <div className="min-h-screen relative overflow-hidden flex flex-col" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
         <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/8 blur-[120px] animate-pulse-glow" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-accent/8 blur-[120px] animate-pulse-glow [animation-delay:1.5s]" />
 
@@ -121,7 +121,7 @@ const Quiz = () => {
           : "Good start! We'll help you learn the rest!";
 
     return (
-      <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
+      <div className="min-h-screen relative overflow-hidden flex flex-col" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
         <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/8 blur-[120px] animate-pulse-glow" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-accent/8 blur-[120px] animate-pulse-glow [animation-delay:1.5s]" />
 
@@ -155,7 +155,7 @@ const Quiz = () => {
 
   // Question screen
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
+    <div className="min-h-screen relative overflow-hidden flex flex-col" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/8 blur-[120px] animate-pulse-glow" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-accent/8 blur-[120px] animate-pulse-glow [animation-delay:1.5s]" />
 

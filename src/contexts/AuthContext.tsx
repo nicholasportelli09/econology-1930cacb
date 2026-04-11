@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -28,6 +28,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem("econology_guest");
       }
       setLoading(false);
+
+      // After OAuth sign-in, redirect appropriately
+      if (event === "SIGNED_IN" && session?.user) {
+        const currentPath = window.location.pathname;
+        // Only redirect if on landing, login, or signup pages
+        if (currentPath === "/" || currentPath === "/login" || currentPath === "/signup") {
+          const profile = localStorage.getItem("econology_profile");
+          if (!profile) {
+            window.location.href = "/onboarding";
+          } else {
+            window.location.href = "/dashboard";
+          }
+        }
+      }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {

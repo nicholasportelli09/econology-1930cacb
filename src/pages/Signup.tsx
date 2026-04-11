@@ -51,6 +51,7 @@ export default function Signup() {
         toast({ title: "Google sign-in failed", description: String(result.error), variant: "destructive" });
         setGoogleLoading(false);
       } else if (!result.redirected) {
+        // New Google user → onboarding
         navigate("/onboarding");
         setGoogleLoading(false);
       }
@@ -61,19 +62,26 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
+      {/* Animated gradient orbs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/10 blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
+      </div>
+
       <div className="relative z-10 w-full max-w-md space-y-8">
         <div className="flex flex-col items-center gap-3">
           <EconologyLogo size={56} />
-          <h1 className="text-2xl font-display font-bold text-foreground">Create Account</h1>
-          <p className="text-muted-foreground text-sm">Start building your financial knowledge</p>
+          <h1 className="text-2xl font-display font-bold" style={{ color: "hsl(240 30% 20%)" }}>Create Account</h1>
+          <p className="text-sm" style={{ color: "hsl(240 20% 40%)" }}>Start building your financial knowledge</p>
         </div>
 
-        <div className="space-y-4 rounded-xl border border-border bg-card p-6">
+        <div className="space-y-4 rounded-xl border border-white/40 bg-white/60 backdrop-blur-sm p-6">
           <Button
             type="button"
             variant="outline"
-            className="w-full hover:bg-muted hover:text-foreground"
+            className="w-full bg-white/70 border-white/50 hover:bg-white/90"
+            style={{ color: "hsl(240 20% 25%)" }}
             disabled={googleLoading}
             onClick={handleGoogleSignIn}
           >
@@ -86,30 +94,30 @@ export default function Signup() {
           </Button>
 
           <div className="relative my-2">
-            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
-            <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">or</span></div>
+            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-black/10" /></div>
+            <div className="relative flex justify-center text-xs uppercase"><span className="bg-white/60 px-2" style={{ color: "hsl(240 15% 50%)" }}>or</span></div>
           </div>
 
           <form onSubmit={handleSignup} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Name</label>
+              <label className="text-sm font-medium" style={{ color: "hsl(240 20% 25%)" }}>Name</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="pl-10" required />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "hsl(240 15% 50%)" }} />
+                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="pl-10 bg-white/70 border-white/50" required />
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Email</label>
+              <label className="text-sm font-medium" style={{ color: "hsl(240 20% 25%)" }}>Email</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="pl-10" required />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "hsl(240 15% 50%)" }} />
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="pl-10 bg-white/70 border-white/50" required />
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Password</label>
+              <label className="text-sm font-medium" style={{ color: "hsl(240 20% 25%)" }}>Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 characters" className="pl-10" required />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "hsl(240 15% 50%)" }} />
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 characters" className="pl-10 bg-white/70 border-white/50" required />
               </div>
             </div>
             <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground hover:opacity-90">
@@ -119,11 +127,11 @@ export default function Signup() {
         </div>
 
         <div className="text-center space-y-2 text-sm">
-          <p className="text-muted-foreground">
+          <p style={{ color: "hsl(240 15% 45%)" }}>
             Already have an account?{" "}
             <Link to="/login" className="text-primary hover:underline font-medium">Sign In</Link>
           </p>
-          <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors block">
+          <Link to="/" className="block transition-colors hover:opacity-80" style={{ color: "hsl(240 15% 45%)" }}>
             ← Back to landing page
           </Link>
         </div>
