@@ -46,22 +46,26 @@ export function NewsDigest({ articles, profile }: NewsDigestProps) {
   if (articles.length < 2) return null;
 
   return (
-    <div className="rounded-xl border border-border bg-card card-shadow overflow-hidden">
-      <div className="p-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <FileText size={18} className="text-primary" />
-          <h3 className="text-sm font-semibold text-foreground">News Digest</h3>
-          <span className="text-xs text-muted-foreground">({articles.length} articles)</span>
+    <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 via-card to-card card-shadow overflow-hidden">
+      <div className="p-5 flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-start gap-3">
+          <div className="h-10 w-10 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
+            <FileText size={20} className="text-primary" />
+          </div>
+          <div>
+            <h3 className="text-base font-display font-semibold text-foreground">AI News Digest</h3>
+            <p className="text-xs text-muted-foreground">A ≤300-word personalized summary across {articles.length} articles.</p>
+          </div>
         </div>
         <button
           onClick={handleDigest}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 disabled:opacity-50"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground shadow-md transition-all hover:opacity-90 hover:scale-[1.02] disabled:opacity-50"
         >
           {loading ? (
-            <><Loader2 size={14} className="animate-spin" /> Generating...</>
+            <><Loader2 size={16} className="animate-spin" /> Generating...</>
           ) : (
-            <><Sparkles size={14} /> {digest ? "Hide Digest" : "Generate AI Digest"}</>
+            <><Sparkles size={16} /> {digest ? "Hide Digest" : "Generate AI Digest"}</>
           )}
         </button>
       </div>
