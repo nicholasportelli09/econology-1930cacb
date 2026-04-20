@@ -239,6 +239,7 @@ const EconomicNews = () => {
       )}
       {articles.length > 0 && !loading && (
         <>
+          <NewsDigest articles={articles} profile={profile} />
           <div className="grid gap-4 animate-fade-in">
             {articles.map((article, i) => (
               <ArticleCard
@@ -252,7 +253,6 @@ const EconomicNews = () => {
               />
             ))}
           </div>
-          <NewsDigest articles={articles} profile={profile} />
         </>
       )}
       {articles.length === 0 && !loading && !error && (
