@@ -17,20 +17,77 @@ interface TopicCard {
 }
 
 const ALL_TOPICS: TopicCard[] = [
-  { id: "budget", title: "The 50/30/20 Budget Rule", description: "Split your income into needs, wants, and savings with this simple framework.", category: "Budgeting" },
-  { id: "inflation", title: "Beat Inflation", description: "Learn why your savings lose value over time and how investing fights back.", category: "Investing" },
-  { id: "credit", title: "Credit Score Matters", description: "Understand the factors behind your score and how it impacts your financial life.", category: "Credit" },
-  { id: "emergency", title: "Emergency Fund", description: "Build a financial safety net for life's unexpected expenses.", category: "Savings" },
-  { id: "index", title: "Index Funds 101", description: "Buy 500 companies at once with low fees — the easiest way to start investing.", category: "Investing" },
-  { id: "hustle", title: "Side Hustle Power", description: "Turn extra hours into extra income and accelerate your financial goals.", category: "Earning" },
+  // Budgeting
+  { id: "budget", title: "The 50/30/20 Budget Rule", description: "Split income into needs, wants, and savings with this simple framework.", category: "Budgeting" },
+  { id: "needs-wants", title: "Needs vs Wants", description: "Master the 24-hour rule and stop impulse spending derailing your goals.", category: "Budgeting" },
+  { id: "subscriptions", title: "Subscription Audit", description: "The average person wastes $200/month on unused subscriptions. Find yours.", category: "Budgeting" },
+  { id: "budgetapps", title: "Best Budgeting Apps", description: "YNAB, Mint, Copilot — pick the right tool and stick with it.", category: "Budgeting" },
+  { id: "minimalism", title: "Financial Minimalism", description: "Spend intentionally on what matters and cut the noise.", category: "Budgeting" },
+
+  // Saving
+  { id: "emergency", title: "Emergency Fund", description: "Build a 3-6 month safety net before life surprises you.", category: "Savings" },
+  { id: "highyield", title: "High-Yield Savings", description: "Earn 4-5% APY instead of 0.01% — same safety, 100x the interest.", category: "Savings" },
+  { id: "automate", title: "Automate Your Savings", description: "Remove willpower from the equation with payday auto-transfers.", category: "Savings" },
+  { id: "gratification", title: "Delayed Gratification", description: "The #1 predictor of financial success. Train the muscle.", category: "Savings" },
+
+  // Investing
+  { id: "inflation", title: "Beat Inflation", description: "Why your savings lose value and how investing fights back.", category: "Investing" },
+  { id: "index", title: "Index Funds 101", description: "Own 500 companies at once with the lowest fees in finance.", category: "Investing" },
+  { id: "compound", title: "Compound Interest", description: "Einstein's '8th wonder' — your money earning money on its money.", category: "Investing" },
+  { id: "dca", title: "Dollar-Cost Averaging", description: "Beat market timing by investing the same amount every month.", category: "Investing" },
+  { id: "diversify", title: "Diversification 101", description: "Spread risk across stocks, bonds, and geographies.", category: "Investing" },
+  { id: "roth", title: "Roth IRA Advantage", description: "Pay taxes now, withdraw tax-free in retirement.", category: "Investing" },
+  { id: "etf", title: "ETFs Explained", description: "Stock-like flexibility with mutual fund diversification.", category: "Investing" },
+  { id: "bonds", title: "Bonds for Beginners", description: "The safer side of your portfolio — IOUs from governments and companies.", category: "Investing" },
+  { id: "401k", title: "401(k) Match = Free Money", description: "Never leave your employer match on the table.", category: "Investing" },
+  { id: "rule72", title: "The Rule of 72", description: "Quick mental math for how long it takes money to double.", category: "Investing" },
+  { id: "inflation-hedge", title: "Inflation-Proof Assets", description: "TIPS, real estate, and stocks that protect purchasing power.", category: "Investing" },
+  { id: "cryptobasics", title: "Crypto 101", description: "Blockchain, Bitcoin, Ethereum — what's real, what's hype.", category: "Investing" },
+  { id: "cryptorisk", title: "Crypto Risk Management", description: "How to allocate without blowing up your portfolio.", category: "Investing" },
+
+  // Credit & Debt
+  { id: "credit", title: "Credit Score Matters", description: "The 5 factors and why a 700+ score saves you thousands.", category: "Credit" },
+  { id: "creditcard", title: "Your First Credit Card", description: "Build credit safely without falling into the debt trap.", category: "Credit" },
+  { id: "cashback", title: "Cashback Rewards", description: "Free money — but only if you pay in full every month.", category: "Credit" },
+  { id: "debtavalanche", title: "Debt Avalanche Method", description: "Pay highest-interest debt first to save the most money.", category: "Debt" },
+  { id: "debtsnowball", title: "Debt Snowball Method", description: "Quick wins keep you motivated to crush every debt.", category: "Debt" },
+  { id: "studentloans", title: "Student Loan Strategy", description: "Federal vs private, IDR plans, PSLF — navigate it all.", category: "Debt" },
+  { id: "paylater", title: "Buy Now Pay Later Trap", description: "Klarna and Afterpay make overspending feel painless.", category: "Debt" },
+
+  // Earning
+  { id: "hustle", title: "Side Hustle Power", description: "Turn extra hours into extra income — and invest the difference.", category: "Earning" },
+  { id: "freelance", title: "Freelancing Income", description: "Turn skills into hourly rates of $30-100+.", category: "Earning" },
+  { id: "negotiate", title: "Salary Negotiation", description: "First offers leave 10-20% on the table. Don't.", category: "Earning" },
+  { id: "networking", title: "Networking = Net Worth", description: "70%+ of jobs come through relationships, not applications.", category: "Earning" },
+  { id: "internships", title: "Paid Internship Strategy", description: "Convert summer work into a full-time offer.", category: "Earning" },
+  { id: "passiveincome", title: "Passive Income Streams", description: "Build assets that pay you while you sleep.", category: "Earning" },
+
+  // Taxes
+  { id: "taxbasics", title: "Tax Basics", description: "Brackets, W-2s, and why a raise never costs you money.", category: "Taxes" },
+  { id: "taxdeductions", title: "Tax Deductions & Credits", description: "Credits beat deductions — here's how to find both.", category: "Taxes" },
+  { id: "sidehustletax", title: "Side Hustle Taxes", description: "Set aside 25-30%, track expenses, avoid penalties.", category: "Taxes" },
+
+  // Life
+  { id: "moveout", title: "Moving Out Checklist", description: "True costs of independence — and how to prepare.", category: "Life" },
+  { id: "rentbudget", title: "The 30% Rent Rule", description: "Keep housing affordable so you can fund the rest of life.", category: "Life" },
+  { id: "realestate", title: "Renting vs Buying", description: "Equity vs flexibility — the real math behind the decision.", category: "Life" },
+  { id: "carbudget", title: "Buying Your First Car", description: "20/4/10 rule and the hidden costs of ownership.", category: "Life" },
+  { id: "insurance", title: "Insurance Basics", description: "What you need, what to skip, and how to save on premiums.", category: "Life" },
+  { id: "travelbudget", title: "Budget Travel", description: "See the world without going into debt.", category: "Life" },
+  { id: "scholarships", title: "Scholarship Hunting", description: "Billions go unclaimed each year — claim your share.", category: "Life" },
+  { id: "recession", title: "Recession-Proof Finances", description: "Prepare in good times so downturns don't break you.", category: "Life" },
+  { id: "financialliteracy", title: "Financial Literacy Gap", description: "Why most adults are financially illiterate — and how to lead.", category: "Life" },
 ];
 
 const categoryColor: Record<string, string> = {
   Budgeting: "bg-primary/20 text-primary",
   Investing: "bg-secondary/20 text-secondary",
-  Credit: "bg-accent/20 text-accent",
+  Credit: "bg-primary/20 text-primary",
+  Debt: "bg-destructive/15 text-destructive",
   Savings: "bg-primary/20 text-primary",
-  Earning: "bg-accent/20 text-accent",
+  Earning: "bg-secondary/20 text-secondary",
+  Taxes: "bg-primary/20 text-primary",
+  Life: "bg-secondary/20 text-secondary",
 };
 
 const Learn = () => {
@@ -38,22 +95,37 @@ const Learn = () => {
   const stored = localStorage.getItem("econology_profile");
   const profile: UserProfile = stored ? JSON.parse(stored) : defaultProfile;
 
-  const [order, setOrder] = useState<number[]>(() =>
-    ALL_TOPICS.map((_, i) => i)
-  );
+  const PAGE_SIZE = 9;
+  const [page, setPage] = useState(0);
+  const [seed, setSeed] = useState(() => Math.floor(Math.random() * 1_000_000));
+
+  // Stable shuffled order driven by seed; "Load new topics" advances the page or reshuffles.
+  const shuffledOrder = useMemo(() => {
+    const indices = ALL_TOPICS.map((_, i) => i);
+    let s = seed;
+    for (let i = indices.length - 1; i > 0; i--) {
+      s = (s * 1664525 + 1013904223) >>> 0;
+      const j = s % (i + 1);
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    return indices;
+  }, [seed]);
+
+  const totalPages = Math.ceil(ALL_TOPICS.length / PAGE_SIZE);
+
+  const topics = useMemo(() => {
+    const start = page * PAGE_SIZE;
+    return shuffledOrder.slice(start, start + PAGE_SIZE).map((i) => ALL_TOPICS[i]);
+  }, [shuffledOrder, page]);
 
   const shuffleTopics = () => {
-    setOrder((prev) => {
-      const copy = [...prev];
-      for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copy[i], copy[j]] = [copy[j], copy[i]];
-      }
-      return copy;
-    });
+    if (page < totalPages - 1) {
+      setPage((p) => p + 1);
+    } else {
+      setSeed(Math.floor(Math.random() * 1_000_000));
+      setPage(0);
+    }
   };
-
-  const topics = useMemo(() => order.map((i) => ALL_TOPICS[i]), [order]);
 
   const initials = profile.name
     ? profile.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)
