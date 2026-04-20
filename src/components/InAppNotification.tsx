@@ -35,6 +35,9 @@ export function InAppNotification() {
 
   useEffect(() => {
     if (!user) return;
+    // Don't show notifications on landing/auth pages
+    const path = window.location.pathname;
+    if (path === "/" || path === "/login" || path === "/signup" || path === "/verify-email" || path === "/onboarding" || path === "/quiz") return;
 
     let cancelled = false;
 
