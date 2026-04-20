@@ -31,8 +31,8 @@ serve(async (req) => {
         .map((a: any, i: number) => `${i + 1}. "${a.title}" - ${a.text?.slice(0, 200)}`)
         .join("\n");
 
-      systemPrompt = `You are a financial news analyst for students and young adults. Summarize multiple news articles into a cohesive digest. Be clear, avoid jargon, and explain relevance to the reader's financial life.${profileContext}`;
-      userPrompt = `Create a comprehensive news digest from these articles. Include:\n1. **Key Themes** - What are the major trends?\n2. **What It Means For You** - Personalized impact\n3. **Action Items** - 2-3 things the reader could do\n\nArticles:\n${articleList}`;
+      systemPrompt = `You are a financial news analyst for students and young adults. Summarize multiple news articles into a cohesive, tight digest. Be clear, avoid jargon, and explain relevance to the reader's financial life. HARD LIMIT: 300 words total — be ruthless about brevity.${profileContext}`;
+      userPrompt = `Create a tight news digest (MAX 300 WORDS TOTAL) from these articles. Use this exact structure with short bullets:\n\n**Key Themes** (2-3 bullets)\n**What It Means For You** (2-3 bullets, personalized)\n**Action Items** (2-3 short bullets)\n\nArticles:\n${articleList}\n\nReminder: stay under 300 words. Cut filler.`;
     } else {
       systemPrompt = `You are a friendly financial tutor for students. Explain news articles simply, avoid jargon, and relate them to the reader's financial life. Keep it concise (3-4 paragraphs max).${profileContext}`;
       userPrompt = `Explain this article in simple terms and how it might affect someone in my situation:\n\nTitle: ${article.title}\nContent: ${article.text}\nSource: ${article.site}\nTicker: ${article.symbol || "N/A"}`;
