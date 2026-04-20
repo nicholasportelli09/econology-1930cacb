@@ -1,12 +1,15 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
-import { Send, MessageCircle, Sparkles } from "lucide-react";
+import { Send, MessageCircle, Sparkles, Info } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { defaultProfile, type UserProfile } from "@/types/profile";
+import { supabase } from "@/integrations/supabase/client";
+
+const DAILY_LIMIT = 10;
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -19,9 +22,10 @@ const SUGGESTED_QUESTIONS = [
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
-async function streamChat({ messages, profile, onDelta, onDone, onError }: {
+async function streamChat({ messages, profile, accessToken, onDelta, onDone, onError }: {
   messages: Msg[];
   profile: UserProfile;
+  accessToken?: string | null;
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (msg: string) => void;
@@ -30,7 +34,7 @@ async function streamChat({ messages, profile, onDelta, onDone, onError }: {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      Authorization: `Bearer ${accessToken || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
     },
     body: JSON.stringify({ messages, profile }),
   });
