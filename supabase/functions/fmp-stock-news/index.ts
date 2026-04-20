@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://www.econology.app",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
@@ -9,6 +9,19 @@ const corsHeaders = {
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // SECURITY: verify authenticated Econology user via Supabase JWT
+  const _token = req.headers.get('Authorization')?.replace('Bearer ', '');
+  if (!_token) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
+  }
+  const _authResp = await fetch(
+    `${Deno.env.get('SUPABASE_URL')}/auth/v1/user`,
+    { headers: { 'Authorization': `Bearer ${_token}`, 'apikey': Deno.env.get('SUPABASE_ANON_KEY') ?? '' } }
+  );
+  if (!_authResp.ok) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
   }
 
   try {
