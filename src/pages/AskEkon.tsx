@@ -244,6 +244,12 @@ export default function AskEkon() {
         </ScrollArea>
 
         <div className="border-t border-border p-4">
+          {usedToday != null && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
+              <Info className="h-3 w-3" />
+              {Math.max(0, DAILY_LIMIT - usedToday)} of {DAILY_LIMIT} messages left today
+            </div>
+          )}
           <form onSubmit={(e) => { e.preventDefault(); send(input); }} className="flex gap-2">
             <Input ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask about budgeting, investing, credit scores..." disabled={isLoading} className="flex-1" />
             <Button type="submit" disabled={!input.trim() || isLoading} size="icon"><Send className="h-4 w-4" /></Button>
