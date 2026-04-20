@@ -201,7 +201,12 @@ export default function AskEkon() {
               <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
                 <MessageCircle className="h-8 w-8 text-primary" />
               </div>
-              <h2 className="text-xl font-display font-semibold">Start a Conversation</h2>
+              <div className="text-center space-y-2 max-w-md">
+                <h2 className="text-xl font-display font-semibold">Meet Ekon — your AI money tutor</h2>
+                <p className="text-sm text-muted-foreground">
+                  I explain budgeting, credit, investing, and markets in plain English — personalized to your profile. I can also fetch live stock prices on request.
+                </p>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
                 {SUGGESTED_QUESTIONS.map((q) => (
                   <button key={q} onClick={() => send(q)} className="text-left p-3 rounded-lg border border-border bg-card hover:border-primary/50 hover:bg-muted transition-colors text-sm text-foreground">
