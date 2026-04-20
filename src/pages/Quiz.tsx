@@ -112,7 +112,6 @@ const Quiz = () => {
   // Results screen
   if (phase === "results") {
     const percentage = Math.round((score / total) * 100);
-    const emoji = score === 5 ? "🎉" : score >= 3 ? "👏" : "💪";
     const message =
       score === 5
         ? "Perfect score! You've got a solid foundation!"
@@ -126,10 +125,9 @@ const Quiz = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-accent/8 blur-[120px] animate-pulse-glow [animation-delay:1.5s]" />
 
         <div className="relative z-10 flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full px-6 text-center">
-          <div className="w-20 h-20 rounded-2xl gradient-bg flex items-center justify-center mb-6 glow-shadow">
+          <div className="w-20 h-20 rounded-2xl gradient-bg flex items-center justify-center mb-8 glow-shadow">
             <Trophy size={40} className="text-primary-foreground" />
           </div>
-          <p className="text-5xl mb-4">{emoji}</p>
           <h1 className="text-3xl font-display font-bold text-foreground mb-2">Quiz Complete!</h1>
           <p className="text-muted-foreground text-lg mb-8">{message}</p>
 

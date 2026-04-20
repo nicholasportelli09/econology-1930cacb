@@ -44,7 +44,7 @@ const Index = () => {
       {/* Hero */}
       <section className="relative z-10 flex flex-col items-center text-center px-6 pt-6 pb-16 md:pt-10 md:pb-20 w-full">
         <div className="-mb-4 md:-mb-6">
-          <img src={logoSrc} alt="Econology logo" className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px]" loading="eager" />
+          <img src={logoSrc} alt="Econology logo" className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px] animate-float" loading="eager" />
         </div>
         <h1 className="text-4xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
           <span className="gradient-text">Econology</span>
@@ -136,28 +136,6 @@ const Index = () => {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Social proof */}
-      <section className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full">
-        <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-10" style={{ color: "hsl(240 30% 20%)" }}>
-          Built for Young Adults
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {[
-            { quote: "I finally understand how investing works. The daily tips make it feel manageable instead of overwhelming.", name: "Alex, 22", role: "College Senior" },
-            { quote: "The budget simulator helped me plan my first post-grad budget. I actually have a savings plan now.", name: "Jordan, 24", role: "Recent Graduate" },
-            { quote: "I love the AI-curated video recommendations. I've learned more here in a month than from years of random YouTube.", name: "Sam, 19", role: "Freshman" },
-          ].map((t) => (
-            <div key={t.name} className="rounded-xl p-6 border" style={{ background: "rgba(255,255,255,0.5)", borderColor: "rgba(255,255,255,0.4)" }}>
-              <p className="text-sm leading-relaxed mb-4 italic" style={{ color: "hsl(240 20% 35%)" }}>"{t.quote}"</p>
-              <div>
-                <p className="text-sm font-semibold" style={{ color: "hsl(240 25% 20%)" }}>{t.name}</p>
-                <p className="text-xs" style={{ color: "hsl(240 15% 50%)" }}>{t.role}</p>
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 

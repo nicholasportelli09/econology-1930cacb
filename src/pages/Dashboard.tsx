@@ -2,6 +2,8 @@ import { useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import DailyLesson from "@/components/DailyLesson";
+import DailyPlan from "@/components/DailyPlan";
+import DashboardSummary from "@/components/DashboardSummary";
 import {
   X,
   ArrowRight,
@@ -100,25 +102,31 @@ const Dashboard = () => {
       <DashboardHeader initials={initials} />
 
       <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-8">
-        {/* Welcome */}
-        <section>
-          <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-1">
-            Welcome back, <span className="gradient-text">{profile.name || "Explorer"}</span>
-          </h1>
-          <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            <span>Level {level.level} {level.title} · {gam.xp} XP</span>
-            {gam.streak > 1 && <span>· 🔥 {gam.streak}-day streak</span>}
-            <button
-              onClick={() => navigate("/settings")}
-              className="text-primary hover:underline text-xs ml-1"
-            >
-              Edit Topics
-            </button>
+        {/* Welcome + Daily Plan */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-3">
+            <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">
+              Welcome back, <span className="gradient-text">{profile.name || "Explorer"}</span>
+            </h1>
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <span>Level {level.level} {level.title} · {gam.xp} XP</span>
+              {gam.streak > 1 && <span>· 🔥 {gam.streak}-day streak</span>}
+              <button
+                onClick={() => navigate("/settings")}
+                className="text-primary hover:underline text-xs ml-1"
+              >
+                Edit Topics
+              </button>
+            </div>
+            <DailyLesson />
+          </div>
+          <div className="lg:col-span-1">
+            <DailyPlan />
           </div>
         </section>
 
-        {/* Daily Lesson */}
-        <DailyLesson />
+        {/* At-a-glance summary */}
+        <DashboardSummary />
 
         {/* Tips */}
         <section className="space-y-4">
