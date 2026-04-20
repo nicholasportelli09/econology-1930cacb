@@ -30,6 +30,28 @@ function getProfile(): UserProfile {
   } catch { return defaultProfile; }
 }
 
+/** Pick up to `limit` articles, prioritizing source diversity (max 2 per outlet). */
+function diversifyBySource(articles: Article[], limit = 10): Article[] {
+  const counts = new Map<string, number>();
+  const picked: Article[] = [];
+  const overflow: Article[] = [];
+  for (const a of articles) {
+    const src = (a.site || "unknown").toLowerCase();
+    const c = counts.get(src) || 0;
+    if (c < 2 && picked.length < limit) {
+      picked.push(a);
+      counts.set(src, c + 1);
+    } else {
+      overflow.push(a);
+    }
+  }
+  for (const a of overflow) {
+    if (picked.length >= limit) break;
+    picked.push(a);
+  }
+  return picked;
+}
+
 const categoryColor = (cat: string) => {
   switch (cat) {
     case "Interest Rates": return "bg-secondary/15 text-secondary border-secondary/30";
@@ -111,7 +133,7 @@ const EconomicNews = () => {
       const { data, error } = await supabase.functions.invoke("stock-news", { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      setMarketArticles(data.articles || []);
+      setMarketArticles(diversifyBySource(data.articles || [], 10));
     } catch (e: any) {
       const msg = e?.message || "Failed to fetch market news";
       setMarketError(msg);
@@ -133,7 +155,7 @@ const EconomicNews = () => {
       const { data, error } = await supabase.functions.invoke("fmp-stock-news", { body });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      setStockArticles(data.articles || []);
+      setStockArticles(diversifyBySource(data.articles || [], 10));
     } catch (e: any) {
       const msg = e?.message || "Failed to fetch company news";
       setStockError(msg);
@@ -217,6 +239,7 @@ const EconomicNews = () => {
       )}
       {articles.length > 0 && !loading && (
         <>
+          <NewsDigest articles={articles} profile={profile} />
           <div className="grid gap-4 animate-fade-in">
             {articles.map((article, i) => (
               <ArticleCard
@@ -230,7 +253,6 @@ const EconomicNews = () => {
               />
             ))}
           </div>
-          <NewsDigest articles={articles} profile={profile} />
         </>
       )}
       {articles.length === 0 && !loading && !error && (

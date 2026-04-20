@@ -1,12 +1,15 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
-import { Send, MessageCircle, Sparkles } from "lucide-react";
+import { Send, MessageCircle, Sparkles, Info } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { defaultProfile, type UserProfile } from "@/types/profile";
+import { supabase } from "@/integrations/supabase/client";
+
+const DAILY_LIMIT = 10;
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -19,9 +22,10 @@ const SUGGESTED_QUESTIONS = [
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
-async function streamChat({ messages, profile, onDelta, onDone, onError }: {
+async function streamChat({ messages, profile, accessToken, onDelta, onDone, onError }: {
   messages: Msg[];
   profile: UserProfile;
+  accessToken?: string | null;
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (msg: string) => void;
@@ -30,7 +34,7 @@ async function streamChat({ messages, profile, onDelta, onDone, onError }: {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      Authorization: `Bearer ${accessToken || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
     },
     body: JSON.stringify({ messages, profile }),
   });
@@ -97,6 +101,25 @@ export default function AskEkon() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const topicSentRef = useRef(false);
+  const [usedToday, setUsedToday] = useState<number | null>(null);
+
+  // Load today's usage from the backend (RLS-scoped to the user)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { if (!cancelled) setUsedToday(null); return; }
+      const today = new Date().toISOString().slice(0, 10);
+      const { data } = await supabase
+        .from("ekon_usage")
+        .select("message_count")
+        .eq("user_id", user.id)
+        .eq("usage_date", today)
+        .maybeSingle();
+      if (!cancelled) setUsedToday(data?.message_count ?? 0);
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const profile: UserProfile = (() => {
     try {
@@ -134,11 +157,16 @@ export default function AskEkon() {
     };
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       await streamChat({
         messages: updatedMessages,
         profile,
+        accessToken: session?.access_token ?? null,
         onDelta: upsert,
-        onDone: () => setIsLoading(false),
+        onDone: () => {
+          setIsLoading(false);
+          setUsedToday((n) => (n == null ? n : n + 1));
+        },
         onError: (msg) => {
           setMessages((prev) => [...prev, { role: "assistant", content: `⚠️ ${msg}` }]);
           setIsLoading(false);
@@ -173,7 +201,12 @@ export default function AskEkon() {
               <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
                 <MessageCircle className="h-8 w-8 text-primary" />
               </div>
-              <h2 className="text-xl font-display font-semibold">Start a Conversation</h2>
+              <div className="text-center space-y-2 max-w-md">
+                <h2 className="text-xl font-display font-semibold">Meet Ekon — your AI money tutor</h2>
+                <p className="text-sm text-muted-foreground">
+                  I explain budgeting, credit, investing, and markets in plain English — personalized to your profile. I can also fetch live stock prices on request.
+                </p>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
                 {SUGGESTED_QUESTIONS.map((q) => (
                   <button key={q} onClick={() => send(q)} className="text-left p-3 rounded-lg border border-border bg-card hover:border-primary/50 hover:bg-muted transition-colors text-sm text-foreground">
@@ -211,6 +244,12 @@ export default function AskEkon() {
         </ScrollArea>
 
         <div className="border-t border-border p-4">
+          {usedToday != null && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
+              <Info className="h-3 w-3" />
+              {Math.max(0, DAILY_LIMIT - usedToday)} of {DAILY_LIMIT} messages left today
+            </div>
+          )}
           <form onSubmit={(e) => { e.preventDefault(); send(input); }} className="flex gap-2">
             <Input ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask about budgeting, investing, credit scores..." disabled={isLoading} className="flex-1" />
             <Button type="submit" disabled={!input.trim() || isLoading} size="icon"><Send className="h-4 w-4" /></Button>
