@@ -101,6 +101,25 @@ export default function AskEkon() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const topicSentRef = useRef(false);
+  const [usedToday, setUsedToday] = useState<number | null>(null);
+
+  // Load today's usage from the backend (RLS-scoped to the user)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { if (!cancelled) setUsedToday(null); return; }
+      const today = new Date().toISOString().slice(0, 10);
+      const { data } = await supabase
+        .from("ekon_usage")
+        .select("message_count")
+        .eq("user_id", user.id)
+        .eq("usage_date", today)
+        .maybeSingle();
+      if (!cancelled) setUsedToday(data?.message_count ?? 0);
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const profile: UserProfile = (() => {
     try {
@@ -138,11 +157,16 @@ export default function AskEkon() {
     };
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       await streamChat({
         messages: updatedMessages,
         profile,
+        accessToken: session?.access_token ?? null,
         onDelta: upsert,
-        onDone: () => setIsLoading(false),
+        onDone: () => {
+          setIsLoading(false);
+          setUsedToday((n) => (n == null ? n : n + 1));
+        },
         onError: (msg) => {
           setMessages((prev) => [...prev, { role: "assistant", content: `⚠️ ${msg}` }]);
           setIsLoading(false);
