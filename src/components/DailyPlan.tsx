@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, Circle, BookOpen, Newspaper, Calculator, MessageCircle, TrendingUp } from "lucide-react";
+import { CheckCircle2, Circle, BookOpen, Newspaper, Calculator, MessageCircle, TrendingUp, type LucideIcon } from "lucide-react";
 import { getGamification } from "@/lib/gamification";
 
 interface PlanItem {
   id: string;
   label: string;
   to: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: LucideIcon;
   done: boolean;
 }
 
