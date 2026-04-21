@@ -26,8 +26,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 const NAV_ITEMS = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/learn", label: "Learn", icon: BookOpen },
-  { to: "/market", label: "Market Ideas", icon: TrendingUp },
   { to: "/news", label: "Economic News", icon: Newspaper },
+  { to: "/market", label: "Market Ideas", icon: TrendingUp },
   { to: "/videos", label: "Videos", icon: Youtube },
   { to: "/ask", label: "Ask Ekon", icon: MessageCircle },
 ];
