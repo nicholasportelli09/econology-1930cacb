@@ -24,6 +24,10 @@ function wasDismissedToday(type: string): boolean {
   return new Date(val).toDateString() === new Date().toDateString();
 }
 
+function wasAnyDismissedToday(): boolean {
+  return wasDismissedToday("digest") || wasDismissedToday("market") || wasDismissedToday("all");
+}
+
 interface CachedNotifs {
   digest: { title: string; body: string };
   market: { title: string; body: string };
@@ -42,6 +46,9 @@ export function InAppNotification() {
     let cancelled = false;
 
     async function load() {
+      // If the user dismissed any notification today, stay quiet for the rest of the day.
+      if (wasAnyDismissedToday()) return;
+
       // Check user preferences
       const { data: prefs } = await supabase
         .from("notification_preferences")
@@ -100,8 +107,11 @@ export function InAppNotification() {
   }, [user]);
 
   const dismiss = (id: string) => {
-    localStorage.setItem(getStorageKey(id), new Date().toISOString());
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    const now = new Date().toISOString();
+    localStorage.setItem(getStorageKey(id), now);
+    // Dismissing one silences all notifications for the day — users want a quiet hub.
+    localStorage.setItem(getStorageKey("all"), now);
+    setNotifications([]);
   };
 
   if (notifications.length === 0) return null;
