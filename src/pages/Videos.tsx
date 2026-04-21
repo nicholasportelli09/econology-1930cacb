@@ -98,7 +98,7 @@ const Videos = () => {
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
-      <main className="max-w-7xl mx-auto px-4 md:px-8 py-8 space-y-8">
+      <main className="max-w-screen-2xl mx-auto px-4 md:px-10 lg:px-16 py-8 space-y-8">
         {/* Header */}
         <section className="flex items-start justify-between gap-4 animate-fade-in">
           <div>

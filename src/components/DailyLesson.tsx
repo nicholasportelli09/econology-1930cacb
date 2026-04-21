@@ -129,28 +129,28 @@ export default function DailyLesson() {
   };
 
   return (
-    <section className="rounded-2xl border border-primary/20 bg-card p-6 md:p-8 space-y-6 shadow-lg shadow-primary/5 ring-1 ring-primary/5">
+    <section className="rounded-xl border border-border bg-card p-6 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
-            <Flame size={14} />
-            <span>Today's Lesson</span>
+          <div className="flex items-center gap-1.5 text-sm font-medium text-primary">
+            <Flame size={16} />
+            <span>Daily Lesson</span>
           </div>
           {gam.streak > 1 && (
             <span className="text-xs text-muted-foreground">{gam.streak}-day streak</span>
           )}
         </div>
         {isCompleted && (
-          <div className="flex items-center gap-1.5 text-xs text-primary">
-            <CheckCircle2 size={14} />
+          <div className="flex items-center gap-1.5 text-sm text-primary">
+            <CheckCircle2 size={16} />
             <span className="font-medium">Completed</span>
           </div>
         )}
       </div>
 
       <div>
-        <h3 className="text-xl md:text-2xl font-display font-bold text-foreground mb-3 tracking-tight">{lesson.title}</h3>
-        <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{lesson.explanation}</p>
+        <h3 className="text-lg font-display font-semibold text-foreground mb-3">{lesson.title}</h3>
+        <p className="text-sm text-muted-foreground leading-relaxed">{lesson.explanation}</p>
       </div>
 
       <div className="rounded-lg bg-muted/50 border border-border p-4">

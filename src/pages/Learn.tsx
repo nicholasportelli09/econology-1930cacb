@@ -136,7 +136,7 @@ const Learn = () => {
       <DashboardHeader initials={initials} />
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 md:px-8 py-10 space-y-8">
+      <main className="max-w-screen-2xl mx-auto px-4 md:px-10 lg:px-16 py-10 space-y-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-display font-bold text-foreground">
