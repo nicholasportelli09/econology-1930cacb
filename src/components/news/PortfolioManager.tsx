@@ -241,19 +241,23 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
             return (
               <div
                 key={t}
-                className={`flex items-center justify-between rounded-lg border px-3 py-2 cursor-pointer transition-all ${
-                  isActive ? "border-primary bg-primary/5" : "border-border bg-muted/30 hover:bg-muted/50"
+                className={`group flex items-center justify-between rounded-lg border px-3 py-2 cursor-pointer transition-all ${
+                  isActive ? "border-primary bg-primary/10 shadow-sm" : "border-border bg-muted/30 hover:border-primary/40 hover:bg-primary/5"
                 }`}
                 onClick={() => setActiveChart(isActive ? null : t)}
+                title={isActive ? "Hide chart" : "Click to view live chart"}
               >
                 <div className="flex items-center gap-2">
-                  <LineChart size={12} className={isActive ? "text-primary" : "text-muted-foreground"} />
+                  <LineChart size={14} className={isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary"} />
                   <span className="text-sm font-mono font-semibold text-foreground">{t}</span>
                   {q && q.price > 0 && (
                     <span className="text-sm font-semibold text-foreground">${q.price.toFixed(2)}</span>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
+                  <span className={`hidden sm:inline text-[10px] font-semibold uppercase tracking-wider transition-opacity ${isActive ? "text-primary opacity-100" : "text-primary opacity-0 group-hover:opacity-100"}`}>
+                    {isActive ? "Viewing" : "View chart"}
+                  </span>
                   {q && q.price > 0 && (
                     <span className={`flex items-center gap-0.5 text-xs font-medium ${isUp ? "text-accent" : "text-destructive"}`}>
                       {isUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
