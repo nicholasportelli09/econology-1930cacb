@@ -24,12 +24,12 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const NAV_ITEMS = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/learn", label: "Learn", icon: BookOpen },
-  { to: "/news", label: "Economic News", icon: Newspaper },
-  { to: "/market", label: "Market Ideas", icon: TrendingUp },
-  { to: "/videos", label: "Videos", icon: Youtube },
-  { to: "/ask", label: "Ask Ekon", icon: MessageCircle },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, tour: "nav-dashboard" },
+  { to: "/learn", label: "Learn", icon: BookOpen, tour: "nav-learn" },
+  { to: "/news", label: "Economic News", icon: Newspaper, tour: "nav-news" },
+  { to: "/market", label: "Market Ideas", icon: TrendingUp, tour: "nav-market" },
+  { to: "/videos", label: "Videos", icon: Youtube, tour: "nav-videos" },
+  { to: "/ask", label: "Ask Ekon", icon: MessageCircle, tour: "nav-ask" },
 ];
 
 interface Props {
@@ -55,6 +55,7 @@ export function DashboardHeader({ initials = "U" }: Props) {
             <NavLink
               key={item.to}
               to={item.to}
+              data-tour={item.tour}
               className="px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
               activeClassName="text-foreground bg-muted"
             >
@@ -66,6 +67,7 @@ export function DashboardHeader({ initials = "U" }: Props) {
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => navigate("/progress")}
+            data-tour="progress-btn"
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
           >
             <BarChart3 size={16} />
