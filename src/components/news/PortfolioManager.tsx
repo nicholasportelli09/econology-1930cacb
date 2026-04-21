@@ -211,6 +211,20 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
         </div>
       ) : tickers.length > 0 ? (
         <div className="space-y-2">
+          <button
+            onClick={() => setExpanded(e => !e)}
+            className="flex w-full items-center justify-between rounded-lg border border-border bg-muted/30 px-3 py-2 text-left hover:bg-muted/50 transition-colors"
+          >
+            <span className="text-xs font-medium text-foreground">
+              {tickers.length} {tickers.length === 1 ? "holding" : "holdings"}
+              <span className="ml-2 font-mono text-muted-foreground">
+                {tickers.slice(0, 4).join(" · ")}{tickers.length > 4 ? ` +${tickers.length - 4}` : ""}
+              </span>
+            </span>
+            <ChevronDown size={14} className={`text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""}`} />
+          </button>
+          {expanded && (
+          <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
           {tickers.map(t => {
             const q = quotes[t];
             const isUp = q && q.change >= 0;
@@ -239,6 +253,8 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
               </div>
             );
           })}
+          </div>
+          )}
         </div>
       ) : (
         <p className="text-xs text-muted-foreground">No tickers yet. Add your holdings to get personalized news.</p>
