@@ -280,5 +280,42 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
         <p className="text-xs text-muted-foreground">No tickers yet. Add your holdings to get personalized news.</p>
       )}
     </div>
+
+    {activeChart && (
+      <div className="rounded-xl border border-border bg-card p-3 lg:w-[420px] lg:flex-shrink-0 space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Activity size={14} className="text-primary" />
+            <span className="text-sm font-semibold text-foreground">{activeChart}</span>
+            {quotes[activeChart]?.price > 0 && (
+              <>
+                <span className="text-sm font-semibold text-foreground">
+                  ${quotes[activeChart].price.toFixed(2)}
+                </span>
+                <span className={`text-xs font-medium ${quotes[activeChart].change >= 0 ? "text-accent" : "text-destructive"}`}>
+                  {quotes[activeChart].change >= 0 ? "+" : ""}{quotes[activeChart].changePercent.toFixed(2)}%
+                </span>
+              </>
+            )}
+          </div>
+          <button
+            onClick={() => setActiveChart(null)}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Close chart"
+          >
+            <X size={14} />
+          </button>
+        </div>
+        <iframe
+          key={activeChart}
+          title={`${activeChart} chart`}
+          src={`https://s.tradingview.com/widgetembed/?frameElementId=tv_${activeChart}&symbol=${encodeURIComponent(activeChart)}&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=1&timezone=Etc%2FUTC&withdateranges=1`}
+          className="w-full h-[360px] rounded-lg border border-border"
+          loading="lazy"
+        />
+        <p className="text-[10px] text-muted-foreground text-center">Chart by TradingView</p>
+      </div>
+    )}
+    </div>
   );
 }
