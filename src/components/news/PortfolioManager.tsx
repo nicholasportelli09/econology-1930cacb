@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { Plus, X, Briefcase, Loader2, TrendingUp, TrendingDown, RefreshCw } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Plus, X, Briefcase, Loader2, TrendingUp, TrendingDown, RefreshCw, Camera } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -27,6 +27,8 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
   const [adding, setAdding] = useState(false);
   const [quotes, setQuotes] = useState<Record<string, StockQuote>>({});
   const [quotesLoading, setQuotesLoading] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const fetchQuotes = useCallback(async () => {
@@ -88,6 +90,52 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
     }
   };
 
+  const handleScreenshot = async (file: File) => {
+    if (!userId) return;
+    if (file.size > 8 * 1024 * 1024) {
+      toast({ title: "Image too large", description: "Please use an image under 8MB.", variant: "destructive" });
+      return;
+    }
+    setImporting(true);
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error("Failed to read file"));
+        reader.readAsDataURL(file);
+      });
+      const { data, error } = await supabase.functions.invoke("portfolio-from-image", {
+        body: { imageBase64: base64, mimeType: file.type },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      const found: string[] = data?.tickers || [];
+      const newOnes = found.filter(t => !tickers.includes(t));
+      if (newOnes.length === 0) {
+        toast({
+          title: found.length > 0 ? "Already tracking" : "No tickers found",
+          description: found.length > 0
+            ? `All ${found.length} detected tickers are already in your portfolio.`
+            : "Couldn't detect any tickers in that screenshot. Try a clearer image.",
+        });
+        return;
+      }
+      const rows = newOnes.map(ticker => ({ user_id: userId, ticker }));
+      const { error: insertErr } = await supabase.from("user_portfolio").insert(rows);
+      if (insertErr) throw insertErr;
+      onUpdate([...tickers, ...newOnes]);
+      toast({
+        title: `Added ${newOnes.length} ticker${newOnes.length > 1 ? "s" : ""}`,
+        description: newOnes.join(", "),
+      });
+    } catch (e: any) {
+      toast({ title: "Import failed", description: e.message || "Could not read screenshot", variant: "destructive" });
+    } finally {
+      setImporting(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   if (!userId) {
     return (
       <div className="rounded-xl border border-border bg-card p-4 text-center text-sm text-muted-foreground">
@@ -104,17 +152,38 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
           <Briefcase size={16} className="text-primary" />
           <span className="text-sm font-semibold text-foreground">My Portfolio</span>
         </div>
-        {tickers.length > 0 && (
+        <div className="flex items-center gap-3">
           <button
-            onClick={fetchQuotes}
-            disabled={quotesLoading}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
-            title="Refresh prices"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={importing}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+            title="Import from screenshot"
           >
-            <RefreshCw size={12} className={quotesLoading ? "animate-spin" : ""} />
-            Refresh
+            {importing ? <Loader2 size={12} className="animate-spin" /> : <Camera size={12} />}
+            {importing ? "Reading..." : "Import screenshot"}
           </button>
-        )}
+          {tickers.length > 0 && (
+            <button
+              onClick={fetchQuotes}
+              disabled={quotesLoading}
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+              title="Refresh prices"
+            >
+              <RefreshCw size={12} className={quotesLoading ? "animate-spin" : ""} />
+              Refresh
+            </button>
+          )}
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) handleScreenshot(f);
+          }}
+        />
       </div>
 
       <form onSubmit={(e) => { e.preventDefault(); addTicker(); }} className="flex gap-2">
