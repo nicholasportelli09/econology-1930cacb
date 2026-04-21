@@ -1,10 +1,22 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://www.econology.app",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+const ALLOWED_ORIGINS = [
+  "https://www.econology.app",
+  "https://econology.app",
+  "https://econology.lovable.app",
+];
+function buildCorsHeaders(req: Request) {
+  const origin = req.headers.get("origin") ?? "";
+  const allow = ALLOWED_ORIGINS.includes(origin) || /\.lovable(project)?\.app$/.test(new URL(origin || "https://x.local").hostname) || /\.vercel\.app$/.test(new URL(origin || "https://x.local").hostname)
+    ? origin
+    : "https://www.econology.app";
+  return {
+    "Access-Control-Allow-Origin": allow,
+    "Vary": "Origin",
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  };
+}
 
 interface VideoEntry {
   id: string;
@@ -47,6 +59,7 @@ function parseRSSFeed(xml: string, channelId: string): VideoEntry[] {
 }
 
 serve(async (req) => {
+  const corsHeaders = buildCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
