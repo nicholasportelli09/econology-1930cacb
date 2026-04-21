@@ -77,6 +77,80 @@ const ALL_TOPICS: TopicCard[] = [
   { id: "scholarships", title: "Scholarship Hunting", description: "Billions go unclaimed each year — claim your share.", category: "Life" },
   { id: "recession", title: "Recession-Proof Finances", description: "Prepare in good times so downturns don't break you.", category: "Life" },
   { id: "financialliteracy", title: "Financial Literacy Gap", description: "Why most adults are financially illiterate — and how to lead.", category: "Life" },
+
+  // --- Additional high-quality topics ---
+
+  // Budgeting
+  { id: "zerobudget", title: "Zero-Based Budgeting", description: "Give every dollar a job before the month begins.", category: "Budgeting" },
+  { id: "envelope", title: "Cash Envelope System", description: "Old-school method that crushes overspending in problem categories.", category: "Budgeting" },
+  { id: "irregular-income", title: "Budgeting Irregular Income", description: "Build a system that works when paychecks fluctuate.", category: "Budgeting" },
+  { id: "sinking-funds", title: "Sinking Funds", description: "Save monthly for predictable yearly expenses — never get blindsided.", category: "Budgeting" },
+  { id: "lifestyle-creep", title: "Beat Lifestyle Creep", description: "Why every raise quietly disappears — and how to keep yours.", category: "Budgeting" },
+  { id: "no-spend", title: "The No-Spend Challenge", description: "Reset your spending habits with a 30-day reset.", category: "Budgeting" },
+
+  // Savings
+  { id: "savings-rate", title: "Your Savings Rate", description: "The single number that predicts when you'll be financially free.", category: "Savings" },
+  { id: "cd-ladder", title: "Building a CD Ladder", description: "Lock in rates without losing access to all your cash.", category: "Savings" },
+  { id: "money-market", title: "Money Market Accounts", description: "Higher yields than checking, more flexible than CDs.", category: "Savings" },
+  { id: "buckets", title: "The Bucket Strategy", description: "Separate accounts for goals, bills, and fun money.", category: "Savings" },
+  { id: "save-for-house", title: "Saving for a Down Payment", description: "How much, where to park it, and how long it really takes.", category: "Savings" },
+
+  // Investing
+  { id: "asset-allocation", title: "Asset Allocation 101", description: "The single biggest driver of long-term returns.", category: "Investing" },
+  { id: "rebalancing", title: "Portfolio Rebalancing", description: "Sell high, buy low — automatically, once a year.", category: "Investing" },
+  { id: "expense-ratios", title: "Why Fees Destroy Returns", description: "A 1% fee can cut your retirement balance by 28%.", category: "Investing" },
+  { id: "target-date", title: "Target-Date Funds", description: "One fund that auto-adjusts as you approach retirement.", category: "Investing" },
+  { id: "reits", title: "REITs Explained", description: "Own real estate income without becoming a landlord.", category: "Investing" },
+  { id: "dividends", title: "Dividend Investing", description: "Build cash-flow from stocks that pay you to hold them.", category: "Investing" },
+  { id: "growth-vs-value", title: "Growth vs Value Stocks", description: "Two philosophies, one portfolio — when each one wins.", category: "Investing" },
+  { id: "small-cap", title: "Small-Cap Premium", description: "Why smaller companies historically outperform — and the catch.", category: "Investing" },
+  { id: "international", title: "International Diversification", description: "The case for owning the rest of the world, not just the US.", category: "Investing" },
+  { id: "robo-advisors", title: "Robo-Advisors", description: "Automated investing for less than 0.5% per year.", category: "Investing" },
+  { id: "tax-loss-harvesting", title: "Tax-Loss Harvesting", description: "Turn losing positions into a tax bill reduction.", category: "Investing" },
+  { id: "behavior-gap", title: "The Behavior Gap", description: "Why investors earn less than the funds they own.", category: "Investing" },
+  { id: "bear-market", title: "Surviving Bear Markets", description: "What to do — and not do — when stocks drop 30%+.", category: "Investing" },
+  { id: "hsa-investing", title: "HSA: The Triple Tax Advantage", description: "The most tax-efficient account most people ignore.", category: "Investing" },
+  { id: "trad-vs-roth", title: "Traditional vs Roth", description: "Pay taxes now or later — how to actually decide.", category: "Investing" },
+  { id: "options-basics", title: "Options Basics (Carefully)", description: "What calls and puts really are — and why most traders lose.", category: "Investing" },
+  { id: "stablecoins", title: "Stablecoins Demystified", description: "Crypto that tries to stay at $1 — how, why, and the risks.", category: "Investing" },
+
+  // Credit
+  { id: "credit-utilization", title: "Credit Utilization", description: "Keep usage under 30% — and ideally under 10% — for top scores.", category: "Credit" },
+  { id: "credit-mix", title: "Credit Mix & History", description: "Why account age and variety matter more than you think.", category: "Credit" },
+  { id: "secured-card", title: "Secured Credit Cards", description: "The fastest way to build credit from zero.", category: "Credit" },
+  { id: "authorized-user", title: "Authorized User Hack", description: "Inherit years of credit history from a trusted family member.", category: "Credit" },
+  { id: "credit-freeze", title: "Freeze Your Credit", description: "The free, 5-minute fix that stops most identity theft.", category: "Credit" },
+
+  // Debt
+  { id: "consolidation", title: "Debt Consolidation", description: "When combining debts saves money — and when it backfires.", category: "Debt" },
+  { id: "balance-transfer", title: "Balance Transfer Cards", description: "0% APR can erase interest — if you have a payoff plan.", category: "Debt" },
+  { id: "minimum-payments", title: "Minimum Payment Trap", description: "Why paying the minimum keeps you in debt for decades.", category: "Debt" },
+  { id: "medical-debt", title: "Negotiating Medical Bills", description: "Most hospital bills are negotiable — here's the script.", category: "Debt" },
+
+  // Earning
+  { id: "high-income-skills", title: "High-Income Skills", description: "The 5 skills that pay $100K+ without a fancy degree.", category: "Earning" },
+  { id: "personal-brand", title: "Build a Personal Brand", description: "Why your online presence is your new resume.", category: "Earning" },
+  { id: "remote-work", title: "Remote Work Economics", description: "Earn city wages while living somewhere cheaper.", category: "Earning" },
+  { id: "raise-script", title: "Asking for a Raise", description: "The exact framework to get a yes — backed by data.", category: "Earning" },
+  { id: "career-capital", title: "Build Career Capital", description: "Skills that compound — the rarer, the more valuable.", category: "Earning" },
+
+  // Taxes
+  { id: "w4-optimization", title: "Optimizing Your W-4", description: "Stop giving the government an interest-free loan.", category: "Taxes" },
+  { id: "fsa-vs-hsa", title: "FSA vs HSA", description: "Two pretax accounts that cut your medical costs.", category: "Taxes" },
+  { id: "529-plans", title: "529 College Savings", description: "Tax-free growth for education — flexible enough for most families.", category: "Taxes" },
+  { id: "estimated-taxes", title: "Quarterly Estimated Taxes", description: "If you freelance, miss these and the IRS adds penalties.", category: "Taxes" },
+
+  // Life
+  { id: "renters-insurance", title: "Renters Insurance Is Cheap", description: "$15/month protects thousands in stuff plus liability.", category: "Life" },
+  { id: "umbrella-policy", title: "Umbrella Insurance", description: "$1M of liability coverage for ~$200/year — usually worth it.", category: "Life" },
+  { id: "estate-basics", title: "Estate Planning at 22", description: "A will, beneficiaries, and a power of attorney — start here.", category: "Life" },
+  { id: "prenup", title: "Prenups & Money Talks", description: "How couples merge finances without losing the relationship.", category: "Life" },
+  { id: "kids-cost", title: "True Cost of a Kid", description: "Beyond the $300K stat — what to actually plan for.", category: "Life" },
+  { id: "fire-movement", title: "The FIRE Movement", description: "Financial Independence, Retire Early — what it really takes.", category: "Life" },
+  { id: "barista-fire", title: "Coast & Barista FIRE", description: "Half-retirement strategies that don't require $2M.", category: "Life" },
+  { id: "geo-arbitrage", title: "Geographic Arbitrage", description: "Move where your money buys more — domestically or abroad.", category: "Life" },
+  { id: "scams", title: "Spot Financial Scams", description: "The 5 red flags every modern scam shares.", category: "Life" },
+  { id: "money-mindset", title: "Money Mindset", description: "How beliefs about money shape every financial decision.", category: "Life" },
 ];
 
 const categoryColor: Record<string, string> = {
@@ -96,8 +170,25 @@ const Learn = () => {
   const profile: UserProfile = stored ? JSON.parse(stored) : defaultProfile;
 
   const PAGE_SIZE = 9;
-  const [page, setPage] = useState(0);
-  const [seed, setSeed] = useState(() => Math.floor(Math.random() * 1_000_000));
+
+  // Persist seed + page so refreshes don't reshuffle and we keep advancing
+  // through unseen topics (5+ refreshes without repeats).
+  const [seed, setSeed] = useState<number>(() => {
+    const stored = localStorage.getItem("econology_learn_seed");
+    if (stored) {
+      const parsed = parseInt(stored, 10);
+      if (!Number.isNaN(parsed)) return parsed;
+    }
+    const fresh = Math.floor(Math.random() * 1_000_000);
+    localStorage.setItem("econology_learn_seed", String(fresh));
+    return fresh;
+  });
+
+  const [page, setPage] = useState<number>(() => {
+    const stored = localStorage.getItem("econology_learn_page");
+    const parsed = stored ? parseInt(stored, 10) : 0;
+    return Number.isNaN(parsed) ? 0 : parsed;
+  });
 
   // Stable shuffled order driven by seed; "Load new topics" advances the page or reshuffles.
   const shuffledOrder = useMemo(() => {
@@ -120,10 +211,15 @@ const Learn = () => {
 
   const shuffleTopics = () => {
     if (page < totalPages - 1) {
-      setPage((p) => p + 1);
+      const next = page + 1;
+      setPage(next);
+      localStorage.setItem("econology_learn_page", String(next));
     } else {
-      setSeed(Math.floor(Math.random() * 1_000_000));
+      const newSeed = Math.floor(Math.random() * 1_000_000);
+      setSeed(newSeed);
       setPage(0);
+      localStorage.setItem("econology_learn_seed", String(newSeed));
+      localStorage.setItem("econology_learn_page", "0");
     }
   };
 
