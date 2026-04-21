@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Bell, Newspaper, TrendingUp, CheckCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { defaultProfile, UserProfile } from "@/types/profile";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +22,31 @@ interface CachedNotifs {
 }
 
 const READ_KEY = () => `econology_notif_read_${new Date().toDateString()}`;
-const CACHE_KEY = () => `econology_notif_cache_${new Date().toDateString()}`;
+const CACHE_KEY = (hash: string) =>
+  `econology_notif_cache_${new Date().toDateString()}_${hash}`;
+
+function getProfile(): UserProfile {
+  try {
+    const raw = localStorage.getItem("econology_profile");
+    return raw ? { ...defaultProfile, ...JSON.parse(raw) } : defaultProfile;
+  } catch {
+    return defaultProfile;
+  }
+}
+
+function profileHash(p: UserProfile): string {
+  const key = JSON.stringify({
+    a: p.age,
+    s: p.studentStatus,
+    l: p.livingSituation,
+    g: p.financialGoals,
+    t: p.topicsOfInterest,
+    d: p.debtTypes,
+  });
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) | 0;
+  return Math.abs(h).toString(36);
+}
 
 function getReadIds(): Set<string> {
   try {
@@ -57,9 +82,12 @@ export function NotificationsBell() {
       const wantsMarket = prefs?.market_news_alerts ?? true;
       if (!wantsDigest && !wantsMarket) return;
 
+      const profile = getProfile();
+      const cacheKey = CACHE_KEY(profileHash(profile));
+
       let cached: CachedNotifs | null = null;
       try {
-        const raw = localStorage.getItem(CACHE_KEY());
+        const raw = localStorage.getItem(cacheKey);
         if (raw) cached = JSON.parse(raw);
       } catch {
         /* ignore */
@@ -67,11 +95,14 @@ export function NotificationsBell() {
 
       if (!cached) {
         try {
-          const { data, error } = await supabase.functions.invoke("daily-notifications");
+          const { data, error } = await supabase.functions.invoke(
+            "daily-notifications",
+            { body: { profile } }
+          );
           if (error) throw error;
           if (data?.digest && data?.market) {
             cached = data as CachedNotifs;
-            localStorage.setItem(CACHE_KEY(), JSON.stringify(cached));
+            localStorage.setItem(cacheKey, JSON.stringify(cached));
           }
         } catch (e) {
           console.error("Failed to fetch notifications:", e);
