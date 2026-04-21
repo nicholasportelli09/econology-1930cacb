@@ -4,17 +4,9 @@ import { DashboardHeader } from "@/components/DashboardHeader";
 import DailyLesson from "@/components/DailyLesson";
 import DailyPlan from "@/components/DailyPlan";
 import DashboardSummary from "@/components/DashboardSummary";
-import {
-  X,
-  ArrowRight,
-  RefreshCw,
-  BookOpen,
-  TrendingUp,
-  Newspaper,
-  Calculator,
-} from "lucide-react";
+import { X, ArrowRight, RefreshCw } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
-import { recordDailyLogin, getGamification, getLevel } from "@/lib/gamification";
+import { recordDailyLogin, getLevel } from "@/lib/gamification";
 
 interface Tip {
   id: string;
@@ -101,93 +93,86 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
-      <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-8">
-        {/* Welcome + Daily Plan */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-3">
-            <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">
+      <main className="max-w-5xl mx-auto px-4 md:px-8 py-10 md:py-14 space-y-12 md:space-y-16">
+        {/* 1. HOMEBASE HEADER — slim status bar */}
+        <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-display font-semibold text-foreground tracking-tight">
               Welcome back, <span className="gradient-text">{profile.name || "Explorer"}</span>
             </h1>
-            <div className="flex items-center gap-3 text-sm text-muted-foreground">
-              <span>Level {level.level} {level.title} · {gam.xp} XP</span>
-              {gam.streak > 1 && <span>· 🔥 {gam.streak}-day streak</span>}
-              <button
-                onClick={() => navigate("/settings")}
-                className="text-primary hover:underline text-xs ml-1"
-              >
-                Edit Topics
-              </button>
-            </div>
+            <p className="text-sm text-muted-foreground mt-1">
+              Level {level.level} {level.title}
+              <span className="mx-1.5 text-muted-foreground/50">·</span>
+              {gam.xp} XP
+              {gam.streak > 1 && (
+                <>
+                  <span className="mx-1.5 text-muted-foreground/50">·</span>
+                  🔥 {gam.streak}-day streak
+                </>
+              )}
+            </p>
+          </div>
+          <button
+            onClick={() => navigate("/settings")}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors self-start sm:self-end"
+          >
+            Edit topics
+          </button>
+        </header>
+
+        {/* 2 + 3. PRIMARY (Daily Lesson) + SECONDARY (Today's Plan) */}
+        <section className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
+          <div className="lg:col-span-3">
             <DailyLesson />
           </div>
-          <div className="lg:col-span-1">
+          <aside className="lg:col-span-2">
             <DailyPlan />
-          </div>
+          </aside>
         </section>
 
-        {/* At-a-glance summary */}
+        {/* 5. CONSOLIDATED REFERENCE STRIP */}
         <DashboardSummary />
 
-        {/* Tips */}
-        <section className="space-y-4">
+        {/* 6. EXPLORATION — lighter, optional */}
+        <section className="space-y-4 pt-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-display font-semibold text-foreground">Recommended Reading</h2>
+            <div>
+              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                Recommended Reading
+              </h2>
+              <p className="text-xs text-muted-foreground/70 mt-0.5">Optional deep dives picked for you</p>
+            </div>
             <button
               onClick={refreshTips}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
             >
-              <RefreshCw size={13} /> Refresh
+              <RefreshCw size={12} /> Refresh
             </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {tips.map((tip) => (
               <div
                 key={tip.id}
-                className="group relative rounded-xl border border-border bg-card p-5 flex flex-col transition-all gradient-border hover:-translate-y-0.5 hover:shadow-lg"
+                className="group relative rounded-lg bg-muted/30 hover:bg-muted/60 p-4 flex flex-col transition-colors"
               >
                 <button
                   onClick={() => dismissTip(tip.id)}
                   title="Dismiss"
-                  className="absolute top-3 right-3 p-1 rounded text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:bg-muted"
+                  className="absolute top-2.5 right-2.5 p-1 rounded text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity hover:text-foreground"
                 >
-                  <X size={14} />
+                  <X size={13} />
                 </button>
-                <h3 className="text-base font-display font-semibold text-foreground mb-2 pr-6">{tip.title}</h3>
-                <p className="text-sm text-muted-foreground mb-4 leading-relaxed flex-1">{tip.description}</p>
+                <h3 className="text-sm font-display font-semibold text-foreground mb-1.5 pr-5">{tip.title}</h3>
+                <p className="text-xs text-muted-foreground mb-3 leading-relaxed flex-1">{tip.description}</p>
                 <button
                   onClick={() => navigate(`/tip/${tip.id}`)}
-                  className="flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+                  className="flex items-center gap-1 text-xs font-medium text-primary transition-colors hover:text-primary/80 self-start"
                 >
-                  Read more <ArrowRight size={13} />
+                  Read more <ArrowRight size={11} />
                 </button>
               </div>
             ))}
           </div>
-        </section>
-
-        {/* Hub links */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { to: "/learn", icon: BookOpen, title: "Learn", desc: "Deep dives & lessons", color: "text-primary", bg: "bg-primary/10" },
-            { to: "/market", icon: TrendingUp, title: "Markets", desc: "Trends & insights", color: "text-secondary", bg: "bg-secondary/10" },
-            { to: "/news", icon: Newspaper, title: "News", desc: "Events simplified", color: "text-accent", bg: "bg-accent/10" },
-            { to: "/budget", icon: Calculator, title: "Budget", desc: "Plan spending", color: "text-primary", bg: "bg-primary/10" },
-          ].map((hub) => {
-            const Icon = hub.icon;
-            return (
-              <button
-                key={hub.to}
-                onClick={() => navigate(hub.to)}
-                className="rounded-xl p-5 text-left border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-lg hover:border-primary/20 group"
-              >
-                <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg ${hub.bg} mb-3`}>
-                  <Icon size={18} className={hub.color} />
-                </div>
-                <h3 className="text-sm font-display font-semibold text-foreground mb-0.5">{hub.title}</h3>
-                <p className="text-xs text-muted-foreground">{hub.desc}</p>
-              </button>
-            );
-          })}
         </section>
       </main>
     </div>

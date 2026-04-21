@@ -54,24 +54,24 @@ export default function DashboardSummary() {
   ];
 
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+    <section className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-border/60 rounded-lg border border-border/60 bg-card/40">
       {cards.map((c) => {
         const Icon = c.icon;
         return (
           <button
             key={c.label}
             onClick={() => navigate(c.to)}
-            className="text-left rounded-xl border border-border bg-card p-4 card-shadow transition-all hover:-translate-y-0.5 hover:shadow-lg hover:border-primary/20 group"
+            className="group flex-1 text-left px-5 py-3.5 transition-colors hover:bg-muted/40 first:rounded-t-lg last:rounded-b-lg sm:first:rounded-l-lg sm:first:rounded-tr-none sm:last:rounded-r-lg sm:last:rounded-bl-none"
           >
-            <div className="flex items-center justify-between mb-1.5">
-              <div className="flex items-center gap-2">
-                <Icon size={14} className="text-primary" />
-                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{c.label}</span>
-              </div>
-              <ArrowRight size={13} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center gap-2 mb-1">
+              <Icon size={12} className="text-muted-foreground" />
+              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{c.label}</span>
             </div>
-            <p className="text-base font-display font-semibold text-foreground">{c.value}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">{c.hint}</p>
+            <div className="flex items-baseline justify-between gap-2">
+              <p className="text-sm font-display font-semibold text-foreground truncate">{c.value}</p>
+              <ArrowRight size={11} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+            </div>
+            <p className="text-[11px] text-muted-foreground/80 mt-0.5 truncate">{c.hint}</p>
           </button>
         );
       })}
