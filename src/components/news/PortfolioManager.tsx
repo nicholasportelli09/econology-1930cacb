@@ -29,6 +29,7 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
   const [quotesLoading, setQuotesLoading] = useState(false);
   const [importing, setImporting] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [activeChart, setActiveChart] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
