@@ -43,7 +43,7 @@ serve(async (req) => {
 
 
   try {
-    const { profile } = await req.json();
+    const { profile, portfolioTickers } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -86,7 +86,19 @@ serve(async (req) => {
       ? `\n\nHere are REAL current headlines to base your analysis on:\n${realHeadlines}\n\nUse these real headlines to identify the 3 most impactful economic events. Do NOT fabricate events.`
       : "";
 
-    const systemPrompt = `You are an economics educator for students. Identify 3 current major economic events that would affect young people. For EACH event, personalize to THIS specific user profile: ${userData}${headlinesContext}
+    const tickers = Array.isArray(portfolioTickers) ? portfolioTickers.filter(Boolean) : [];
+    const portfolioContext = tickers.length > 0
+      ? `\n\nThe user CURRENTLY HOLDS these tickers in their portfolio: ${tickers.join(", ")}.\nFor at least 2 of the 3 events, the "impact" and "action" MUST directly reference how the news affects one or more of these specific holdings (name the ticker), and suggest a SHORT-TERM tactical move: a hedge, a rebalance, a stop, a sector rotation, or a way to take advantage of the news. Do not give long-term passive advice — that is covered elsewhere.`
+      : `\n\nThe user has NOT added any portfolio holdings yet. Focus the "action" on a tactical, short-term reaction to each news event (e.g., a defensive hedge, a sector to watch this week, an instrument to buy/sell into the news), NOT on long-term passive investing advice.`;
+
+    const systemPrompt = `You are a tactical markets analyst for young investors. Identify the 3 most important CURRENT economic / market events from the headlines below. For each event, explain the SHORT-TERM, news-driven implication for this specific user — focused on hedging, taking advantage of the move, or repositioning their existing holdings.
+
+User profile: ${userData}${portfolioContext}${headlinesContext}
+
+Rules:
+- Each "action" must be a tactical, news-reactive move (hedge, rotate, trim, add, options-style protection, cash buffer) — NOT generic "invest in an index fund" or "build an emergency fund" advice.
+- If the user holds tickers, explicitly name the ticker(s) affected in the "impact" field.
+- Keep it grounded in the real headlines — do not invent events.
 
 Return ONLY valid JSON in this format:
 {
@@ -94,8 +106,8 @@ Return ONLY valid JSON in this format:
     {
       "title": "Event title",
       "summary": "What happened (2-3 sentences)",
-      "impact": "How this SPECIFICALLY affects THIS user based on their status/living/income/debt/goals",
-      "action": "Specific action THIS user should take based on their situation",
+      "impact": "Short-term effect on the user — reference held tickers by name when relevant",
+      "action": "Specific tactical / hedging move the user can make THIS WEEK based on the news",
       "category": "Interest Rates/Inflation/Jobs/Markets/Policy"
     }
   ],
