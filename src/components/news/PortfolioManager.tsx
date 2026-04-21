@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Plus, X, Briefcase, Loader2, TrendingUp, TrendingDown, RefreshCw, Camera, ChevronDown } from "lucide-react";
+import { Plus, X, Briefcase, Loader2, TrendingUp, TrendingDown, RefreshCw, Camera, ChevronDown, Activity, LineChart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
