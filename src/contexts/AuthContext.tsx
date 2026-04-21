@@ -21,38 +21,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let isInitialLoad = true;
+    let mounted = true;
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted) return;
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
         setIsGuest(false);
         localStorage.removeItem("econology_guest");
       }
-      setLoading(false);
+      // Only flip loading off on the very first event to avoid re-showing the
+      // full-screen loader (which causes a flicker) on subsequent token refreshes.
+      if (isInitialLoad) {
+        setLoading(false);
+        isInitialLoad = false;
+      }
 
-      // Only redirect on a fresh sign-in (not on initial session restore for returning visitors)
-      if (event === "SIGNED_IN" && session?.user && !isInitialLoad) {
+      // Soft-redirect on fresh sign-in from auth pages only.
+      if (event === "SIGNED_IN" && session?.user) {
         const currentPath = window.location.pathname;
-        // Only redirect from auth pages, never from the landing page
         if (currentPath === "/login" || currentPath === "/signup" || currentPath === "/verify-email") {
           const profile = localStorage.getItem("econology_profile");
-          if (!profile) {
-            window.location.href = "/onboarding";
-          } else {
-            window.location.href = "/dashboard";
-          }
+          // Use history API to avoid a full reload flash. ProtectedRoute will
+          // pick up the new auth state without unmounting the app shell.
+          const target = profile ? "/dashboard" : "/onboarding";
+          window.history.replaceState({}, "", target);
+          // Trigger react-router to react to the URL change.
+          window.dispatchEvent(new PopStateEvent("popstate"));
         }
       }
-      isInitialLoad = false;
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      isInitialLoad = false;
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {
