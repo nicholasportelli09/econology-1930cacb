@@ -7,7 +7,11 @@ const ALLOWED_ORIGINS = [
 ];
 function buildCorsHeaders(req: Request) {
   const origin = req.headers.get("origin") ?? "";
-  const allow = ALLOWED_ORIGINS.includes(origin) || /\.lovable(project)?\.app$/.test(new URL(origin || "https://x.local").hostname) || /\.vercel\.app$/.test(new URL(origin || "https://x.local").hostname)
+  const host = (() => { try { return new URL(origin).hostname; } catch { return ""; } })();
+  const allow = ALLOWED_ORIGINS.includes(origin)
+    || /\.lovable(project)?\.(app|dev)$/.test(host)
+    || /\.lovableproject\.com$/.test(host)
+    || /\.vercel\.app$/.test(host)
     ? origin
     : "https://www.econology.app";
   return {
