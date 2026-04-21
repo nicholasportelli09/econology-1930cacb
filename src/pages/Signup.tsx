@@ -103,24 +103,24 @@ export default function Signup() {
               <label className="text-sm font-medium" style={{ color: "hsl(240 20% 25%)" }}>Name</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "hsl(240 15% 50%)" }} />
-                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="pl-10 bg-white/70 border-white/50" required />
+                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="pl-10 bg-white border-white/60 text-slate-900 placeholder:text-slate-400" required />
               </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium" style={{ color: "hsl(240 20% 25%)" }}>Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "hsl(240 15% 50%)" }} />
-                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="pl-10 bg-white/70 border-white/50" required />
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="pl-10 bg-white border-white/60 text-slate-900 placeholder:text-slate-400" required />
               </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium" style={{ color: "hsl(240 20% 25%)" }}>Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "hsl(240 15% 50%)" }} />
-                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 characters" className="pl-10 bg-white/70 border-white/50" required />
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 characters" className="pl-10 bg-white border-white/60 text-slate-900 placeholder:text-slate-400" required />
               </div>
             </div>
-            <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground hover:opacity-90">
+            <Button type="submit" disabled={loading} className="w-full gradient-bg text-primary-foreground font-semibold shadow-lg glow-shadow transition-all hover:opacity-90 hover:shadow-xl">
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create Account"}
             </Button>
           </form>
