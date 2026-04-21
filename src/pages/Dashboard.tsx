@@ -126,9 +126,11 @@ const Dashboard = () => {
                 Edit Topics
               </button>
             </div>
-            <DailyLesson />
+            <div data-tour="daily-lesson">
+              <DailyLesson />
+            </div>
           </div>
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1" data-tour="daily-plan">
             <DailyPlan />
           </div>
         </section>
@@ -174,7 +176,7 @@ const Dashboard = () => {
         </section>
 
         {/* Hub links */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-5">
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-5" data-tour="hub-grid">
           {[
             { to: "/learn", icon: BookOpen, title: "Learn", desc: "Deep dives & lessons", color: "text-primary", bg: "bg-primary/10" },
             { to: "/market", icon: TrendingUp, title: "Markets", desc: "Trends & insights", color: "text-secondary", bg: "bg-secondary/10" },
