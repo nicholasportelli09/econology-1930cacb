@@ -306,21 +306,21 @@ const EconomicNews = () => {
           <p className="text-muted-foreground mt-1">Real-time market headlines, stock news & AI-personalized insights.</p>
         </div>
 
-        {/* Portfolio & Pins row */}
-        <div className="grid md:grid-cols-2 gap-4">
-          <PortfolioManager
-            userId={user?.id}
-            tickers={portfolioTickers}
-            onUpdate={setPortfolioTickers}
-            loading={portfolioLoading}
-          />
-          <PinnedArticles
-            articles={pinnedArticles}
-            loading={pinnedLoading}
-            onUnpin={unpinById}
-            formatDate={formatDate}
-          />
-        </div>
+        {/* Portfolio (full width — chart opens into right whitespace) */}
+        <PortfolioManager
+          userId={user?.id}
+          tickers={portfolioTickers}
+          onUpdate={setPortfolioTickers}
+          loading={portfolioLoading}
+        />
+
+        {/* Pinned articles */}
+        <PinnedArticles
+          articles={pinnedArticles}
+          loading={pinnedLoading}
+          onUnpin={unpinById}
+          formatDate={formatDate}
+        />
 
         <Tabs defaultValue="headlines" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
