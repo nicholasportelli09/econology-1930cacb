@@ -295,7 +295,7 @@ const EconomicNews = () => {
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
-      <main className="max-w-5xl mx-auto px-4 md:px-8 py-8 space-y-6">
+      <main className="max-w-screen-2xl mx-auto px-4 md:px-10 lg:px-16 py-8 space-y-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground flex items-center gap-3">
             <Newspaper className="text-primary" size={32} />
