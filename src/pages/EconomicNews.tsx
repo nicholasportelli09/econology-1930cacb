@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import {
-  Newspaper, Loader2, CheckCircle2, Sparkles, TrendingUp, Search, BarChart3, RefreshCw,
+  Newspaper, Loader2, CheckCircle2, Sparkles, TrendingUp, Search, RefreshCw,
 } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import { Badge } from "@/components/ui/badge";
@@ -69,16 +69,12 @@ const EconomicNews = () => {
   const { user } = useAuth();
 
   /* Market news (Finnhub) */
-  const [marketLoading, setMarketLoading] = useState(false);
-  const [marketArticles, setMarketArticles] = useState<Article[]>([]);
-  const [marketError, setMarketError] = useState<string | null>(null);
-  const [marketSearch, setMarketSearch] = useState("");
-
-  /* Stock/company news (Finnhub via fmp-stock-news) */
-  const [stockLoading, setStockLoading] = useState(false);
-  const [stockArticles, setStockArticles] = useState<Article[]>([]);
-  const [stockError, setStockError] = useState<string | null>(null);
-  const [tickerSearch, setTickerSearch] = useState("");
+  /* Unified headlines (general market + ticker/company news) */
+  const [headlinesLoading, setHeadlinesLoading] = useState(false);
+  const [headlinesArticles, setHeadlinesArticles] = useState<Article[]>([]);
+  const [headlinesError, setHeadlinesError] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [modeLabel, setModeLabel] = useState<string>("General market headlines");
 
   /* AI news */
   const [aiLoading, setAiLoading] = useState(false);
@@ -120,48 +116,79 @@ const EconomicNews = () => {
     loadData();
   }, [user]);
 
-  /* ── Fetch Market News (Finnhub general news) ── */
-  const fetchMarketNews = useCallback(async (search?: string) => {
-    setMarketLoading(true);
-    setMarketError(null);
-    try {
-      const body: any = { limit: 20 };
-      if (search?.trim()) {
-        body.category = search.trim().toLowerCase();
-      }
-      // Always use general market news endpoint (no tickers)
-      const { data, error } = await supabase.functions.invoke("stock-news", { body });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      setMarketArticles(diversifyBySource(data.articles || [], 10));
-    } catch (e: any) {
-      const msg = e?.message || "Failed to fetch market news";
-      setMarketError(msg);
-      toast({ title: "Error", description: msg, variant: "destructive" });
-    } finally { setMarketLoading(false); }
-  }, [toast]);
+  /* ── Unified Headlines fetcher ── */
+  const KNOWN_CATEGORIES = ["general", "forex", "crypto", "merger"];
+  const TICKER_RE = /^[A-Za-z]{1,5}$/;
 
-  /* ── Fetch Company News (Finnhub company-specific, requires ticker) ── */
-  const fetchStockNews = async (tickers?: string) => {
-    const query = tickers?.trim() || portfolioTickers.join(",");
-    if (!query) {
-      toast({ title: "Enter a ticker", description: "Search for a company ticker like AAPL, TSLA, or MSFT to see company-specific news.", variant: "destructive" });
-      return;
-    }
-    setStockLoading(true);
-    setStockError(null);
+  const fetchHeadlines = useCallback(async (rawQuery: string, opts?: { usePortfolio?: boolean }) => {
+    setHeadlinesLoading(true);
+    setHeadlinesError(null);
+    const q = rawQuery.trim();
     try {
-      const body: any = { limit: 15, tickers: query.toUpperCase() };
-      const { data, error } = await supabase.functions.invoke("fmp-stock-news", { body });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      setStockArticles(diversifyBySource(data.articles || [], 10));
+      let articles: Article[] = [];
+      let label = "General market headlines";
+
+      if (opts?.usePortfolio) {
+        if (portfolioTickers.length === 0) {
+          toast({ title: "No portfolio tickers", description: "Add tickers to your portfolio to see personalized news.", variant: "destructive" });
+          setHeadlinesLoading(false);
+          return;
+        }
+        const { data, error } = await supabase.functions.invoke("fmp-stock-news", {
+          body: { limit: 20, tickers: portfolioTickers.join(",") },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        // Dedupe by URL, sort by publishedDate desc
+        const seen = new Set<string>();
+        articles = (data.articles || [])
+          .filter((a: Article) => {
+            if (!a.url || seen.has(a.url)) return false;
+            seen.add(a.url);
+            return true;
+          })
+          .sort((a: Article, b: Article) =>
+            new Date(b.publishedDate || 0).getTime() - new Date(a.publishedDate || 0).getTime()
+          );
+        label = `Your portfolio (${portfolioTickers.join(", ")})`;
+      } else if (TICKER_RE.test(q) && !KNOWN_CATEGORIES.includes(q.toLowerCase())) {
+        const ticker = q.toUpperCase();
+        const { data, error } = await supabase.functions.invoke("fmp-stock-news", {
+          body: { limit: 15, tickers: ticker },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        articles = data.articles || [];
+        label = `${ticker} company news`;
+      } else if (q) {
+        const category = q.toLowerCase();
+        const { data, error } = await supabase.functions.invoke("stock-news", {
+          body: { limit: 20, category },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        articles = data.articles || [];
+        label = `${category.charAt(0).toUpperCase() + category.slice(1)} headlines`;
+      } else {
+        const { data, error } = await supabase.functions.invoke("stock-news", {
+          body: { limit: 20 },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        articles = data.articles || [];
+        label = "General market headlines";
+      }
+
+      setHeadlinesArticles(diversifyBySource(articles, 10));
+      setModeLabel(label);
     } catch (e: any) {
-      const msg = e?.message || "Failed to fetch company news";
-      setStockError(msg);
+      const msg = e?.message || "Failed to fetch headlines";
+      setHeadlinesError(msg);
       toast({ title: "Error", description: msg, variant: "destructive" });
-    } finally { setStockLoading(false); }
-  };
+    } finally {
+      setHeadlinesLoading(false);
+    }
+  }, [portfolioTickers, toast]);
 
   /* ── Fetch AI Insights ── */
   const fetchAiNews = async () => {
