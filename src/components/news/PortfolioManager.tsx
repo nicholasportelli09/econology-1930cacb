@@ -148,8 +148,8 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-3">
-    <div className="rounded-xl border border-border bg-card p-4 space-y-3 flex-1 min-w-0">
+    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="rounded-xl border border-border bg-card p-4 space-y-3 min-w-0">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Briefcase size={16} className="text-primary" />
