@@ -116,6 +116,7 @@ export function DashboardHeader({ initials = "U" }: Props) {
             <NavLink
               key={item.to}
               to={item.to}
+              data-tour={`m-${item.tour}`}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground whitespace-nowrap transition-colors hover:text-foreground hover:bg-muted"
               activeClassName="text-foreground bg-muted"
             >

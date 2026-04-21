@@ -21,6 +21,13 @@ export function resetTour() {
  * isn't on the current page (driver.js skips missing selectors).
  */
 export function startProductTour(opts?: { onFinish?: () => void }) {
+  // Detect mobile so we anchor on the visible mobile nav, not the
+  // hidden desktop nav. Re-evaluated each time the tour starts.
+  const isMobile =
+    typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches;
+  const navSel = (key: string) =>
+    isMobile ? `[data-tour="m-${key}"]` : `[data-tour="${key}"]`;
+
   const d = driver({
     showProgress: true,
     allowClose: true,
@@ -67,17 +74,17 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         },
       },
       {
-        element: '[data-tour="nav-learn"]',
+        element: navSel("nav-learn"),
         popover: {
           title: "Learn Hub",
           description:
             "Dozens of deep-dive articles on budgeting, investing, credit, taxes, and more. Search any topic.",
-          side: "bottom",
+          side: isMobile ? "bottom" : "bottom",
           align: "center",
         },
       },
       {
-        element: '[data-tour="nav-news"]',
+        element: navSel("nav-news"),
         popover: {
           title: "Economic News 📰",
           description:
@@ -87,7 +94,7 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         },
       },
       {
-        element: '[data-tour="nav-market"]',
+        element: navSel("nav-market"),
         popover: {
           title: "Market Ideas 💡",
           description:
@@ -97,7 +104,7 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         },
       },
       {
-        element: '[data-tour="nav-videos"]',
+        element: navSel("nav-videos"),
         popover: {
           title: "Curated Videos 🎥",
           description:
@@ -107,7 +114,7 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         },
       },
       {
-        element: '[data-tour="nav-ask"]',
+        element: navSel("nav-ask"),
         popover: {
           title: "Ask Ekon 🤖",
           description:
