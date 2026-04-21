@@ -148,8 +148,8 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-3">
-    <div className="rounded-xl border border-border bg-card p-4 space-y-3 flex-1 min-w-0">
+    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="rounded-xl border border-border bg-card p-4 space-y-3 min-w-0">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Briefcase size={16} className="text-primary" />
@@ -241,19 +241,23 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
             return (
               <div
                 key={t}
-                className={`flex items-center justify-between rounded-lg border px-3 py-2 cursor-pointer transition-all ${
-                  isActive ? "border-primary bg-primary/5" : "border-border bg-muted/30 hover:bg-muted/50"
+                className={`group flex items-center justify-between rounded-lg border px-3 py-2 cursor-pointer transition-all ${
+                  isActive ? "border-primary bg-primary/10 shadow-sm" : "border-border bg-muted/30 hover:border-primary/40 hover:bg-primary/5"
                 }`}
                 onClick={() => setActiveChart(isActive ? null : t)}
+                title={isActive ? "Hide chart" : "Click to view live chart"}
               >
                 <div className="flex items-center gap-2">
-                  <LineChart size={12} className={isActive ? "text-primary" : "text-muted-foreground"} />
+                  <LineChart size={14} className={isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary"} />
                   <span className="text-sm font-mono font-semibold text-foreground">{t}</span>
                   {q && q.price > 0 && (
                     <span className="text-sm font-semibold text-foreground">${q.price.toFixed(2)}</span>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
+                  <span className={`hidden sm:inline text-[10px] font-semibold uppercase tracking-wider transition-opacity ${isActive ? "text-primary opacity-100" : "text-primary opacity-0 group-hover:opacity-100"}`}>
+                    {isActive ? "Viewing" : "View chart"}
+                  </span>
                   {q && q.price > 0 && (
                     <span className={`flex items-center gap-0.5 text-xs font-medium ${isUp ? "text-accent" : "text-destructive"}`}>
                       {isUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
@@ -281,18 +285,22 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
       )}
     </div>
 
-    {activeChart && (
-      <div className="rounded-xl border border-border bg-card p-3 lg:w-[420px] lg:flex-shrink-0 space-y-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Activity size={14} className="text-primary" />
-            <span className="text-sm font-semibold text-foreground">{activeChart}</span>
+    {activeChart ? (
+      <div className="rounded-xl border-2 border-primary/30 bg-card p-4 space-y-3 min-w-0 shadow-lg shadow-primary/5 animate-fade-in">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-primary/10 border border-primary/20">
+              <Activity size={12} className="text-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Live Chart</span>
+            </div>
+            <span className="text-base font-mono font-bold text-foreground">{activeChart}</span>
             {quotes[activeChart]?.price > 0 && (
               <>
-                <span className="text-sm font-semibold text-foreground">
+                <span className="text-base font-bold text-foreground">
                   ${quotes[activeChart].price.toFixed(2)}
                 </span>
-                <span className={`text-xs font-medium ${quotes[activeChart].change >= 0 ? "text-accent" : "text-destructive"}`}>
+                <span className={`flex items-center gap-0.5 text-sm font-semibold ${quotes[activeChart].change >= 0 ? "text-accent" : "text-destructive"}`}>
+                  {quotes[activeChart].change >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
                   {quotes[activeChart].change >= 0 ? "+" : ""}{quotes[activeChart].changePercent.toFixed(2)}%
                 </span>
               </>
@@ -300,22 +308,38 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
           </div>
           <button
             onClick={() => setActiveChart(null)}
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className="flex-shrink-0 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             aria-label="Close chart"
           >
-            <X size={14} />
+            <X size={16} />
           </button>
         </div>
         <iframe
           key={activeChart}
           title={`${activeChart} chart`}
-          src={`https://s.tradingview.com/widgetembed/?frameElementId=tv_${activeChart}&symbol=${encodeURIComponent(activeChart)}&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=1&timezone=Etc%2FUTC&withdateranges=1`}
-          className="w-full h-[360px] rounded-lg border border-border"
+          src={`https://s.tradingview.com/widgetembed/?frameElementId=tv_${activeChart}&symbol=${encodeURIComponent(activeChart)}&interval=D&hidesidetoolbar=0&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=1&timezone=Etc%2FUTC&withdateranges=1`}
+          className="w-full h-[440px] rounded-lg border border-border bg-muted/20"
           loading="lazy"
         />
-        <p className="text-[10px] text-muted-foreground text-center">Chart by TradingView</p>
+        <p className="text-[10px] text-muted-foreground text-center">Interactive chart by TradingView · Click any holding to switch</p>
       </div>
-    )}
+    ) : tickers.length > 0 ? (
+      <button
+        onClick={() => setActiveChart(tickers[0])}
+        className="hidden lg:flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-secondary/5 p-6 text-center hover:border-primary/60 hover:from-primary/10 hover:to-secondary/10 transition-all group min-h-[300px]"
+      >
+        <div className="flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 mb-3 group-hover:bg-primary/20 group-hover:scale-110 transition-all">
+          <LineChart size={28} className="text-primary" />
+        </div>
+        <p className="text-sm font-semibold text-foreground mb-1">View live charts</p>
+        <p className="text-xs text-muted-foreground max-w-[240px]">
+          Click any ticker on the left to open an interactive TradingView chart right here.
+        </p>
+        <span className="mt-3 text-[10px] font-semibold uppercase tracking-wider text-primary">
+          Tap to preview {tickers[0]} →
+        </span>
+      </button>
+    ) : null}
     </div>
   );
 }
