@@ -92,13 +92,18 @@ serve(async (req) => {
     const focusCategories = shuffled.slice(0, 5).join(", ");
     const randomSeed = Math.random().toString(36).slice(2, 8);
 
-    const systemPrompt = `You are a creative financial advisor for students. Based on this user profile: ${userData}, provide 3 UNIQUE and SPECIFIC investment options suitable for their situation.${headlinesContext}
+    const systemPrompt = `You are a LONG-TERM investment strategist for young investors. Based on this user profile: ${userData}, propose 3 UNIQUE and SPECIFIC investments to BUY AND HOLD for the next 3-10+ years.${headlinesContext}
+
+Positioning vs. other parts of the app:
+- This section is about LONG-TERM thesis-driven investing (multi-year holds, structural trends, compounding).
+- It is NOT about reacting to today's headlines, hedging, or tactical short-term trades — that lives in the AI Insights section of the news page.
+- You may use current headlines as context for *why* a long-term thesis is timely, but every recommendation must make sense as a multi-year position even if the news fades.
 
 IMPORTANT: Be CREATIVE and VARIED. Focus on these categories this time: ${focusCategories}. Seed: ${randomSeed}.
 - Do NOT always suggest the same generic options like "S&P 500 index fund" or "high-yield savings"
 - Include SPECIFIC fund names, ETF tickers, or platform names
 - Mix different asset classes and risk levels
-- Consider trending sectors, thematic ETFs, or niche opportunities appropriate for beginners
+- Consider structural long-term trends (demographics, AI, energy transition, emerging markets, etc.)
 - Each recommendation should feel fresh and different from typical generic advice
 
 For EACH investment, include a detailed step-by-step execution guide with 5-7 specific, actionable steps that a complete beginner can follow. Steps should include exact platform names, what to click, what documents are needed, and how to place the first order.
