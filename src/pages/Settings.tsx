@@ -8,10 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
-import { Save, RotateCcw, Trash2, Bell, Mail, Youtube, Plus, X } from "lucide-react";
+import { Save, RotateCcw, Trash2, Bell, Mail, Youtube, Plus, X, Compass } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { type YouTubeCreator, DEFAULT_CREATORS, getCreators, saveCreators } from "@/data/youtubeCreators";
+import { resetTour, startProductTour } from "@/lib/productTour";
 
 function getProfile(): UserProfile {
   try {
@@ -391,6 +392,18 @@ const Settings = () => {
             className="w-full"
           >
             Retake Quiz
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={() => {
+              resetTour();
+              startProductTour();
+              toast({ title: "Tutorial restarted", description: "Walking you through the app again." });
+            }}
+            className="w-full"
+          >
+            <Compass size={16} /> Replay Product Tour
           </Button>
         </div>
       </main>
