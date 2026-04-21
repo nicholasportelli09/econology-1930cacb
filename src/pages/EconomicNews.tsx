@@ -195,7 +195,9 @@ const EconomicNews = () => {
     setAiLoading(true);
     setAiError(null);
     try {
-      const { data, error } = await supabase.functions.invoke("economic-news", { body: { profile } });
+      const { data, error } = await supabase.functions.invoke("economic-news", {
+        body: { profile, portfolioTickers },
+      });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setAiData(data as AiNewsData);
@@ -397,6 +399,11 @@ const EconomicNews = () => {
 
           {/* ═══════ AI Insights Tab ═══════ */}
           <TabsContent value="ai" className="space-y-4 mt-4">
+            <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-xs text-muted-foreground leading-relaxed">
+              <span className="font-semibold text-foreground">AI Insights = short-term, news-driven moves</span> tailored to {portfolioTickers.length > 0
+                ? <>your portfolio (<span className="font-mono text-primary">{portfolioTickers.join(", ")}</span>)</>
+                : "your profile"}: hedges, rebalances and ways to take advantage of what's happening this week. For long-term buy-and-hold ideas, see <span className="font-medium text-foreground">Market Ideas</span>.
+            </div>
             <div className="flex justify-between items-center gap-2">
               {aiData?.lastUpdated && <p className="text-xs text-muted-foreground">Last updated: {aiData.lastUpdated}</p>}
               <div className="flex items-center gap-2 ml-auto">

@@ -109,6 +109,9 @@ const MarketIdeas = () => {
               Market Ideas
             </h1>
             <p className="text-muted-foreground mt-1">AI-powered investment recommendations personalized for you.</p>
+            <p className="text-xs text-muted-foreground mt-2 max-w-2xl">
+              <span className="font-semibold text-foreground">Long-term, thesis-driven ideas</span> to buy and hold for years — informed by current trends but built to outlast the news cycle. For short-term, news-reactive moves on your portfolio, check <span className="font-medium text-foreground">AI Insights</span> in Economic News.
+            </p>
           </div>
           <div className="flex items-center gap-3">
             <button onClick={fetchInsights} disabled={loading} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
