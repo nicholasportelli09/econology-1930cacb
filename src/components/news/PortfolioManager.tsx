@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Plus, X, Briefcase, Loader2, TrendingUp, TrendingDown, RefreshCw, Camera } from "lucide-react";
+import { Plus, X, Briefcase, Loader2, TrendingUp, TrendingDown, RefreshCw, Camera, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -28,6 +28,7 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
   const [quotes, setQuotes] = useState<Record<string, StockQuote>>({});
   const [quotesLoading, setQuotesLoading] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
