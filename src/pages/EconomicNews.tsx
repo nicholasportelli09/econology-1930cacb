@@ -320,67 +320,79 @@ const EconomicNews = () => {
           />
         </div>
 
-        <Tabs defaultValue="market" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="market" className="flex items-center gap-2">
-              <Newspaper size={16} /> Market News
-            </TabsTrigger>
-            <TabsTrigger value="stock" className="flex items-center gap-2">
-              <BarChart3 size={16} /> Company News
+        <Tabs defaultValue="headlines" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="headlines" className="flex items-center gap-2">
+              <Newspaper size={16} /> Headlines
             </TabsTrigger>
             <TabsTrigger value="ai" className="flex items-center gap-2">
               <Sparkles size={16} /> AI Insights
             </TabsTrigger>
           </TabsList>
 
-          {/* ═══════ Market News Tab (Finnhub) ═══════ */}
-          <TabsContent value="market" className="space-y-4 mt-4">
-            <form onSubmit={(e) => { e.preventDefault(); fetchMarketNews(marketSearch); }} className="flex gap-2">
+          {/* ═══════ Headlines Tab (unified market + company) ═══════ */}
+          <TabsContent value="headlines" className="space-y-4 mt-4">
+            <form onSubmit={(e) => { e.preventDefault(); fetchHeadlines(query); }} className="flex gap-2">
               <div className="relative flex-1">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Filter by category (e.g. general, forex, crypto, merger)"
-                  value={marketSearch}
-                  onChange={(e) => setMarketSearch(e.target.value)}
+                  placeholder="Search ticker (AAPL) or topic (forex, crypto, merger)…"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
                   className="pl-9"
                 />
               </div>
               <button
                 type="submit"
-                disabled={marketLoading}
+                disabled={headlinesLoading}
                 className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {marketLoading ? <Loader2 size={16} className="animate-spin" /> : <TrendingUp size={16} />}
-                {marketLoading ? "Loading..." : "Fetch News"}
+                {headlinesLoading ? <Loader2 size={16} className="animate-spin" /> : <TrendingUp size={16} />}
+                {headlinesLoading ? "Loading..." : "Fetch News"}
               </button>
             </form>
-            {renderArticleList(marketArticles, marketLoading, marketError, () => fetchMarketNews(marketSearch), 'Click "Fetch News" for the latest general market headlines.')}
-          </TabsContent>
 
-          {/* ═══════ Stock News Tab ═══════ */}
-          <TabsContent value="stock" className="space-y-4 mt-4">
-            <form onSubmit={(e) => { e.preventDefault(); fetchStockNews(tickerSearch); }} className="flex gap-2">
-              <div className="relative flex-1">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder={portfolioTickers.length > 0
-                    ? `Search ticker or press Fetch for portfolio (${portfolioTickers.join(", ")})`
-                    : "Enter a ticker (e.g. AAPL, TSLA, MSFT)"}
-                  value={tickerSearch}
-                  onChange={(e) => setTickerSearch(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
+            {/* Quick filter chips */}
+            <div className="flex flex-wrap gap-2">
               <button
-                type="submit"
-                disabled={stockLoading}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => { setQuery(""); fetchHeadlines(""); }}
+                disabled={headlinesLoading}
+                className="px-3 py-1.5 rounded-full text-xs font-medium border border-border bg-card text-foreground hover:bg-muted transition-colors disabled:opacity-50"
               >
-                {stockLoading ? <Loader2 size={16} className="animate-spin" /> : <BarChart3 size={16} />}
-                {stockLoading ? "Loading..." : "Fetch Company News"}
+                All
               </button>
-            </form>
-            {renderArticleList(stockArticles, stockLoading, stockError, () => fetchStockNews(tickerSearch), 'Enter a company ticker (e.g. AAPL) to see company-specific news and earnings updates.')}
+              <button
+                onClick={() => { setQuery(""); fetchHeadlines("", { usePortfolio: true }); }}
+                disabled={headlinesLoading || portfolioTickers.length === 0}
+                className="px-3 py-1.5 rounded-full text-xs font-medium border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                My Portfolio{portfolioTickers.length > 0 ? ` (${portfolioTickers.length})` : ""}
+              </button>
+              {["Crypto", "Forex", "Merger"].map((c) => (
+                <button
+                  key={c}
+                  onClick={() => { setQuery(c.toLowerCase()); fetchHeadlines(c.toLowerCase()); }}
+                  disabled={headlinesLoading}
+                  className="px-3 py-1.5 rounded-full text-xs font-medium border border-border bg-card text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+
+            {headlinesArticles.length > 0 && !headlinesLoading && (
+              <p className="text-xs text-muted-foreground border-l-2 border-primary/40 pl-3">
+                Showing: <span className="font-medium text-foreground">{modeLabel}</span>
+              </p>
+            )}
+
+            {renderArticleList(
+              headlinesArticles,
+              headlinesLoading,
+              headlinesError,
+              () => fetchHeadlines(query),
+              'Click "Fetch News" or pick a filter to see the latest headlines.'
+            )}
           </TabsContent>
 
           {/* ═══════ AI Insights Tab ═══════ */}
