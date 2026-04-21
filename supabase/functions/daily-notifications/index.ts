@@ -46,6 +46,34 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
+    let profile: Record<string, unknown> = {};
+    try {
+      if (req.method === "POST") {
+        const body = await req.json();
+        if (body && typeof body === "object" && body.profile) {
+          profile = body.profile;
+        }
+      }
+    } catch {
+      /* ignore malformed body */
+    }
+
+    const profileSummary = (() => {
+      const parts: string[] = [];
+      if (profile.age) parts.push(`age ${profile.age}`);
+      if (profile.studentStatus) parts.push(String(profile.studentStatus));
+      if (profile.livingSituation) parts.push(`lives ${profile.livingSituation}`);
+      if (profile.monthlyIncome) parts.push(`income ${profile.monthlyIncome}/mo`);
+      if (profile.currentSavings) parts.push(`savings ${profile.currentSavings}`);
+      if (Array.isArray(profile.debtTypes) && profile.debtTypes.length)
+        parts.push(`debt: ${(profile.debtTypes as string[]).join(", ")}`);
+      if (Array.isArray(profile.financialGoals) && profile.financialGoals.length)
+        parts.push(`goals: ${(profile.financialGoals as string[]).join(", ")}`);
+      if (Array.isArray(profile.topicsOfInterest) && profile.topicsOfInterest.length)
+        parts.push(`interests: ${(profile.topicsOfInterest as string[]).join(", ")}`);
+      return parts.length ? parts.join(" | ") : "no profile provided";
+    })();
+
     const now = new Date();
     const dayName = now.toLocaleDateString("en-US", { weekday: "long" });
     const fullDate = now.toLocaleDateString("en-US", {
@@ -71,6 +99,9 @@ serve(async (req) => {
             {
               role: "system",
               content: `You are a financial notification writer for a student finance app called Econology. Today is ${fullDate}.
+
+USER PROFILE: ${profileSummary}
+
 ${isWeekend ? "US stock markets are CLOSED today (weekend). Do NOT reference live trading, market opens, or intraday moves." : "US stock markets are OPEN today."}
 
 Return ONLY valid JSON with this exact structure, no markdown:
@@ -80,16 +111,17 @@ Return ONLY valid JSON with this exact structure, no markdown:
 }
 
 Rules:
-- "digest": A useful, accurate financial tip or insight relevant to today. Under 25 words for body.
-- "market": A timely market observation relevant to today. Under 25 words for body.
+- "digest": A useful, accurate financial tip or insight TAILORED TO THIS USER'S profile (age, country/situation, goals, interests). Under 25 words for body.
+- "market": A timely market observation relevant to today AND aligned with the user's interests/goals. Under 25 words for body.
 - Titles should be 2-4 words.
 - Be specific and accurate for today's date and day of week.
 - If weekend, focus on weekly recaps, upcoming week previews, or evergreen financial wisdom.
-- Never fabricate specific numbers or prices.`,
+- Never fabricate specific numbers or prices.
+- CRITICAL: Do NOT give US-specific advice (e.g. "refinance federal student loans", "Roth IRA", "401k") unless the user's profile clearly indicates US context. If the user is a high schooler with no debt, do NOT mention loan refinancing. Match advice to their actual life stage and stated goals.`,
             },
             {
               role: "user",
-              content: `Generate today's two notification items for ${fullDate}.`,
+              content: `Generate today's two notification items for ${fullDate}. Tailor strictly to: ${profileSummary}.`,
             },
           ],
         }),
