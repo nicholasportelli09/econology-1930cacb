@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import EconologyLogo from "@/components/EconologyLogo";
 import { NavLink } from "@/components/NavLink";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NotificationsBell } from "@/components/NotificationsBell";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   LayoutDashboard,
@@ -70,6 +71,7 @@ export function DashboardHeader({ initials = "U" }: Props) {
             <BarChart3 size={16} />
             <span className="hidden sm:inline">Progress</span>
           </button>
+          <NotificationsBell />
           <ThemeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
