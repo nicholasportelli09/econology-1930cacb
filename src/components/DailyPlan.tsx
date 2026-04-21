@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle2, Circle, BookOpen, Newspaper, Calculator, MessageCircle, TrendingUp, type LucideIcon } from "lucide-react";
 import { getGamification } from "@/lib/gamification";
@@ -16,9 +16,21 @@ function isToday(iso: string | null | undefined): boolean {
   return new Date(iso).toDateString() === new Date().toDateString();
 }
 
+const MANUAL_KEY = () => `econology_daily_plan_manual_${new Date().toDateString()}`;
+
+function getManual(): Record<string, boolean> {
+  try {
+    const raw = localStorage.getItem(MANUAL_KEY());
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
 export default function DailyPlan() {
   const navigate = useNavigate();
   const gam = getGamification();
+  const [manual, setManual] = useState<Record<string, boolean>>(() => getManual());
 
   const items: PlanItem[] = useMemo(() => {
     const todayKey = new Date().toDateString();
@@ -29,15 +41,22 @@ export default function DailyPlan() {
     const budgetUsed = isToday(localStorage.getItem("econology_last_budget_use"));
 
     return [
-      { id: "lesson", label: "Daily lesson", to: "/dashboard", icon: BookOpen, done: lessonDone },
-      { id: "tip", label: "Read a topic", to: "/learn", icon: BookOpen, done: tipRead },
-      { id: "news", label: "Check the news", to: "/news", icon: Newspaper, done: newsChecked },
-      { id: "ekon", label: "Ask Ekon a question", to: "/ask", icon: MessageCircle, done: ekonAsked },
-      { id: "budget", label: "Try the budget simulator", to: "/budget", icon: Calculator, done: budgetUsed },
+      { id: "lesson", label: "Daily lesson", to: "/dashboard", icon: BookOpen, done: lessonDone || !!manual.lesson },
+      { id: "tip", label: "Read a topic", to: "/learn", icon: BookOpen, done: tipRead || !!manual.tip },
+      { id: "news", label: "Check the news", to: "/news", icon: Newspaper, done: newsChecked || !!manual.news },
+      { id: "ekon", label: "Ask Ekon a question", to: "/ask", icon: MessageCircle, done: ekonAsked || !!manual.ekon },
+      { id: "budget", label: "Try the budget simulator", to: "/budget", icon: Calculator, done: budgetUsed || !!manual.budget },
     ];
-  }, [gam.xp]);
+  }, [gam.xp, manual]);
 
   const completed = items.filter((i) => i.done).length;
+
+  const toggle = (id: string, currentlyDone: boolean) => {
+    const next = { ...manual, [id]: !currentlyDone };
+    if (!next[id]) delete next[id];
+    setManual(next);
+    localStorage.setItem(MANUAL_KEY(), JSON.stringify(next));
+  };
 
   return (
     <div className="rounded-xl border border-border bg-card p-4 card-shadow">
@@ -52,16 +71,25 @@ export default function DailyPlan() {
         {items.map((item) => {
           const Icon = item.icon;
           return (
-            <li key={item.id}>
+            <li key={item.id} className="flex items-center gap-1 rounded-md transition-colors hover:bg-muted">
               <button
-                onClick={() => navigate(item.to)}
-                className="w-full flex items-center gap-2.5 text-left text-sm py-1.5 px-2 rounded-md transition-colors hover:bg-muted group"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggle(item.id, item.done);
+                }}
+                className="p-1.5 shrink-0"
+                aria-label={item.done ? `Mark ${item.label} incomplete` : `Mark ${item.label} complete`}
               >
                 {item.done ? (
-                  <CheckCircle2 size={15} className="text-accent shrink-0" />
+                  <CheckCircle2 size={15} className="text-accent" />
                 ) : (
-                  <Circle size={15} className="text-muted-foreground shrink-0" />
+                  <Circle size={15} className="text-muted-foreground hover:text-foreground transition-colors" />
                 )}
+              </button>
+              <button
+                onClick={() => navigate(item.to)}
+                className="flex-1 flex items-center gap-2.5 text-left text-sm py-1.5 pr-2"
+              >
                 <Icon size={13} className="text-muted-foreground shrink-0" />
                 <span className={item.done ? "text-muted-foreground line-through" : "text-foreground"}>
                   {item.label}
