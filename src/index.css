@@ -182,16 +182,38 @@
   color: hsl(var(--primary));
 }
 
+.econology-tour-popover .driver-popover-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.econology-tour-popover .driver-popover-navigation-btns {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .econology-tour-popover .driver-popover-footer button {
   background: hsl(var(--muted));
   color: hsl(var(--foreground));
   border: 1px solid hsl(var(--border));
   border-radius: 0.5rem;
-  padding: 0.4rem 0.85rem;
+  padding: 0.45rem 0.9rem;
   font-size: 0.8rem;
   font-weight: 600;
+  line-height: 1.2;
   text-shadow: none;
-  transition: all 0.15s;
+  box-shadow: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .econology-tour-popover .driver-popover-footer button:hover {
@@ -200,20 +222,37 @@
 
 .econology-tour-popover .driver-popover-next-btn,
 .econology-tour-popover .driver-popover-footer button.driver-popover-next-btn {
-  background: var(--gradient-primary);
-  color: hsl(var(--primary-foreground));
-  border-color: transparent;
+  background: var(--gradient-primary) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  border: 1px solid transparent !important;
+  text-shadow: none !important;
+  box-shadow: 0 4px 12px -2px hsl(270 70% 55% / 0.35);
 }
 
 .econology-tour-popover .driver-popover-next-btn:hover {
   opacity: 0.92;
+  box-shadow: 0 6px 16px -2px hsl(270 70% 55% / 0.45);
 }
 
 .econology-tour-popover .driver-popover-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
   color: hsl(var(--muted-foreground));
   background: transparent;
   border: none;
   font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 0.375rem;
+}
+
+.econology-tour-popover .driver-popover-close-btn:hover {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
 }
 
 .econology-tour-popover .driver-popover-arrow-side-bottom.driver-popover-arrow {
