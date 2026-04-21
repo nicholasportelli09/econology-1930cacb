@@ -40,11 +40,11 @@ export default function DailyPlan() {
   const completed = items.filter((i) => i.done).length;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 card-shadow">
+    <div className="rounded-xl border border-border/60 bg-card/50 p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <TrendingUp size={16} className="text-primary" />
-          <h3 className="text-sm font-display font-semibold text-foreground">Today's Plan</h3>
+          <TrendingUp size={13} className="text-muted-foreground" />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Today's Plan</h3>
         </div>
         <span className="text-xs font-medium text-muted-foreground">{completed}/{items.length}</span>
       </div>
