@@ -1,9 +1,10 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import DailyLesson from "@/components/DailyLesson";
 import DailyPlan from "@/components/DailyPlan";
 import DashboardSummary from "@/components/DashboardSummary";
+import { hasSeenTour, startProductTour } from "@/lib/productTour";
 import {
   X,
   ArrowRight,
@@ -74,6 +75,13 @@ const Dashboard = () => {
     return state;
   }, []);
   const level = useMemo(() => getLevel(gam.xp), [gam.xp]);
+
+  // Trigger product tour once for new users (after onboarding/quiz lands them here)
+  useEffect(() => {
+    if (hasSeenTour()) return;
+    const t = setTimeout(() => startProductTour(), 600);
+    return () => clearTimeout(t);
+  }, []);
 
   const dismissTip = useCallback(
     (id: string) => {
