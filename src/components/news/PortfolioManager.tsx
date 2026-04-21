@@ -148,11 +148,19 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+    <div className="flex flex-col lg:flex-row gap-3">
+    <div className="rounded-xl border border-border bg-card p-4 space-y-3 flex-1 min-w-0">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Briefcase size={16} className="text-primary" />
           <span className="text-sm font-semibold text-foreground">My Portfolio</span>
+          <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-accent">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+            </span>
+            Live prices
+          </span>
         </div>
         <div className="flex items-center gap-3">
           <button
