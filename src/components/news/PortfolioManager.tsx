@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Plus, X, Briefcase, Loader2, TrendingUp, TrendingDown, RefreshCw, Camera, ChevronDown } from "lucide-react";
+import { Plus, X, Briefcase, Loader2, TrendingUp, TrendingDown, RefreshCw, Camera, ChevronDown, Activity, LineChart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -29,6 +29,7 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
   const [quotesLoading, setQuotesLoading] = useState(false);
   const [importing, setImporting] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [activeChart, setActiveChart] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -147,11 +148,19 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+    <div className="flex flex-col lg:flex-row gap-3">
+    <div className="rounded-xl border border-border bg-card p-4 space-y-3 flex-1 min-w-0">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Briefcase size={16} className="text-primary" />
           <span className="text-sm font-semibold text-foreground">My Portfolio</span>
+          <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-accent">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+            </span>
+            Live prices
+          </span>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -228,9 +237,17 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
           {tickers.map(t => {
             const q = quotes[t];
             const isUp = q && q.change >= 0;
+            const isActive = activeChart === t;
             return (
-              <div key={t} className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-3 py-2">
+              <div
+                key={t}
+                className={`flex items-center justify-between rounded-lg border px-3 py-2 cursor-pointer transition-all ${
+                  isActive ? "border-primary bg-primary/5" : "border-border bg-muted/30 hover:bg-muted/50"
+                }`}
+                onClick={() => setActiveChart(isActive ? null : t)}
+              >
                 <div className="flex items-center gap-2">
+                  <LineChart size={12} className={isActive ? "text-primary" : "text-muted-foreground"} />
                   <span className="text-sm font-mono font-semibold text-foreground">{t}</span>
                   {q && q.price > 0 && (
                     <span className="text-sm font-semibold text-foreground">${q.price.toFixed(2)}</span>
@@ -246,7 +263,10 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
                   {quotesLoading && !q && (
                     <Loader2 size={12} className="animate-spin text-muted-foreground" />
                   )}
-                  <button onClick={() => removeTicker(t)} className="ml-1 text-muted-foreground hover:text-destructive transition-colors">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); removeTicker(t); }}
+                    className="ml-1 text-muted-foreground hover:text-destructive transition-colors"
+                  >
                     <X size={14} />
                   </button>
                 </div>
@@ -259,6 +279,43 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
       ) : (
         <p className="text-xs text-muted-foreground">No tickers yet. Add your holdings to get personalized news.</p>
       )}
+    </div>
+
+    {activeChart && (
+      <div className="rounded-xl border border-border bg-card p-3 lg:w-[420px] lg:flex-shrink-0 space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Activity size={14} className="text-primary" />
+            <span className="text-sm font-semibold text-foreground">{activeChart}</span>
+            {quotes[activeChart]?.price > 0 && (
+              <>
+                <span className="text-sm font-semibold text-foreground">
+                  ${quotes[activeChart].price.toFixed(2)}
+                </span>
+                <span className={`text-xs font-medium ${quotes[activeChart].change >= 0 ? "text-accent" : "text-destructive"}`}>
+                  {quotes[activeChart].change >= 0 ? "+" : ""}{quotes[activeChart].changePercent.toFixed(2)}%
+                </span>
+              </>
+            )}
+          </div>
+          <button
+            onClick={() => setActiveChart(null)}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Close chart"
+          >
+            <X size={14} />
+          </button>
+        </div>
+        <iframe
+          key={activeChart}
+          title={`${activeChart} chart`}
+          src={`https://s.tradingview.com/widgetembed/?frameElementId=tv_${activeChart}&symbol=${encodeURIComponent(activeChart)}&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=1&timezone=Etc%2FUTC&withdateranges=1`}
+          className="w-full h-[360px] rounded-lg border border-border"
+          loading="lazy"
+        />
+        <p className="text-[10px] text-muted-foreground text-center">Chart by TradingView</p>
+      </div>
+    )}
     </div>
   );
 }
