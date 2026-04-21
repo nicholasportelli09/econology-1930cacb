@@ -237,9 +237,17 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
           {tickers.map(t => {
             const q = quotes[t];
             const isUp = q && q.change >= 0;
+            const isActive = activeChart === t;
             return (
-              <div key={t} className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-3 py-2">
+              <div
+                key={t}
+                className={`flex items-center justify-between rounded-lg border px-3 py-2 cursor-pointer transition-all ${
+                  isActive ? "border-primary bg-primary/5" : "border-border bg-muted/30 hover:bg-muted/50"
+                }`}
+                onClick={() => setActiveChart(isActive ? null : t)}
+              >
                 <div className="flex items-center gap-2">
+                  <LineChart size={12} className={isActive ? "text-primary" : "text-muted-foreground"} />
                   <span className="text-sm font-mono font-semibold text-foreground">{t}</span>
                   {q && q.price > 0 && (
                     <span className="text-sm font-semibold text-foreground">${q.price.toFixed(2)}</span>
@@ -255,7 +263,10 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
                   {quotesLoading && !q && (
                     <Loader2 size={12} className="animate-spin text-muted-foreground" />
                   )}
-                  <button onClick={() => removeTicker(t)} className="ml-1 text-muted-foreground hover:text-destructive transition-colors">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); removeTicker(t); }}
+                    className="ml-1 text-muted-foreground hover:text-destructive transition-colors"
+                  >
                     <X size={14} />
                   </button>
                 </div>
