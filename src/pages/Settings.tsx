@@ -73,7 +73,7 @@ const Settings = () => {
   };
 
   const resetQuiz = () => {
-    const updated = { ...profile, quizScore: null };
+    const updated = { ...profile, quizScore: null, quizScore2: null };
     setProfile(updated);
     localStorage.setItem("econology_profile", JSON.stringify(updated));
     toast({ title: "Quiz reset", description: "You can retake the quiz now." });
