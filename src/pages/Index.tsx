@@ -1,4 +1,4 @@
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
@@ -8,11 +8,6 @@ import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Bra
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-
-  // Existing users skip the hero and land on the dashboard.
-  if (user) {
-    return <Navigate to="/dashboard" replace />;
-  }
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
@@ -29,12 +24,21 @@ const Index = () => {
           <EconologyLogo size={40} />
           <span className="font-display text-xl font-bold gradient-text">Econology</span>
         </div>
-        <button
-          onClick={() => navigate("/login")}
-          className="px-5 py-2.5 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-lg glow-shadow"
-        >
-          Sign In
-        </button>
+        {user ? (
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-lg glow-shadow"
+          >
+            Dashboard
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate("/login")}
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-lg glow-shadow"
+          >
+            Sign In
+          </button>
+        )}
       </nav>
 
       {/* Hero */}
