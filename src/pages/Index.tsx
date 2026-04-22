@@ -3,9 +3,15 @@ import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
 import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, Shield } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, isGuest } = useAuth();
+  const hasSession = Boolean(user) || isGuest;
+  const ctaLabel = hasSession ? "Continue to Dashboard" : "Start Your Journey";
+  const ctaTarget = hasSession ? "/dashboard" : "/signup";
+  const secondaryCtaLabel = hasSession ? "Continue to Dashboard" : "Get Started — It's Free";
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
@@ -23,10 +29,10 @@ const Index = () => {
           <span className="font-display text-xl font-bold gradient-text">Econology</span>
         </div>
         <button
-          onClick={() => navigate("/login")}
+          onClick={() => navigate(hasSession ? "/dashboard" : "/login")}
           className="px-5 py-2.5 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-lg glow-shadow"
         >
-          Sign In
+          {hasSession ? "Go to Dashboard" : "Sign In"}
         </button>
       </nav>
 
@@ -45,10 +51,10 @@ const Index = () => {
           Learn faster with simple explanations, real examples, and daily progress.
         </p>
         <button
-          onClick={() => navigate("/signup")}
+          onClick={() => navigate(ctaTarget)}
           className="group flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow"
         >
-          Start Your Journey
+          {ctaLabel}
           <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
         </button>
       </section>
@@ -138,10 +144,10 @@ const Index = () => {
             Join thousands of young adults building financial confidence — one day at a time.
           </p>
           <button
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate(ctaTarget)}
             className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow"
           >
-            Get Started — It's Free
+            {secondaryCtaLabel}
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
           </button>
         </div>
