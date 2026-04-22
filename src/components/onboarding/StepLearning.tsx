@@ -16,8 +16,8 @@ const StepLearning = ({ profile, update, toggleArrayField }: Props) => (
       <div className="flex items-center gap-2 text-primary">
         <BookOpen size={28} />
       </div>
-      <h2 className="text-3xl font-display font-bold text-foreground">Learning Preferences</h2>
-      <p className="text-muted-foreground">Almost done! Tell us how you like to learn.</p>
+      <h2 className="text-3xl font-display font-bold text-slate-900">Learning Preferences</h2>
+      <p className="text-slate-600">Almost done! Tell us how you like to learn.</p>
     </div>
 
     <div className="space-y-4 pt-4">
