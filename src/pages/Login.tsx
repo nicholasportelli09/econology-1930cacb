@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import EconologyLogo from "@/components/EconologyLogo";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Mail, Lock } from "lucide-react";
 
 export default function Login() {
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,10 +21,8 @@ export default function Login() {
     setLoading(false);
     if (error) {
       toast({ title: "Login failed", description: error.message, variant: "destructive" });
-    } else {
-      // Existing user logging in — go to dashboard
-      navigate("/dashboard");
     }
+    // On success, AuthContext's onAuthStateChange handles the redirect.
   };
 
   const handleGoogleSignIn = async () => {
