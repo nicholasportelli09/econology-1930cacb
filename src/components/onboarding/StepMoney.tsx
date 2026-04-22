@@ -16,8 +16,8 @@ const StepMoney = ({ profile, update, toggleArrayField }: Props) => (
       <div className="flex items-center gap-2 text-primary">
         <Wallet size={28} />
       </div>
-      <h2 className="text-3xl font-display font-bold text-foreground">Money Situation</h2>
-      <p className="text-muted-foreground">No judgment — this helps us give relevant advice.</p>
+      <h2 className="text-3xl font-display font-bold text-slate-900">Money Situation</h2>
+      <p className="text-slate-600">No judgment — this helps us give relevant advice.</p>
     </div>
 
     <div className="space-y-4 pt-4">
