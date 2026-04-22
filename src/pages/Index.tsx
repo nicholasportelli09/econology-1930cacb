@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
