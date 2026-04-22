@@ -28,6 +28,7 @@ const StepMoney = ({ profile, update, toggleArrayField }: Props) => (
           placeholder="$500"
           value={profile.monthlyIncome}
           onChange={(e) => update({ monthlyIncome: e.target.value })}
+          className="bg-white text-slate-900 placeholder:text-slate-400 border-input"
         />
       </div>
       <div className="space-y-2">
@@ -37,6 +38,7 @@ const StepMoney = ({ profile, update, toggleArrayField }: Props) => (
           placeholder="$100"
           value={profile.currentSavings}
           onChange={(e) => update({ currentSavings: e.target.value })}
+          className="bg-white text-slate-900 placeholder:text-slate-400 border-input"
         />
       </div>
       <div className="space-y-3">
