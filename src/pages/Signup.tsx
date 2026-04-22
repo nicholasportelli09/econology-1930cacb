@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import EconologyLogo from "@/components/EconologyLogo";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -44,17 +43,17 @@ export default function Signup() {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/onboarding`,
+        },
       });
-      if (result.error) {
-        toast({ title: "Google sign-in failed", description: String(result.error), variant: "destructive" });
-        setGoogleLoading(false);
-      } else if (!result.redirected) {
-        // New Google user → onboarding
-        navigate("/onboarding");
+      if (error) {
+        toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
         setGoogleLoading(false);
       }
+      // Browser redirects to Google on success.
     } catch {
       toast({ title: "Google sign-in failed", description: "An unexpected error occurred", variant: "destructive" });
       setGoogleLoading(false);
