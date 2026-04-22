@@ -1,61 +1,36 @@
 
 
-## Merge Market News + Company News into one tab
+## Better experience for existing logged-in users
 
-Right now the News page has three tabs: **Market News** (general macro headlines), **Company News** (ticker-specific), and **AI Insights**. The first two pull from the same Finnhub backend with slightly different inputs, so combining them into a single smarter "Headlines" tab will reduce friction and feel more like one coherent newsroom.
+Right now `/` always shows "Sign In" in the top right, even for users who are already authenticated. That's fine for new visitors but a small friction for returning users — they have to click Sign In and get bounced through the auth flow before reaching the dashboard.
 
-### What the user will see
+Here's a cleaner pattern that keeps the hero as the default landing page (per your earlier decision) while making things smoother for existing users.
 
-A simplified News page with **two tabs**:
+### Proposed behavior
 
-1. **Headlines** (replaces Market + Company)
-2. **AI Insights** (unchanged)
+**Top-right button on `/` (hero page):**
+- **Logged out** → "Sign In" (navigates to `/login`) — unchanged
+- **Logged in** → "Go to Dashboard" (navigates to `/dashboard`) — new
 
-Inside Headlines:
+**Hero CTA buttons ("Start Your Journey" / "Get Started — It's Free"):**
+- **Logged out** → keep as "Start Your Journey" → `/signup` (unchanged)
+- **Logged in** → swap label to "Continue to Dashboard" → `/dashboard`
 
-```text
-┌──────────────────────────────────────────────────────────┐
-│ [🔍 Search ticker (AAPL) or topic (forex, crypto)…] [Go] │
-│                                                          │
-│ Quick filters:  [All]  [My Portfolio]  [Crypto] [Forex]  │
-│                                                          │
-│ ─── Showing: General market headlines ───                │
-│ • Article card                                           │
-│ • Article card                                           │
-└──────────────────────────────────────────────────────────┘
-```
+**No auto-redirect.** The hero page stays visible to everyone. Logged-in users just get a contextually correct button instead of being told to "Sign In" when they already are.
 
-Behavior:
-- **Empty search** → general market news (current Market tab default).
-- **Looks like a ticker** (1–5 uppercase letters, e.g. `AAPL`, `TSLA`) → company news for that ticker.
-- **Looks like a category word** (`forex`, `crypto`, `merger`, `general`) → category news.
-- **"My Portfolio" chip** → fetches news for all saved portfolio tickers, merged and de-duplicated.
-- A small label above the results tells the user what mode they're in ("Showing: AAPL company news", "Showing: your portfolio (AAPL, MSFT)", etc.).
+### Why this is better than alternatives
 
-A single **NewsDigest** summary appears above results regardless of source, so the AI digest works for both macro and company news.
+| Option | Trade-off |
+|---|---|
+| Auto-redirect logged-in users to `/dashboard` | You explicitly rejected this — hero must remain the default landing page |
+| Always show "Sign In" (current state) | Confusing for logged-in users; makes them think they're signed out |
+| **Conditional button (proposed)** | Hero stays default, logged-in users get a clear path forward in one click |
 
-### Technical changes
+### Technical details
 
-Frontend only — **no backend/edge function changes required**.
-
-**`src/pages/EconomicNews.tsx`**
-- Remove the `BarChart3` "Company News" tab; rename "Market News" → "Headlines".
-- Collapse the two state pairs (`marketArticles`/`stockArticles`, `marketLoading`/`stockLoading`, `marketError`/`stockError`, `marketSearch`/`tickerSearch`) into a single `headlinesArticles`, `headlinesLoading`, `headlinesError`, `query` set.
-- Add a `mode` state: `"general" | "category" | "ticker" | "portfolio"` plus a derived label string.
-- New `fetchHeadlines(query, usePortfolio?)` function:
-  - If `usePortfolio` → call `fmp-stock-news` with `tickers: portfolioTickers.join(",")`, then for multi-ticker, loop or call once per ticker (Finnhub company-news takes one symbol at a time — same approach already in `fmp-stock-news/index.ts`), merge + dedupe by URL, sort by `publishedDate` desc.
-  - Else if query matches `/^[A-Z]{1,5}$/i` → call `fmp-stock-news` with `tickers`.
-  - Else if query is non-empty → call `stock-news` with `category`.
-  - Else → call `stock-news` with default category `general`.
-- Keep `diversifyBySource` post-processing.
-- Keep pin/unpin logic untouched (works on the unified `headlinesArticles`).
-- Update the `<TabsList>` to `grid-cols-2` and adjust the icon (use `Newspaper` for Headlines, keep `Sparkles` for AI Insights).
-- Add chip row beneath the search input for quick filters (`All`, `My Portfolio`, `Crypto`, `Forex`, `Mergers`).
-
-**Optional small follow-up (not required for this task):** if portfolio multi-ticker fetches feel slow, add a `tickers` array fan-out inside `fmp-stock-news/index.ts` server-side. Skipping for now — client-side fan-out keeps the change purely frontend.
-
-### Out of scope
-- AI Insights tab stays exactly as-is.
-- PortfolioManager and PinnedArticles cards stay where they are.
-- No DB migrations, no edge function redeploys.
+- File: `src/pages/Index.tsx`
+- Add `import { useAuth } from "@/contexts/AuthContext"` and read `user` + `isGuest`
+- Treat `user || isGuest` as "has a session"
+- Conditionally render the nav button label/destination and the two hero CTAs
+- No changes to routing, `ProtectedRoute`, or `AuthContext`
 
