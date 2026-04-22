@@ -3,9 +3,15 @@ import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
 import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, Shield } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, isGuest } = useAuth();
+  const hasSession = Boolean(user) || isGuest;
+  const ctaLabel = hasSession ? "Continue to Dashboard" : "Start Your Journey";
+  const ctaTarget = hasSession ? "/dashboard" : "/signup";
+  const secondaryCtaLabel = hasSession ? "Continue to Dashboard" : "Get Started — It's Free";
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
