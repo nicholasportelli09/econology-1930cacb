@@ -29,10 +29,10 @@ const Index = () => {
           <span className="font-display text-xl font-bold gradient-text">Econology</span>
         </div>
         <button
-          onClick={() => navigate("/login")}
+          onClick={() => navigate(hasSession ? "/dashboard" : "/login")}
           className="px-5 py-2.5 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-lg glow-shadow"
         >
-          Sign In
+          {hasSession ? "Go to Dashboard" : "Sign In"}
         </button>
       </nav>
 
@@ -51,10 +51,10 @@ const Index = () => {
           Learn faster with simple explanations, real examples, and daily progress.
         </p>
         <button
-          onClick={() => navigate("/signup")}
+          onClick={() => navigate(ctaTarget)}
           className="group flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow"
         >
-          Start Your Journey
+          {ctaLabel}
           <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
         </button>
       </section>
@@ -144,10 +144,10 @@ const Index = () => {
             Join thousands of young adults building financial confidence — one day at a time.
           </p>
           <button
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate(ctaTarget)}
             className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow"
           >
-            Get Started — It's Free
+            {secondaryCtaLabel}
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
           </button>
         </div>
