@@ -14,8 +14,8 @@ const StepGoals = ({ profile, toggleArrayField }: Props) => (
       <div className="flex items-center gap-2 text-primary">
         <Target size={28} />
       </div>
-      <h2 className="text-3xl font-display font-bold text-foreground">Your Goals</h2>
-      <p className="text-muted-foreground">What do you want to achieve? Pick at least one.</p>
+      <h2 className="text-3xl font-display font-bold text-slate-900">Your Goals</h2>
+      <p className="text-slate-600">What do you want to achieve? Pick at least one.</p>
     </div>
 
     <div className="space-y-3 pt-4">
