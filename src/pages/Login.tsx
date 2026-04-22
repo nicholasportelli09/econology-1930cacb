@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import EconologyLogo from "@/components/EconologyLogo";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Mail, Lock } from "lucide-react";
 
 export default function Login() {
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,31 +21,24 @@ export default function Login() {
     setLoading(false);
     if (error) {
       toast({ title: "Login failed", description: error.message, variant: "destructive" });
-    } else {
-      // Existing user logging in — go to dashboard
-      navigate("/dashboard");
     }
+    // On success, AuthContext's onAuthStateChange handles the redirect.
   };
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
       });
-      if (result.error) {
-        toast({ title: "Google sign-in failed", description: String(result.error), variant: "destructive" });
-        setGoogleLoading(false);
-      } else if (!result.redirected) {
-        // Check if user needs onboarding
-        const profile = localStorage.getItem("econology_profile");
-        if (!profile) {
-          navigate("/onboarding");
-        } else {
-          navigate("/dashboard");
-        }
+      if (error) {
+        toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
         setGoogleLoading(false);
       }
+      // On success the browser redirects to Google; nothing else to do here.
     } catch {
       toast({ title: "Google sign-in failed", description: "An unexpected error occurred", variant: "destructive" });
       setGoogleLoading(false);
