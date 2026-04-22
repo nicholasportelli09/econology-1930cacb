@@ -14,8 +14,8 @@ const StepSituation = ({ profile, update }: Props) => (
       <div className="flex items-center gap-2 text-primary">
         <GraduationCap size={28} />
       </div>
-      <h2 className="text-3xl font-display font-bold text-foreground">Current Situation</h2>
-      <p className="text-muted-foreground">This helps us tailor content to your life stage.</p>
+      <h2 className="text-3xl font-display font-bold text-slate-900">Current Situation</h2>
+      <p className="text-slate-600">This helps us tailor content to your life stage.</p>
     </div>
 
     <div className="space-y-4 pt-4">
