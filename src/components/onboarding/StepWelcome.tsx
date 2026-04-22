@@ -27,6 +27,7 @@ const StepWelcome = ({ profile, update }: Props) => (
           value={profile.name}
           onChange={(e) => update({ name: e.target.value })}
           maxLength={100}
+          className="bg-white text-slate-900 placeholder:text-slate-400 border-input"
         />
       </div>
       <div className="space-y-2">
@@ -39,6 +40,7 @@ const StepWelcome = ({ profile, update }: Props) => (
           max={120}
           value={profile.age}
           onChange={(e) => update({ age: e.target.value })}
+          className="bg-white text-slate-900 placeholder:text-slate-400 border-input"
         />
       </div>
     </div>
