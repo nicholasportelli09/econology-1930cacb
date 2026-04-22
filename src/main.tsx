@@ -2,10 +2,13 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 
-// Initialize theme before render to avoid flash
+// Initialize theme before render to avoid flash.
+// Default for everyone is LIGHT mode. Only honor an explicit user toggle.
 const theme = localStorage.getItem("econology_theme");
-if (theme === "dark" || (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+if (theme === "dark") {
   document.documentElement.classList.add("dark");
+} else {
+  document.documentElement.classList.remove("dark");
 }
 
 // Track first visit for days active

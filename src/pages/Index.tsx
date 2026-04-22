@@ -1,4 +1,4 @@
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
@@ -8,11 +8,6 @@ import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Bra
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-
-  // Existing users skip the hero and land on the dashboard.
-  if (user) {
-    return <Navigate to="/dashboard" replace />;
-  }
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>

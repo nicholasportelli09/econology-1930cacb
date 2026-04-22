@@ -3,10 +3,9 @@ import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
   const [dark, setDark] = useState(() => {
-    if (typeof window === "undefined") return true;
-    const stored = localStorage.getItem("econology_theme");
-    if (stored) return stored === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (typeof window === "undefined") return false;
+    // Default for everyone is light. Only opt into dark if explicitly stored.
+    return localStorage.getItem("econology_theme") === "dark";
   });
 
   useEffect(() => {
