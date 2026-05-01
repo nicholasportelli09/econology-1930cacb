@@ -11,6 +11,16 @@ interface Mover {
   changePercent: number;
 }
 
+function nextTierLabel(tier: string): string {
+  switch (tier) {
+    case "starter": return "bronze (7d)";
+    case "bronze": return "silver (14d)";
+    case "silver": return "gold (30d)";
+    case "gold": return "diamond (100d)";
+    default: return "next milestone";
+  }
+}
+
 export default function DashboardSummary() {
   const navigate = useNavigate();
   const { user } = useAuth();
