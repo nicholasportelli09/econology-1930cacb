@@ -76,7 +76,7 @@ const MarketIdeas = () => {
       if (result?.error) throw new Error(result.error);
       setData(result as MarketData);
     } catch (e: any) {
-      const msg = e?.message || "Failed to fetch case studies";
+      const msg = e?.message || "Failed to fetch market ideas";
       setError(msg);
       toast({ title: "Error", description: msg, variant: "destructive" });
     } finally {
@@ -88,7 +88,7 @@ const MarketIdeas = () => {
     setDismissed(prev => new Set(prev).add(index));
     toast({
       title: reason === "studied" ? "Marked as studied" : "Hidden",
-      description: reason === "studied" ? "We'll prioritise different case studies next time." : "Hidden from this set.",
+      description: reason === "studied" ? "We'll prioritise different ideas next time." : "Hidden from this set.",
     });
   };
 
@@ -101,12 +101,12 @@ const MarketIdeas = () => {
         <div className="flex items-start gap-3 rounded-xl border-2 border-destructive/40 bg-destructive/10 p-4">
           <AlertTriangle className="text-destructive shrink-0 mt-0.5" size={22} />
           <div className="text-sm text-destructive leading-relaxed">
-            <p className="font-bold uppercase tracking-wider text-xs mb-1">Education only — not financial advice</p>
+            <p className="font-bold uppercase tracking-wider text-xs mb-1">Ideas only — not financial advice</p>
             <p>
               Nothing on this page is a recommendation to buy, sell, or hold any security. These are
-              <span className="font-semibold"> teaching case studies</span> showing how an analyst might
-              think about a company or theme. Econology is not a registered investment adviser. Always do
-              your own research and consult a licensed professional before making investment decisions.
+              <span className="font-semibold"> educational market ideas</span> to spark your own thinking.
+              Econology is not a registered investment adviser. Always do your own research and consult a
+              licensed professional before making investment decisions.
             </p>
           </div>
         </div>
@@ -143,11 +143,11 @@ const MarketIdeas = () => {
           <div>
             <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground flex items-center gap-3">
               <GraduationCap className="text-primary" size={32} />
-              Analyst Lens
+              Market Ideas
             </h1>
-            <p className="text-muted-foreground mt-1">Teaching case studies — how an analyst might frame a company or theme.</p>
+            <p className="text-muted-foreground mt-1">Ideas to explore — not financial advice.</p>
             <p className="text-xs text-muted-foreground mt-2 max-w-2xl">
-              Each case study walks through the framework an analyst might apply (thesis, risks, what to watch). <span className="font-semibold text-foreground">No buy/sell verdicts.</span> For news-driven explainers, see <span className="font-medium text-foreground">Economic News</span>.
+              Each idea walks through a framework (thesis, risks, what to watch) so you can think it through yourself. <span className="font-semibold text-foreground">No buy/sell recommendations.</span> For news-driven explainers, see <span className="font-medium text-foreground">Economic News</span>.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -159,10 +159,10 @@ const MarketIdeas = () => {
               <ArrowRight size={14} />
             </Link>
             <button onClick={fetchInsights} disabled={loading} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
-              {loading ? <><Loader2 size={18} className="animate-spin" /> Analysing…</> : <><Sparkles size={18} /> Generate case studies</>}
+              {loading ? <><Loader2 size={18} className="animate-spin" /> Analysing…</> : <><Sparkles size={18} /> Get market ideas</>}
             </button>
             {data && !loading && (
-              <button onClick={fetchInsights} title="Refresh case studies" className="p-2.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+              <button onClick={fetchInsights} title="Refresh market ideas" className="p-2.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                 <RefreshCw size={16} />
               </button>
             )}
@@ -172,7 +172,7 @@ const MarketIdeas = () => {
         {loading && (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <Loader2 size={40} className="animate-spin text-primary" />
-            <p className="text-muted-foreground text-sm">Building case studies relevant to your learning path…</p>
+            <p className="text-muted-foreground text-sm">Building market ideas relevant to your learning path…</p>
           </div>
         )}
 
@@ -232,7 +232,7 @@ const MarketIdeas = () => {
               })}
             </div>
             <p className="text-xs text-muted-foreground text-center italic">
-              These are educational case studies, not recommendations. Econology is not a registered investment adviser.
+              These are educational ideas, not recommendations. Econology is not a registered investment adviser.
             </p>
           </div>
         )}
@@ -240,7 +240,7 @@ const MarketIdeas = () => {
         {!data && !loading && !error && (
           <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
             <GraduationCap size={48} className="text-muted-foreground/30" />
-            <p className="text-muted-foreground">Click <span className="font-semibold">"Generate case studies"</span> to see how an analyst might frame three current names — purely as a teaching exercise.</p>
+            <p className="text-muted-foreground">Click <span className="font-semibold">"Get market ideas"</span> to see three current names framed as a teaching exercise — not financial advice.</p>
           </div>
         )}
       </main>

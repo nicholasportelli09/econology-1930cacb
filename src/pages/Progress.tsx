@@ -67,6 +67,8 @@ const Progress = () => {
     : "U";
 
   const quizScore = profile.quizScore;
+  const QUIZ_TOTAL = 5;
+  const placementPct = quizScore === null ? null : Math.round((quizScore / QUIZ_TOTAL) * 100);
   const quizLevel =
     quizScore === null ? "Not taken" : quizScore >= 4 ? "Advanced" : quizScore >= 2 ? "Intermediate" : "Beginner";
 
@@ -114,7 +116,7 @@ const Progress = () => {
                 </ul>
               </div>
               <div className="border-t border-border pt-4">
-                <h3 className="font-semibold mb-1.5">Financial Health Score (0–100)</h3>
+                <h3 className="font-semibold mb-1.5">Learning Progress Score (0–100)</h3>
                 <p className="text-muted-foreground mb-2">A composite metric reflecting four key dimensions of your financial development:</p>
                 <ul className="space-y-2 text-muted-foreground">
                   <li><span className="font-medium text-foreground">Knowledge (25 pts)</span> — Based on your best assessment score. Higher scores indicate stronger foundational understanding.</li>
@@ -165,13 +167,13 @@ const Progress = () => {
           </div>
         </div>
 
-        {/* Financial Health Score + Stats side by side */}
+        {/* Learning Progress Score + Stats side by side */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Health Score */}
+          {/* Learning Progress Score */}
           <div className="rounded-xl border border-border bg-card p-6 card-shadow flex flex-col items-center">
             <h2 className="text-lg font-display font-semibold text-foreground mb-4 flex items-center gap-2">
               <Target size={20} className="text-primary" />
-              Financial Health Score
+              Learning Progress Score
             </h2>
             <div className="relative">
               <HealthScoreRing score={health.score} />
@@ -196,7 +198,7 @@ const Progress = () => {
           <div className="grid grid-cols-2 gap-4 content-start">
             {[
               { icon: Flame, label: "Days Active", value: daysActive, color: "text-destructive" },
-              { icon: Brain, label: "Quiz Score", value: quizScore !== null ? `${quizScore}/5` : "N/A", color: "text-primary" },
+              { icon: Brain, label: "Placement", value: placementPct !== null ? `${quizScore}/${QUIZ_TOTAL} · ${placementPct}%` : "N/A", color: "text-primary" },
               { icon: BookOpen, label: "Topics Selected", value: `${profile.topicsOfInterest.length}/${TOPICS_OF_INTEREST.length}`, color: "text-secondary" },
               { icon: Lightbulb, label: "Insights Studied", value: tipsExplored.length, color: "text-accent" },
               { icon: Zap, label: "Total XP", value: gam.xp, color: "text-primary" },

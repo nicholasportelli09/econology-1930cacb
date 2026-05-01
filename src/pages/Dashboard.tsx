@@ -245,7 +245,7 @@ const Dashboard = () => {
         <section className="grid grid-cols-2 md:grid-cols-4 gap-5" data-tour="hub-grid">
           {[
             { to: "/learn",  icon: BookOpen,    title: "Learn",   desc: "Lessons & deep dives",  color: "text-primary",   bg: "bg-primary/10"   },
-            { to: "/market", icon: TrendingUp,  title: "Markets", desc: "Analyst lens + economic news", color: "text-secondary", bg: "bg-secondary/10" },
+            { to: "/market", icon: TrendingUp,  title: "Markets", desc: "Market ideas + economic news", color: "text-secondary", bg: "bg-secondary/10" },
             { to: "/videos", icon: PlayCircle,  title: "Videos",  desc: "Curated, watch-and-earn-XP", color: "text-accent", bg: "bg-accent/10" },
             { to: "/budget", icon: Calculator,  title: "Budget",  desc: "Plan & simulate",       color: "text-primary",   bg: "bg-primary/10"   },
           ].map((hub) => {
