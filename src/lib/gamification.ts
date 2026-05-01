@@ -139,27 +139,43 @@ export function getLevel(xp: number): Level & { progress: number; nextLevel: Lev
 }
 
 // ── Badges ─────────────────────────────────────────────────
+import {
+  Check,
+  TrendingUp,
+  Zap,
+  Trophy,
+  Search,
+  BarChart3,
+  GraduationCap,
+  ClipboardCheck,
+  Brain,
+  Briefcase,
+  Star,
+  Sparkles,
+  type LucideIcon,
+} from "lucide-react";
+
 export interface Badge {
   id: string;
   name: string;
   description: string;
-  emoji: string;
+  icon: LucideIcon;
   condition: (state: GamificationState) => boolean;
 }
 
 export const ALL_BADGES: Badge[] = [
-  { id: "first_login", name: "First Step", emoji: "✓", description: "Complete your first session", condition: (s) => s.xp > 0 },
-  { id: "streak_3", name: "Consistent", emoji: "📈", description: "Maintain a 3-day engagement streak", condition: (s) => s.streak >= 3 },
-  { id: "streak_7", name: "Committed", emoji: "⚡", description: "Maintain a 7-day engagement streak", condition: (s) => s.streak >= 7 },
-  { id: "streak_30", name: "Disciplined", emoji: "🏆", description: "Maintain a 30-day engagement streak", condition: (s) => s.streak >= 30 },
-  { id: "tips_5", name: "Researcher", emoji: "🔍", description: "Study 5 financial insights", condition: (s) => s.totalTipsExplored >= 5 },
-  { id: "tips_20", name: "Analyst", emoji: "📊", description: "Study 20 financial insights", condition: (s) => s.totalTipsExplored >= 20 },
-  { id: "tips_50", name: "Scholar", emoji: "🎓", description: "Study 50 financial insights", condition: (s) => s.totalTipsExplored >= 50 },
-  { id: "quiz_1", name: "Assessed", emoji: "📝", description: "Complete your first assessment", condition: (s) => s.totalQuizzesTaken >= 1 },
-  { id: "quiz_5", name: "Well-Tested", emoji: "🧠", description: "Complete 5 assessments", condition: (s) => s.totalQuizzesTaken >= 5 },
-  { id: "budget_1", name: "Planner", emoji: "💼", description: "Use the Budget Simulator", condition: (s) => s.budgetSimUses >= 1 },
-  { id: "xp_500", name: "Progressing", emoji: "⭐", description: "Accumulate 500 XP", condition: (s) => s.xp >= 500 },
-  { id: "xp_1000", name: "Distinguished", emoji: "🌟", description: "Accumulate 1,000 XP", condition: (s) => s.xp >= 1000 },
+  { id: "first_login", name: "First Step", icon: Check, description: "Complete your first session", condition: (s) => s.xp > 0 },
+  { id: "streak_3", name: "Consistent", icon: TrendingUp, description: "Maintain a 3-day engagement streak", condition: (s) => s.streak >= 3 },
+  { id: "streak_7", name: "Committed", icon: Zap, description: "Maintain a 7-day engagement streak", condition: (s) => s.streak >= 7 },
+  { id: "streak_30", name: "Disciplined", icon: Trophy, description: "Maintain a 30-day engagement streak", condition: (s) => s.streak >= 30 },
+  { id: "tips_5", name: "Researcher", icon: Search, description: "Study 5 financial insights", condition: (s) => s.totalTipsExplored >= 5 },
+  { id: "tips_20", name: "Analyst", icon: BarChart3, description: "Study 20 financial insights", condition: (s) => s.totalTipsExplored >= 20 },
+  { id: "tips_50", name: "Scholar", icon: GraduationCap, description: "Study 50 financial insights", condition: (s) => s.totalTipsExplored >= 50 },
+  { id: "quiz_1", name: "Assessed", icon: ClipboardCheck, description: "Complete your first assessment", condition: (s) => s.totalQuizzesTaken >= 1 },
+  { id: "quiz_5", name: "Well-Tested", icon: Brain, description: "Complete 5 assessments", condition: (s) => s.totalQuizzesTaken >= 5 },
+  { id: "budget_1", name: "Planner", icon: Briefcase, description: "Use the Budget Simulator", condition: (s) => s.budgetSimUses >= 1 },
+  { id: "xp_500", name: "Progressing", icon: Star, description: "Accumulate 500 XP", condition: (s) => s.xp >= 500 },
+  { id: "xp_1000", name: "Distinguished", icon: Sparkles, description: "Accumulate 1,000 XP", condition: (s) => s.xp >= 1000 },
 ];
 
 function computeBadges(state: GamificationState): string[] {
