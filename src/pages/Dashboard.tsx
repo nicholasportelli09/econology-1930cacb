@@ -15,7 +15,7 @@ import {
   PlayCircle,
   Calculator,
 } from "lucide-react";
-import { type UserProfile, defaultProfile } from "@/types/profile";
+import { type UserProfile, defaultProfile, normalizeTopicLabels } from "@/types/profile";
 import { recordDailyLogin, getLevel } from "@/lib/gamification";
 import { useAuth } from "@/contexts/AuthContext";
 import { loadLiteracyProfile, type LiteracyProfile } from "@/lib/literacy";
