@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight, Sparkles, SkipForward } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles, SkipForward, CheckCircle2, XCircle, MinusCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { PLACEMENT_QUESTIONS } from "@/data/placementQuestions";
 import {
   scorePlacement,
   saveLiteracyProfile,
   type PlacementAnswers,
+  type LiteracyProfile,
 } from "@/lib/literacy";
 import { DIMENSION_LABELS } from "@/data/conceptGraph";
 import { toast } from "@/hooks/use-toast";
@@ -18,6 +19,7 @@ const Placement = () => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<PlacementAnswers>({});
   const [submitting, setSubmitting] = useState(false);
+  const [results, setResults] = useState<LiteracyProfile | null>(null);
 
   const total = PLACEMENT_QUESTIONS.length;
   const q = PLACEMENT_QUESTIONS[step];
@@ -46,7 +48,7 @@ const Placement = () => {
       localStorage.removeItem("econology_quiz_score");
       localStorage.removeItem("econology_quiz_score_2");
       localStorage.setItem("econology_placement_done", "true");
-      navigate("/dashboard");
+      setResults(profile);
     } catch (e) {
       console.error(e);
       toast({ title: "Could not save placement", description: "Please try again." });
@@ -57,6 +59,10 @@ const Placement = () => {
 
   const isLast = step === total - 1;
   const canProceed = selected !== undefined;
+
+  if (results) {
+    return <PlacementResults profile={results} onContinue={() => navigate("/dashboard")} />;
+  }
 
   return (
     <div
@@ -155,3 +161,101 @@ const Placement = () => {
 };
 
 export default Placement;
+
+function PlacementResults({
+  profile,
+  onContinue,
+}: {
+  profile: LiteracyProfile;
+  onContinue: () => void;
+}) {
+  const correct = profile.mastered.length;
+  const wrong = profile.weak.length;
+  const skipped = profile.unknown.length;
+  const total = correct + wrong + skipped;
+
+  const dims = useMemo(() => {
+    const entries = Object.entries(profile.scores) as [keyof typeof profile.scores, number][];
+    entries.sort((a, b) => a[1] - b[1]);
+    return entries;
+  }, [profile]);
+  const weakest = dims[0];
+  const strongest = dims[dims.length - 1];
+
+  return (
+    <div
+      className="min-h-screen relative overflow-hidden flex flex-col"
+      style={{
+        background:
+          "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))",
+      }}
+    >
+      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/8 blur-[120px] animate-pulse" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-accent/8 blur-[120px] animate-pulse" style={{ animationDelay: "1.5s" }} />
+
+      <div className="relative z-10 flex-1 flex flex-col max-w-2xl mx-auto w-full px-6 py-10">
+        <div className="text-center mb-8">
+          <div className="text-5xl mb-3">{correct >= 7 ? "🎯" : correct >= 4 ? "👏" : "🌱"}</div>
+          <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
+            You scored {correct} / {total}
+          </h1>
+          <p className="text-muted-foreground">
+            Here's where you're starting from. We'll point you at the right lessons next.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="rounded-xl border border-border bg-card/70 backdrop-blur p-3 text-center">
+            <CheckCircle2 size={18} className="mx-auto mb-1 text-green-600" />
+            <div className="text-xl font-display font-bold">{correct}</div>
+            <div className="text-xs text-muted-foreground">Correct</div>
+          </div>
+          <div className="rounded-xl border border-border bg-card/70 backdrop-blur p-3 text-center">
+            <XCircle size={18} className="mx-auto mb-1 text-red-500" />
+            <div className="text-xl font-display font-bold">{wrong}</div>
+            <div className="text-xs text-muted-foreground">Missed</div>
+          </div>
+          <div className="rounded-xl border border-border bg-card/70 backdrop-blur p-3 text-center">
+            <MinusCircle size={18} className="mx-auto mb-1 text-muted-foreground" />
+            <div className="text-xl font-display font-bold">{skipped}</div>
+            <div className="text-xs text-muted-foreground">Skipped</div>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-border bg-card/70 backdrop-blur p-5 mb-6 space-y-3">
+          <h2 className="font-display font-semibold text-sm uppercase tracking-wider text-muted-foreground">
+            By area
+          </h2>
+          {dims.map(([dim, score]) => (
+            <div key={dim}>
+              <div className="flex items-center justify-between text-sm mb-1">
+                <span className="text-foreground">{DIMENSION_LABELS[dim]}</span>
+                <span className="text-muted-foreground font-medium">{score}%</span>
+              </div>
+              <Progress value={score} className="h-1.5 bg-muted [&>div]:gradient-bg" />
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 mb-6 text-sm text-foreground">
+          <span className="font-semibold">Start here: </span>
+          We'll begin with{" "}
+          <span className="font-semibold">{DIMENSION_LABELS[weakest[0]]}</span>
+          {strongest[1] > 0 && (
+            <>
+              {" "}— you're already strong in{" "}
+              <span className="font-semibold">{DIMENSION_LABELS[strongest[0]]}</span>, so we'll skip ahead there.
+            </>
+          )}
+        </div>
+
+        <button
+          onClick={onContinue}
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 hover:shadow-[0_0_20px_hsl(270_70%_55%/0.3)]"
+        >
+          <Sparkles size={16} /> Continue to dashboard <ArrowRight size={16} />
+        </button>
+      </div>
+    </div>
+  );
+}
