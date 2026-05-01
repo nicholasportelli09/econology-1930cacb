@@ -1,7 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle2, Circle, BookOpen, Newspaper, Calculator, MessageCircle, TrendingUp, type LucideIcon } from "lucide-react";
 import { getGamification } from "@/lib/gamification";
+import { useAuth } from "@/contexts/AuthContext";
+import { loadLiteracyProfile, pickNextConcept, weakestDimensions } from "@/lib/literacy";
+import { loadLessonProgress } from "@/lib/lessons";
+import { CONCEPT_BY_ID, CONCEPTS_BY_DIMENSION, DIMENSION_LABELS } from "@/data/conceptGraph";
 
 interface PlanItem {
   id: string;
@@ -30,7 +34,42 @@ function getManual(): Record<string, boolean> {
 export default function DailyPlan() {
   const navigate = useNavigate();
   const gam = getGamification();
+  const { user } = useAuth();
   const [manual, setManual] = useState<Record<string, boolean>>(() => getManual());
+  const [nextLessonTitle, setNextLessonTitle] = useState<string | null>(null);
+  const [nextLessonId, setNextLessonId] = useState<string | null>(null);
+  const [readTopic, setReadTopic] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      const [profile, progress] = await Promise.all([
+        loadLiteracyProfile(user.id),
+        loadLessonProgress(user.id),
+      ]);
+      if (cancelled) return;
+      if (profile) {
+        const completed = new Set(progress.map((p) => p.conceptId));
+        const pick = pickNextConcept(profile, completed);
+        if (pick) {
+          const c = CONCEPT_BY_ID[pick.conceptId];
+          setNextLessonId(c.id);
+          setNextLessonTitle(c.title);
+        }
+        // For "Read", surface the weakest-dimension label as a category hint.
+        const weakest = weakestDimensions(profile)[0];
+        if (weakest) {
+          // Pick a not-yet-completed concept in the weakest dim that isn't the lesson pick.
+          const candidate = CONCEPTS_BY_DIMENSION[weakest].find(
+            (c) => !completed.has(c.id) && c.id !== pick?.conceptId,
+          );
+          setReadTopic(candidate ? candidate.title : DIMENSION_LABELS[weakest]);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
 
   const items: PlanItem[] = useMemo(() => {
     const todayKey = new Date().toDateString();
@@ -40,14 +79,19 @@ export default function DailyPlan() {
     const ekonAsked = isToday(localStorage.getItem("econology_last_ekon_ask"));
     const budgetUsed = isToday(localStorage.getItem("econology_last_budget_use"));
 
+    const lessonLabel = nextLessonTitle ? `Daily lesson: ${nextLessonTitle}` : "Daily lesson";
+    const lessonTo = nextLessonId ? `/lesson/${nextLessonId}` : "/learn";
+    const readLabel = readTopic ? `Read: ${readTopic}` : "Read a topic";
+    const newsLabel = "Check news (3 stories tagged to your lessons)";
+
     return [
-      { id: "lesson", label: "Daily lesson", to: "/dashboard", icon: BookOpen, done: lessonDone || !!manual.lesson },
-      { id: "tip", label: "Read a topic", to: "/learn", icon: BookOpen, done: tipRead || !!manual.tip },
-      { id: "news", label: "Check the news", to: "/news", icon: Newspaper, done: newsChecked || !!manual.news },
-      { id: "ekon", label: "Ask Ekon a question", to: "/ask", icon: MessageCircle, done: ekonAsked || !!manual.ekon },
-      { id: "budget", label: "Try the budget simulator", to: "/budget", icon: Calculator, done: budgetUsed || !!manual.budget },
+      { id: "lesson", label: lessonLabel, to: lessonTo, icon: BookOpen, done: lessonDone || !!manual.lesson },
+      { id: "tip", label: readLabel, to: "/learn", icon: BookOpen, done: tipRead || !!manual.tip },
+      { id: "news", label: newsLabel, to: "/news", icon: Newspaper, done: newsChecked || !!manual.news },
+      { id: "ekon", label: "Ask Ekon about today's lesson", to: "/ask", icon: MessageCircle, done: ekonAsked || !!manual.ekon },
+      { id: "budget", label: "Run the budget simulator", to: "/budget", icon: Calculator, done: budgetUsed || !!manual.budget },
     ];
-  }, [gam.xp, manual]);
+  }, [gam.xp, manual, nextLessonTitle, nextLessonId, readTopic]);
 
   const completed = items.filter((i) => i.done).length;
 
