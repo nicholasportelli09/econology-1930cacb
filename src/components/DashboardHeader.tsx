@@ -13,7 +13,6 @@ import {
   BarChart3,
   Settings,
   LogOut,
-  Youtube,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -28,7 +27,6 @@ const NAV_ITEMS = [
   { to: "/learn", label: "Learn", icon: BookOpen, tour: "nav-learn" },
   { to: "/news", label: "Economic News", icon: Newspaper, tour: "nav-news" },
   { to: "/market", label: "Market Ideas", icon: TrendingUp, tour: "nav-market" },
-  { to: "/videos", label: "Videos", icon: Youtube, tour: "nav-videos" },
   { to: "/ask", label: "Ask Ekon", icon: MessageCircle, tour: "nav-ask" },
 ];
 
@@ -90,8 +88,8 @@ export function DashboardHeader({ initials = "U" }: Props) {
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate("/onboarding")}>
-                Redo Onboarding
+              <DropdownMenuItem onClick={() => navigate("/placement")}>
+                Re-take Placement
               </DropdownMenuItem>
               {isGuest ? (
                 <DropdownMenuItem onClick={() => navigate("/login")}>
