@@ -25,15 +25,15 @@ const SECTORS: { ticker: string; name: string }[] = [
 type Quote = { price: number; change: number; changePercent: number };
 type QuoteMap = Record<string, Quote>;
 
-/** Tailwind background tint based on % move. Uses semantic success/destructive tokens. */
+/** Tailwind background tint based on % move. Uses semantic accent/destructive tokens. */
 function tintFor(pct: number): string {
   const v = Math.abs(pct);
   if (!isFinite(pct) || v < 0.1) return "bg-muted/40 border-border";
   if (pct > 0) {
-    if (v >= 2) return "bg-success/40 border-success/50";
-    if (v >= 1) return "bg-success/25 border-success/40";
-    if (v >= 0.5) return "bg-success/15 border-success/30";
-    return "bg-success/10 border-success/20";
+    if (v >= 2) return "bg-accent/40 border-accent/50";
+    if (v >= 1) return "bg-accent/25 border-accent/40";
+    if (v >= 0.5) return "bg-accent/15 border-accent/30";
+    return "bg-accent/10 border-accent/20";
   }
   if (v >= 2) return "bg-destructive/40 border-destructive/50";
   if (v >= 1) return "bg-destructive/25 border-destructive/40";
@@ -95,7 +95,7 @@ export function SectorHeatmap() {
             <span className={cn(
               "px-2.5 py-1 rounded-md text-xs font-mono font-semibold border",
               spy.changePercent >= 0
-                ? "bg-success/15 text-success border-success/30"
+                ? "bg-accent/15 text-accent border-accent/30"
                 : "bg-destructive/15 text-destructive border-destructive/30"
             )}>
               SPY {spy.changePercent >= 0 ? "+" : ""}{spy.changePercent.toFixed(2)}%
@@ -145,14 +145,14 @@ export function SectorHeatmap() {
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono font-bold text-foreground/80">{s.ticker}</span>
                     {q && (pct >= 0
-                      ? <TrendingUp size={12} className="text-success" />
+                      ? <TrendingUp size={12} className="text-accent" />
                       : <TrendingDown size={12} className="text-destructive" />)}
                   </div>
                   <div className="mt-1">
                     <p className="text-[11px] leading-tight text-foreground/80 font-medium truncate">{s.name}</p>
                     <p className={cn(
                       "text-sm font-mono font-bold mt-0.5",
-                      pct >= 0 ? "text-success" : "text-destructive"
+                      pct >= 0 ? "text-accent" : "text-destructive"
                     )}>
                       {q ? `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%` : "—"}
                     </p>
@@ -166,7 +166,7 @@ export function SectorHeatmap() {
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground border-t border-border pt-3">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
                 <span>
-                  Leader: <span className="font-semibold text-success">{top.name} {quotes[top.ticker].changePercent >= 0 ? "+" : ""}{quotes[top.ticker].changePercent.toFixed(2)}%</span>
+                  Leader: <span className="font-semibold text-accent">{top.name} {quotes[top.ticker].changePercent >= 0 ? "+" : ""}{quotes[top.ticker].changePercent.toFixed(2)}%</span>
                 </span>
                 <span>
                   Laggard: <span className="font-semibold text-destructive">{bottom.name} {quotes[bottom.ticker].changePercent.toFixed(2)}%</span>
