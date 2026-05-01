@@ -103,6 +103,28 @@ const MarketIdeas = () => {
           </p>
         </div>
 
+        {/* Economic News promo */}
+        <Link
+          to="/news"
+          className="group flex items-center justify-between gap-4 rounded-2xl border-2 border-primary/30 bg-gradient-to-r from-primary/15 via-primary/10 to-accent/10 p-5 hover:border-primary/50 hover:from-primary/20 transition-all card-shadow"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
+              <Newspaper className="text-primary" size={24} />
+            </div>
+            <div>
+              <h2 className="text-lg font-display font-bold text-foreground flex items-center gap-2">
+                Economic News
+                <Badge className="bg-primary text-primary-foreground text-[10px] uppercase tracking-wider">Live</Badge>
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Today's market-moving headlines + AI insights tailored to your portfolio.
+              </p>
+            </div>
+          </div>
+          <ArrowRight className="text-primary shrink-0 group-hover:translate-x-1 transition-transform" size={20} />
+        </Link>
+
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground flex items-center gap-3">
