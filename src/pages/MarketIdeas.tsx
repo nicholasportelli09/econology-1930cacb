@@ -11,6 +11,8 @@ import {
   X,
   Check,
   Newspaper,
+  Brain,
+  Zap,
 } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import { Badge } from "@/components/ui/badge";
@@ -108,21 +110,27 @@ const MarketIdeas = () => {
           to="/news"
           className="group flex items-center justify-between gap-4 rounded-2xl border-2 border-primary/30 bg-gradient-to-r from-primary/15 via-primary/10 to-accent/10 p-5 hover:border-primary/50 hover:from-primary/20 transition-all card-shadow"
         >
-          <div className="flex items-center gap-4">
+          <div className="flex items-start gap-4 flex-1">
             <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
               <Newspaper className="text-primary" size={24} />
             </div>
-            <div>
-              <h2 className="text-lg font-display font-bold text-foreground flex items-center gap-2">
+            <div className="flex-1">
+              <h2 className="text-lg font-display font-bold text-foreground flex items-center gap-2 flex-wrap">
                 Economic News
                 <Badge className="bg-primary text-primary-foreground text-[10px] uppercase tracking-wider">Live</Badge>
+                <Badge className="bg-accent/20 text-accent border border-accent/30 text-[10px] uppercase tracking-wider">AI insights</Badge>
               </h2>
-              <p className="text-sm text-muted-foreground">
-                Today's market-moving headlines + AI insights tailored to your portfolio.
+              <p className="text-sm text-muted-foreground mt-1">
+                Today's market-moving headlines, decoded for you.
               </p>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1"><Brain size={12} className="text-primary" /> Personalized to your portfolio</span>
+                <span className="inline-flex items-center gap-1"><Zap size={12} className="text-primary" /> AI-summarized headlines</span>
+                <span className="inline-flex items-center gap-1"><Sparkles size={12} className="text-primary" /> Daily digest</span>
+              </div>
             </div>
           </div>
-          <ArrowRight className="text-primary shrink-0 group-hover:translate-x-1 transition-transform" size={20} />
+          <ArrowRight className="text-primary shrink-0 group-hover:translate-x-1 transition-transform self-center" size={20} />
         </Link>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
