@@ -16,7 +16,7 @@ import {
   type LiteracyProfile,
 } from "@/lib/literacy";
 import { loadLessonProgress, loadStreak, type LessonProgressRow, type StreakState } from "@/lib/lessons";
-import { CheckCircle2, Lock, Sparkles, ArrowRight, Flame, RotateCcw, PlayCircle } from "lucide-react";
+import { CheckCircle2, Lock, Sparkles, ArrowRight, Flame, RotateCcw, PlayCircle, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const Learn = () => {
@@ -215,33 +215,44 @@ function DimensionSection({
 }
 
 function ConceptTile({ concept, done, locked }: { concept: ConceptNode; done: boolean; locked: boolean }) {
-  const inner = (
-    <div
-      className={`rounded-xl border p-4 h-full transition-all ${
-        done
-          ? "border-green-500/30 bg-green-500/5"
-          : locked
-          ? "border-border bg-card opacity-60"
-          : "border-border bg-card hover:border-primary/40 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
-      }`}
-    >
-      <div className="flex items-start justify-between gap-2">
-        <h3 className="font-display font-semibold text-sm">{concept.title}</h3>
-        {done ? (
-          <CheckCircle2 size={16} className="text-green-600 shrink-0" />
-        ) : locked ? (
-          <Lock size={14} className="text-muted-foreground shrink-0" />
-        ) : null}
-      </div>
-      {locked && (
-        <p className="text-xs text-muted-foreground mt-1">
-          Unlock by completing prerequisites
-        </p>
-      )}
+  const cardBase = `rounded-xl border p-4 h-full transition-all ${
+    done
+      ? "border-green-500/30 bg-green-500/5"
+      : locked
+      ? "border-border bg-card"
+      : "border-border bg-card hover:border-primary/40 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+  }`;
+
+  const header = (
+    <div className="flex items-start justify-between gap-2">
+      <h3 className="font-display font-semibold text-sm">{concept.title}</h3>
+      {done ? (
+        <CheckCircle2 size={16} className="text-green-600 shrink-0" />
+      ) : locked ? (
+        <Lock size={14} className="text-muted-foreground shrink-0" />
+      ) : null}
     </div>
   );
-  if (locked || done) return inner;
-  return <Link to={`/lesson/${concept.id}`}>{inner}</Link>;
+
+  if (locked) {
+    return (
+      <div className={cardBase}>
+        {header}
+        <p className="text-xs text-muted-foreground mt-1 mb-3">
+          Locked — finish prerequisites first.
+        </p>
+        <Link
+          to={`/lesson/${concept.id}?testOut=1`}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+        >
+          <Zap size={12} /> Test out (3/3 to skip)
+        </Link>
+      </div>
+    );
+  }
+
+  if (done) return <div className={cardBase}>{header}</div>;
+  return <Link to={`/lesson/${concept.id}`}><div className={cardBase}>{header}</div></Link>;
 }
 
 export default Learn;

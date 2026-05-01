@@ -1,21 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link, useSearchParams } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { CONCEPT_BY_ID, DIMENSION_LABELS } from "@/data/conceptGraph";
 import { completeLesson, loadStreak } from "@/lib/lessons";
-import { ArrowRight, BookOpen, CheckCircle2, XCircle, Flame } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, XCircle, Flame, Zap } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
-type Phase = "read" | "quiz" | "result";
+type Phase = "read" | "quiz" | "result" | "testFailed";
 
 const Lesson = () => {
   const { conceptId = "" } = useParams();
+  const [searchParams] = useSearchParams();
+  const testOut = searchParams.get("testOut") === "1";
   const { user } = useAuth();
   const navigate = useNavigate();
   const concept = CONCEPT_BY_ID[conceptId];
 
-  const [phase, setPhase] = useState<Phase>("read");
+  const [phase, setPhase] = useState<Phase>(testOut ? "quiz" : "read");
   const [qIdx, setQIdx] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -28,11 +30,11 @@ const Lesson = () => {
   } | null>(null);
 
   useEffect(() => {
-    setPhase("read");
+    setPhase(testOut ? "quiz" : "read");
     setQIdx(0);
     setAnswers([]);
     setResult(null);
-  }, [conceptId]);
+  }, [conceptId, testOut]);
 
   const score = useMemo(
     () => answers.reduce((acc, a, i) => acc + (a === concept?.quiz[i].correct ? 1 : 0), 0),
@@ -69,6 +71,11 @@ const Lesson = () => {
       navigate("/login");
       return;
     }
+    // Test-out mode: only mark complete on a perfect score.
+    if (testOut && score < concept.quiz.length) {
+      setPhase("testFailed");
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await completeLesson(user.id, concept.id, score, concept.quiz.length);
@@ -98,10 +105,20 @@ const Lesson = () => {
           </Link>
           <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground mb-2">
             <span>{DIMENSION_LABELS[concept.dimension]}</span>
+            {testOut && (
+              <span className="inline-flex items-center gap-1 text-primary">
+                <Zap size={11} /> Test-out challenge
+              </span>
+            )}
           </div>
           <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">
             {concept.title}
           </h1>
+          {testOut && phase === "quiz" && (
+            <p className="text-sm text-muted-foreground mt-2">
+              Answer all {concept.quiz.length} questions correctly to mark this lesson complete and unlock what's next.
+            </p>
+          )}
         </div>
 
         {phase === "read" && (
@@ -143,6 +160,32 @@ const Lesson = () => {
             result={result}
             onContinue={() => navigate("/learn")}
           />
+        )}
+
+        {phase === "testFailed" && (
+          <div className="text-center space-y-6 py-6">
+            <div className="text-5xl">📚</div>
+            <div>
+              <h2 className="text-2xl font-display font-bold mb-1">Worth studying this one</h2>
+              <p className="text-muted-foreground">
+                You got {score} of {concept.quiz.length}. Test-out needs a perfect score — read the lesson and try the regular quiz.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => navigate(`/lesson/${concept.id}`)}
+                className="px-6 py-3 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90"
+              >
+                Read the lesson
+              </button>
+              <Link
+                to="/learn"
+                className="px-6 py-3 rounded-xl text-sm font-semibold border border-border text-foreground hover:bg-muted transition-colors"
+              >
+                Back to Learn
+              </Link>
+            </div>
+          </div>
         )}
       </main>
     </div>
