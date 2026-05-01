@@ -13,6 +13,7 @@ import { ArticleCard, type Article } from "@/components/news/ArticleCard";
 import { NewsDigest } from "@/components/news/NewsDigest";
 import { PortfolioManager } from "@/components/news/PortfolioManager";
 import { PinnedArticles } from "@/components/news/PinnedArticles";
+import { SectorHeatmap } from "@/components/news/SectorHeatmap";
 import { useAuth } from "@/contexts/AuthContext";
 
 /* ── Types ── */
@@ -321,6 +322,9 @@ const EconomicNews = () => {
           onUnpin={unpinById}
           formatDate={formatDate}
         />
+
+        {/* S&P 500 sector heatmap — daily returns at a glance */}
+        <SectorHeatmap />
 
         <Tabs defaultValue="headlines" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
