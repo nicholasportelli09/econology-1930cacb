@@ -96,9 +96,9 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
       {
         element: navSel("nav-market"),
         popover: {
-          title: "Market Ideas 💡",
+          title: "Analyst Lens 🎓",
           description:
-            "Long-term, AI-generated investment ideas with full execution walkthroughs. Built to outlast the news cycle.",
+            "Teaching case studies — see how an analyst would frame a company or theme. Educational only, no buy/sell verdicts.",
           side: "bottom",
           align: "center",
         },
