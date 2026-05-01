@@ -139,7 +139,7 @@ const MarketIdeas = () => {
               <GraduationCap className="text-primary" size={32} />
               Market Ideas
             </h1>
-            <p className="text-muted-foreground mt-1">Three names, framed as thesis · risks · what to watch.</p>
+            <p className="text-muted-foreground mt-1">Three ideas, theses, risks, what to watch</p>
           </div>
           <div className="flex items-center gap-3">
             <Link
