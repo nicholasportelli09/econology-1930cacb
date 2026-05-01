@@ -38,7 +38,7 @@ const InvestmentDetail = () => {
         <div className="text-center space-y-4">
           <p className="text-muted-foreground">Case study not found.</p>
           <Button variant="outline" onClick={() => navigate("/market")}>
-            Back to Analyst Lens
+            Back to Market Ideas
           </Button>
         </div>
       </div>
@@ -68,14 +68,14 @@ const InvestmentDetail = () => {
           onClick={() => navigate("/market")}
           className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
-          <ArrowLeft size={16} /> Back to Analyst Lens
+          <ArrowLeft size={16} /> Back to Market Ideas
         </button>
 
         {/* Education-only banner */}
         <div className="flex items-start gap-3 rounded-xl border-2 border-destructive/40 bg-destructive/10 p-4">
           <AlertTriangle className="text-destructive shrink-0 mt-0.5" size={20} />
           <p className="text-sm text-destructive leading-relaxed">
-            <span className="font-bold">Education only — not financial advice.</span> This walkthrough teaches a research framework. It is not a recommendation to buy, sell, or hold {tickerLabel}.
+            <span className="font-bold">Idea only — not financial advice.</span> This walkthrough teaches a research framework. It is not a recommendation to buy, sell, or hold {tickerLabel}.
           </p>
         </div>
 
@@ -122,7 +122,7 @@ const InvestmentDetail = () => {
         {/* Why study this */}
         <div className="rounded-xl border border-primary/30 bg-primary/10 p-5">
           <span className="text-xs font-semibold text-primary uppercase tracking-wider">
-            Why this case study is useful for you
+            Why this idea is useful for you
           </span>
           <p className="text-foreground mt-1 leading-relaxed italic">
             {investment.personalizedNote}

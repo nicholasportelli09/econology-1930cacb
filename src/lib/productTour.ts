@@ -96,9 +96,9 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
       {
         element: navSel("nav-market"),
         popover: {
-          title: "Analyst Lens 🎓",
+          title: "Market Ideas 💡",
           description:
-            "Teaching case studies — see how an analyst would frame a company or theme. Educational only, no buy/sell verdicts.",
+            "Ideas to explore — see how an analyst might frame a company or theme. Educational only, not financial advice.",
           side: "bottom",
           align: "center",
         },
