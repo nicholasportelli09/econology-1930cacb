@@ -40,6 +40,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Soft-redirect on fresh sign-in from auth pages only.
       if (event === "SIGNED_IN" && session?.user) {
+        // Notify admin once per new user. We treat "new" as
+        // created_at within ~2 minutes of last_sign_in_at, and use a
+        // localStorage guard so token refreshes don't re-fire.
+        try {
+          const u = session.user;
+          const created = u.created_at ? new Date(u.created_at).getTime() : 0;
+          const lastSignIn = u.last_sign_in_at ? new Date(u.last_sign_in_at).getTime() : Date.now();
+          const isFresh = created > 0 && Math.abs(lastSignIn - created) < 120_000;
+          const guardKey = `econology_signup_notified_${u.id}`;
+          if (isFresh && !localStorage.getItem(guardKey)) {
+            localStorage.setItem(guardKey, "1");
+            const provider =
+              (u.app_metadata as any)?.provider ||
+              (u.identities?.[0] as any)?.provider ||
+              "email";
+            // Fire-and-forget — don't block the redirect.
+            supabase.functions
+              .invoke("send-transactional-email", {
+                body: {
+                  templateName: "new-signup",
+                  templateData: {
+                    email: u.email ?? "(no email)",
+                    userId: u.id,
+                    signedUpAt: u.created_at ?? new Date().toISOString(),
+                    provider,
+                  },
+                },
+              })
+              .catch((err) => console.warn("signup notify failed", err));
+          }
+        } catch (err) {
+          console.warn("signup notify error", err);
+        }
+
         const currentPath = window.location.pathname;
         if (currentPath === "/login" || currentPath === "/signup" || currentPath === "/verify-email") {
           const profile = localStorage.getItem("econology_profile");
