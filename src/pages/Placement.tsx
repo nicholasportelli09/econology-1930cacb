@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight, Sparkles, SkipForward } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles, SkipForward, CheckCircle2, XCircle, MinusCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { PLACEMENT_QUESTIONS } from "@/data/placementQuestions";
 import {
   scorePlacement,
   saveLiteracyProfile,
   type PlacementAnswers,
+  type LiteracyProfile,
 } from "@/lib/literacy";
 import { DIMENSION_LABELS } from "@/data/conceptGraph";
 import { toast } from "@/hooks/use-toast";
@@ -18,6 +19,7 @@ const Placement = () => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<PlacementAnswers>({});
   const [submitting, setSubmitting] = useState(false);
+  const [results, setResults] = useState<LiteracyProfile | null>(null);
 
   const total = PLACEMENT_QUESTIONS.length;
   const q = PLACEMENT_QUESTIONS[step];
@@ -46,7 +48,7 @@ const Placement = () => {
       localStorage.removeItem("econology_quiz_score");
       localStorage.removeItem("econology_quiz_score_2");
       localStorage.setItem("econology_placement_done", "true");
-      navigate("/dashboard");
+      setResults(profile);
     } catch (e) {
       console.error(e);
       toast({ title: "Could not save placement", description: "Please try again." });
@@ -57,6 +59,10 @@ const Placement = () => {
 
   const isLast = step === total - 1;
   const canProceed = selected !== undefined;
+
+  if (results) {
+    return <PlacementResults profile={results} onContinue={() => navigate("/dashboard")} />;
+  }
 
   return (
     <div
