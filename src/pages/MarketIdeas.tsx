@@ -97,18 +97,12 @@ const MarketIdeas = () => {
       <DashboardHeader initials={initials} />
 
       <main className="max-w-screen-2xl mx-auto px-4 md:px-10 lg:px-16 py-8 space-y-8">
-        {/* Educational-only banner — prominent, unmissable */}
-        <div className="flex items-start gap-3 rounded-xl border-2 border-destructive/40 bg-destructive/10 p-4">
-          <AlertTriangle className="text-destructive shrink-0 mt-0.5" size={22} />
-          <div className="text-sm text-destructive leading-relaxed">
-            <p className="font-bold uppercase tracking-wider text-xs mb-1">Ideas only — not financial advice</p>
-            <p>
-              Nothing on this page is a recommendation to buy, sell, or hold any security. These are
-              <span className="font-semibold"> educational market ideas</span> to spark your own thinking.
-              Econology is not a registered investment adviser. Always do your own research and consult a
-              licensed professional before making investment decisions.
-            </p>
-          </div>
+        {/* Educational-only banner — single, concise */}
+        <div className="flex items-center gap-3 rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-2.5">
+          <AlertTriangle className="text-destructive shrink-0" size={16} />
+          <p className="text-xs text-destructive">
+            <span className="font-bold uppercase tracking-wider">Not financial advice.</span> Educational ideas only — figures are illustrative. Do your own research.
+          </p>
         </div>
 
         {/* Economic News promo */}
@@ -145,10 +139,7 @@ const MarketIdeas = () => {
               <GraduationCap className="text-primary" size={32} />
               Market Ideas
             </h1>
-            <p className="text-muted-foreground mt-1">Ideas to explore — not financial advice.</p>
-            <p className="text-xs text-muted-foreground mt-2 max-w-2xl">
-              Each idea walks through a framework (thesis, risks, what to watch) so you can think it through yourself. <span className="font-semibold text-foreground">No buy/sell recommendations.</span> For news-driven explainers, see <span className="font-medium text-foreground">Economic News</span>.
-            </p>
+            <p className="text-muted-foreground mt-1">Three names, framed as thesis · risks · what to watch.</p>
           </div>
           <div className="flex items-center gap-3">
             <Link
@@ -220,27 +211,24 @@ const MarketIdeas = () => {
                     {inv.ticker && inv.ticker !== "N/A" && <span className="text-xs font-mono text-primary mb-3">{inv.ticker}</span>}
                     <p className="text-sm text-muted-foreground leading-relaxed mb-4">{inv.description}</p>
                     <div className="space-y-3 mb-5 flex-1">
-                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">The Thesis</span><p className="text-sm text-foreground">{inv.whyGood}</p></div>
+                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Thesis</span><p className="text-sm text-foreground">{inv.whyGood}</p></div>
                       <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Why study this</span><p className="text-sm text-primary/90 italic">{inv.personalizedNote}</p></div>
-                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Position-sizing example</span><p className="text-sm text-foreground font-medium">{inv.startingAmount} <span className="text-muted-foreground font-normal">— illustrative only</span></p></div>
+                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sizing example</span><p className="text-sm text-foreground font-medium">{inv.startingAmount}</p></div>
                     </div>
                     <button onClick={() => navigate("/investment", { state: { investment: inv } })} className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80 mt-auto">
-                      Walk through the framework <ArrowRight size={14} />
+                      Walk through it <ArrowRight size={14} />
                     </button>
                   </div>
                 );
               })}
             </div>
-            <p className="text-xs text-muted-foreground text-center italic">
-              These are educational ideas, not recommendations. Econology is not a registered investment adviser.
-            </p>
           </div>
         )}
 
         {!data && !loading && !error && (
           <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
             <GraduationCap size={48} className="text-muted-foreground/30" />
-            <p className="text-muted-foreground">Click <span className="font-semibold">"Get market ideas"</span> to see three current names framed as a teaching exercise — not financial advice.</p>
+            <p className="text-muted-foreground">Click <span className="font-semibold">"Get market ideas"</span> to see three names framed as a teaching exercise.</p>
           </div>
         )}
       </main>
