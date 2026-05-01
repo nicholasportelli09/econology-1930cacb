@@ -117,9 +117,10 @@ const MarketIdeas = () => {
           <div className="flex items-center gap-3">
             <Link
               to="/news"
-              className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-medium border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold border-2 border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:border-primary/60 transition-colors shadow-sm"
             >
-              <Newspaper size={14} /> Economic News
+              <Newspaper size={16} /> Economic News
+              <ArrowRight size={14} />
             </Link>
             <button onClick={fetchInsights} disabled={loading} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
               {loading ? <><Loader2 size={18} className="animate-spin" /> Analyzing...</> : <><Sparkles size={18} /> Get Latest Investment Ideas</>}
