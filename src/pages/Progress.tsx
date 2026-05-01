@@ -224,17 +224,24 @@ const Progress = () => {
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
             {ALL_BADGES.map((badge) => {
               const earned = gam.badges.includes(badge.id);
+              const Icon = badge.icon;
               return (
                 <div
                   key={badge.id}
-                  className={`flex flex-col items-center p-3 rounded-xl border transition-all ${
+                  className={`flex flex-col items-center p-3 rounded-xl border transition-all gap-2 ${
                     earned
                       ? "border-primary/30 bg-primary/5"
                       : "border-border bg-muted/30 opacity-40"
                   }`}
                   title={badge.description}
                 >
-                  <span className="text-2xl mb-1">{badge.emoji}</span>
+                  <div
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                      earned ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    <Icon size={20} strokeWidth={1.75} />
+                  </div>
                   <span className="text-[10px] font-medium text-foreground text-center leading-tight">{badge.name}</span>
                 </div>
               );
