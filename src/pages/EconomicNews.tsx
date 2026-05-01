@@ -3,7 +3,7 @@ import { DashboardHeader } from "@/components/DashboardHeader";
 import {
   Newspaper, Loader2, CheckCircle2, Sparkles, TrendingUp, Search, RefreshCw,
 } from "lucide-react";
-import { type UserProfile, defaultProfile } from "@/types/profile";
+import { type UserProfile, defaultProfile, CURRICULUM_INTERESTS, EXTRA_INTERESTS, normalizeTopicLabels } from "@/types/profile";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -27,7 +27,9 @@ interface PinnedArticleRow {
 function getProfile(): UserProfile {
   try {
     const stored = localStorage.getItem("econology_profile");
-    return stored ? JSON.parse(stored) : defaultProfile;
+    if (!stored) return defaultProfile;
+    const parsed = JSON.parse(stored) as UserProfile;
+    return { ...parsed, topicsOfInterest: normalizeTopicLabels(parsed.topicsOfInterest) };
   } catch { return defaultProfile; }
 }
 
