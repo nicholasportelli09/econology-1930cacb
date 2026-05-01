@@ -109,7 +109,9 @@ export default function DashboardSummary() {
       icon: Activity,
       label: "Progress",
       value: `Lv ${level.level} · ${gam.xp} XP`,
-      hint: `Next level at ${level.nextAt} XP`,
+      hint: level.nextLevel
+        ? `${Math.max(0, level.nextLevel.minXP - gam.xp)} XP to ${level.nextLevel.title}`
+        : "Top level reached",
     },
   ];
 
