@@ -7,6 +7,7 @@ import {
   DIMENSION_LABELS,
   type Dimension,
   type ConceptNode,
+  CONCEPT_BY_ID,
 } from "@/data/conceptGraph";
 import {
   loadLiteracyProfile,
@@ -146,8 +147,7 @@ function NextLessonCard({
   rationale: string;
   onStart: () => void;
 }) {
-  // Look up concept title without re-importing CONCEPT_BY_ID at top? Keep import minimal.
-  const concept = require("@/data/conceptGraph").CONCEPT_BY_ID[conceptId] as ConceptNode;
+  const concept = CONCEPT_BY_ID[conceptId];
   return (
     <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-card to-card p-6 md:p-8">
       <div className="text-xs uppercase tracking-wider text-primary font-semibold mb-2">
