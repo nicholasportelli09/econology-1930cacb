@@ -1,11 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { TIP_ARTICLES } from "@/data/tipArticles";
+import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
-import { type UserProfile, defaultProfile, normalizeTopicLabels } from "@/types/profile";
-import { useAuth } from "@/contexts/AuthContext";
-import { loadLiteracyProfile, type LiteracyProfile } from "@/lib/literacy";
-import { DIMENSION_LABELS, type Dimension } from "@/data/conceptGraph";
-import { getLevel, ALL_BADGES, recordDailyLogin } from "@/lib/gamification";
-import { Flame, Star, HelpCircle } from "lucide-react";
+import { HealthScoreRing } from "@/components/HealthScoreRing";
+import { type UserProfile, defaultProfile, TOPICS_OF_INTEREST, normalizeTopicLabels } from "@/types/profile";
+import {
+  getGamification,
+  getLevel,
+  ALL_BADGES,
+  recordDailyLogin,
+  computeHealthScore,
+} from "@/lib/gamification";
+import { BookOpen, Brain, Flame, Lightbulb, Star, Trophy, Zap, Target, HelpCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -25,9 +31,29 @@ function getProfile(): UserProfile {
   }
 }
 
+function getDaysActive(): number {
+  const first = localStorage.getItem("econology_first_visit");
+  if (!first) {
+    localStorage.setItem("econology_first_visit", new Date().toISOString());
+    return 1;
+  }
+  const diff = Date.now() - new Date(first).getTime();
+  return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+}
+
+function getTipsExplored(): string[] {
+  try {
+    return JSON.parse(localStorage.getItem("econology_tips_explored") || "[]");
+  } catch {
+    return [];
+  }
+}
+
 const Progress = () => {
-  const { user } = useAuth();
+  const navigate = useNavigate();
   const profile = useMemo(getProfile, []);
+  const daysActive = useMemo(getDaysActive, []);
+  const tipsExplored = useMemo(getTipsExplored, []);
 
   // Record daily login for streak
   const gam = useMemo(() => {
@@ -36,25 +62,17 @@ const Progress = () => {
   }, []);
 
   const level = useMemo(() => getLevel(gam.xp), [gam.xp]);
-
-  const [literacy, setLiteracy] = useState<LiteracyProfile | null>(null);
-  useEffect(() => {
-    if (!user) return;
-    loadLiteracyProfile(user.id).then(setLiteracy).catch(() => setLiteracy(null));
-  }, [user]);
-
-  const dimensionScores = useMemo(() => {
-    const dims: Dimension[] = ["budgeting", "credit", "investing", "macro", "risk"];
-    return dims.map((d) => ({
-      dim: d,
-      label: DIMENSION_LABELS[d],
-      value: literacy?.scores[d] ?? 0,
-    }));
-  }, [literacy]);
+  const health = useMemo(() => computeHealthScore(profile, gam), [profile, gam]);
 
   const initials = profile.name
     ? profile.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)
     : "U";
+
+  const quizScore = profile.quizScore;
+  const QUIZ_TOTAL = 5;
+  const placementPct = quizScore === null ? null : Math.round((quizScore / QUIZ_TOTAL) * 100);
+  const quizLevel =
+    quizScore === null ? "Not taken" : quizScore >= 4 ? "Advanced" : quizScore >= 2 ? "Intermediate" : "Beginner";
 
   const [showMethodology, setShowMethodology] = useState(false);
 
@@ -100,8 +118,14 @@ const Progress = () => {
                 </ul>
               </div>
               <div className="border-t border-border pt-4">
-                <h3 className="font-semibold mb-1.5">Knowledge by Dimension</h3>
-                <p className="text-muted-foreground">Each bar shows your mastery (0–100) in one of the five financial literacy dimensions, based on your placement assessment and lessons completed.</p>
+                <h3 className="font-semibold mb-1.5">Learning Progress Score (0–100)</h3>
+                <p className="text-muted-foreground mb-2">A composite metric reflecting four key dimensions of your financial development:</p>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li><span className="font-medium text-foreground">Knowledge (25 pts)</span> — Based on your best assessment score. Higher scores indicate stronger foundational understanding.</li>
+                  <li><span className="font-medium text-foreground">Engagement (25 pts)</span> — Measures consistency: insights studied, login streak, simulator usage, and assessments completed.</li>
+                  <li><span className="font-medium text-foreground">Goals (25 pts)</span> — Reflects how clearly you've defined your financial objectives. Setting 3+ goals earns full marks.</li>
+                  <li><span className="font-medium text-foreground">Diversification (25 pts)</span> — Tracks breadth of topics explored. Selecting 4+ interest areas earns full marks.</li>
+                </ul>
               </div>
               <div className="border-t border-border pt-4">
                 <h3 className="font-semibold mb-1.5">Levels & Achievements</h3>
@@ -145,38 +169,58 @@ const Progress = () => {
           </div>
         </div>
 
-        {/* Knowledge by Dimension */}
-        <div className="rounded-xl border border-border bg-card p-6 card-shadow">
-          <h2 className="text-lg font-display font-semibold text-foreground mb-1">Knowledge by Dimension</h2>
-          <p className="text-sm text-muted-foreground mb-5">
-            {literacy
-              ? "Mastery across the five financial literacy dimensions."
-              : "Take the placement assessment to see your dimension breakdown."}
-          </p>
-          <div className="space-y-4">
-            {dimensionScores.map((d) => (
-              <div key={d.dim}>
-                <div className="flex justify-between items-baseline mb-1.5">
-                  <span className="text-sm font-medium text-foreground">{d.label}</span>
-                  <span className="text-xs font-medium text-muted-foreground tabular-nums">{d.value}/100</span>
+        {/* Learning Progress Score + Stats side by side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Learning Progress Score */}
+          <div className="rounded-xl border border-border bg-card p-6 card-shadow flex flex-col items-center">
+            <h2 className="text-lg font-display font-semibold text-foreground mb-4 flex items-center gap-2">
+              <Target size={20} className="text-primary" />
+              Learning Progress Score
+            </h2>
+            <div className="relative">
+              <HealthScoreRing score={health.score} />
+            </div>
+            <div className="w-full mt-6 space-y-2">
+              {health.breakdown.map((b) => (
+                <div key={b.label} className="flex items-center gap-3">
+                  <span className="text-xs text-muted-foreground w-24">{b.label}</span>
+                  <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-primary transition-all duration-500"
+                      style={{ width: `${(b.value / b.max) * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-medium text-foreground w-10 text-right">{b.value}/{b.max}</span>
                 </div>
-                <div className="h-3 rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full rounded-full gradient-bg transition-all duration-700"
-                    style={{ width: `${Math.max(2, d.value)}%` }}
-                  />
+              ))}
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 gap-4 content-start">
+            {[
+              { icon: Flame, label: "Days Active", value: daysActive, color: "text-destructive" },
+              { icon: Brain, label: "Placement", value: placementPct !== null ? `${quizScore}/${QUIZ_TOTAL} · ${placementPct}%` : "N/A", color: "text-primary" },
+              { icon: BookOpen, label: "Topics Selected", value: `${profile.topicsOfInterest.length}/${TOPICS_OF_INTEREST.length}`, color: "text-secondary" },
+              { icon: Lightbulb, label: "Insights Studied", value: tipsExplored.length, color: "text-accent" },
+              { icon: Zap, label: "Total XP", value: gam.xp, color: "text-primary" },
+              { icon: Trophy, label: "Achievements", value: `${gam.badges.length}/${ALL_BADGES.length}`, color: "text-accent" },
+            ].map((s) => {
+              const Icon = s.icon;
+              return (
+                <div key={s.label} className="rounded-xl border border-border bg-card p-4 card-shadow text-center space-y-1.5">
+                  <Icon size={22} className={`mx-auto ${s.color}`} />
+                  <p className="text-xl font-display font-bold text-foreground">{s.value}</p>
+                  <p className="text-[11px] text-muted-foreground">{s.label}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
-        {/* Achievements */}
+        {/* Badges */}
         <div className="rounded-xl border border-border bg-card p-6 card-shadow">
-          <div className="flex items-baseline justify-between mb-4">
-            <h2 className="text-lg font-display font-semibold text-foreground">Achievements</h2>
-            <span className="text-xs text-muted-foreground tabular-nums">{gam.badges.length}/{ALL_BADGES.length}</span>
-          </div>
+          <h2 className="text-lg font-display font-semibold text-foreground mb-4">Achievements</h2>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
             {ALL_BADGES.map((badge) => {
               const earned = gam.badges.includes(badge.id);
@@ -204,6 +248,72 @@ const Progress = () => {
             })}
           </div>
         </div>
+
+        {/* Knowledge Level */}
+        <div className="rounded-xl border border-border bg-card p-6 card-shadow">
+          <h2 className="text-lg font-display font-semibold text-foreground mb-3">Knowledge Level</h2>
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <div className="h-3 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full gradient-bg transition-all duration-500"
+                  style={{ width: `${((quizScore ?? 0) / 5) * 100}%` }}
+                />
+              </div>
+            </div>
+            <span className="text-sm font-medium text-foreground">{quizLevel}</span>
+          </div>
+        </div>
+
+        {/* Topics */}
+        <div className="rounded-xl border border-border bg-card p-6 card-shadow">
+          <h2 className="text-lg font-display font-semibold text-foreground mb-4">Selected Topics</h2>
+          <div className="flex flex-wrap gap-2">
+            {TOPICS_OF_INTEREST.map((topic) => {
+              const selected = profile.topicsOfInterest.includes(topic);
+              return (
+                <span
+                  key={topic}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                    selected
+                      ? "bg-primary/20 text-primary border border-primary/30"
+                      : "bg-muted text-muted-foreground border border-border"
+                  }`}
+                >
+                  {topic}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Tips Explored */}
+        {tipsExplored.length > 0 && (
+          <div className="rounded-xl border border-border bg-card p-6 card-shadow">
+            <h2 className="text-lg font-display font-semibold text-foreground mb-3">Insights Studied</h2>
+            <div className="flex flex-wrap gap-2">
+              {tipsExplored.map((tip) => (
+                <span key={tip} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-accent/20 text-accent border border-accent/30">
+                  {TIP_ARTICLES[tip]?.title ?? tip}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Budget Simulator CTA */}
+        <button
+          onClick={() => navigate("/budget")}
+          className="w-full rounded-xl border border-border bg-card p-6 card-shadow text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/30 flex items-center gap-5"
+        >
+          <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+            <span className="text-2xl">💰</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-lg font-display font-semibold text-foreground">Budget Simulator</h3>
+            <p className="text-sm text-muted-foreground">Model your spending allocation and visualize long-term savings projections.</p>
+          </div>
+        </button>
       </main>
     </div>
   );
