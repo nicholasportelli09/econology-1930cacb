@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import {
-  TrendingUp,
+  GraduationCap,
   Loader2,
   AlertTriangle,
   ArrowRight,
@@ -19,18 +19,18 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-interface Investment {
+interface CaseStudy {
   name: string;
   ticker: string;
   description: string;
-  startingAmount: string;
+  startingAmount: string; // kept for back-compat with edge function payload
   riskLevel: "Low" | "Medium" | "High";
   whyGood: string;
   personalizedNote: string;
 }
 
 interface MarketData {
-  investments: Investment[];
+  investments: CaseStudy[];
   marketContext: string;
   disclaimer: string;
 }
@@ -44,11 +44,11 @@ function getProfile(): UserProfile {
   }
 }
 
-const riskColor = (level: string) => {
+const lensColor = (level: string) => {
   switch (level) {
     case "Low": return "bg-accent/15 text-accent border-accent/30";
-    case "Medium": return "bg-yellow-500/15 text-yellow-500 border-yellow-500/30";
-    case "High": return "bg-destructive/15 text-destructive border-destructive/30";
+    case "Medium": return "bg-secondary/15 text-secondary border-secondary/30";
+    case "High": return "bg-primary/15 text-primary border-primary/30";
     default: return "bg-muted text-muted-foreground";
   }
 };
@@ -76,7 +76,7 @@ const MarketIdeas = () => {
       if (result?.error) throw new Error(result.error);
       setData(result as MarketData);
     } catch (e: any) {
-      const msg = e?.message || "Failed to fetch market insights";
+      const msg = e?.message || "Failed to fetch case studies";
       setError(msg);
       toast({ title: "Error", description: msg, variant: "destructive" });
     } finally {
@@ -84,11 +84,11 @@ const MarketIdeas = () => {
     }
   };
 
-  const dismissInvestment = (index: number, reason: "not_interested" | "already_invested") => {
+  const dismissCase = (index: number, reason: "not_interested" | "studied") => {
     setDismissed(prev => new Set(prev).add(index));
     toast({
-      title: reason === "already_invested" ? "Marked as invested" : "Dismissed",
-      description: reason === "already_invested" ? "Nice move! We'll note that." : "We'll try different ideas next time.",
+      title: reason === "studied" ? "Marked as studied" : "Hidden",
+      description: reason === "studied" ? "We'll prioritise different case studies next time." : "Hidden from this set.",
     });
   };
 
@@ -97,12 +97,18 @@ const MarketIdeas = () => {
       <DashboardHeader initials={initials} />
 
       <main className="max-w-screen-2xl mx-auto px-4 md:px-10 lg:px-16 py-8 space-y-8">
-        {/* Disclaimer */}
-        <div className="flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/10 p-4">
-          <AlertTriangle className="text-destructive shrink-0 mt-0.5" size={20} />
-          <p className="text-sm text-destructive leading-relaxed">
-            <span className="font-semibold">Disclaimer:</span> This is educational information only, not financial advice. Always do your own research.
-          </p>
+        {/* Educational-only banner — prominent, unmissable */}
+        <div className="flex items-start gap-3 rounded-xl border-2 border-destructive/40 bg-destructive/10 p-4">
+          <AlertTriangle className="text-destructive shrink-0 mt-0.5" size={22} />
+          <div className="text-sm text-destructive leading-relaxed">
+            <p className="font-bold uppercase tracking-wider text-xs mb-1">Education only — not financial advice</p>
+            <p>
+              Nothing on this page is a recommendation to buy, sell, or hold any security. These are
+              <span className="font-semibold"> teaching case studies</span> showing how an analyst might
+              think about a company or theme. Econology is not a registered investment adviser. Always do
+              your own research and consult a licensed professional before making investment decisions.
+            </p>
+          </div>
         </div>
 
         {/* Economic News promo */}
@@ -136,12 +142,12 @@ const MarketIdeas = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground flex items-center gap-3">
-              <TrendingUp className="text-primary" size={32} />
-              Market Ideas
+              <GraduationCap className="text-primary" size={32} />
+              Analyst Lens
             </h1>
-            <p className="text-muted-foreground mt-1">AI-powered investment recommendations personalized for you.</p>
+            <p className="text-muted-foreground mt-1">Teaching case studies — how an analyst might frame a company or theme.</p>
             <p className="text-xs text-muted-foreground mt-2 max-w-2xl">
-              <span className="font-semibold text-foreground">Long-term ideas</span> to buy and hold for years. For short-term, news-driven moves, see <span className="font-medium text-foreground">AI Insights</span>.
+              Each case study walks through the framework an analyst might apply (thesis, risks, what to watch). <span className="font-semibold text-foreground">No buy/sell verdicts.</span> For news-driven explainers, see <span className="font-medium text-foreground">Economic News</span>.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -153,10 +159,10 @@ const MarketIdeas = () => {
               <ArrowRight size={14} />
             </Link>
             <button onClick={fetchInsights} disabled={loading} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
-              {loading ? <><Loader2 size={18} className="animate-spin" /> Analyzing...</> : <><Sparkles size={18} /> Get Latest Investment Ideas</>}
+              {loading ? <><Loader2 size={18} className="animate-spin" /> Analysing…</> : <><Sparkles size={18} /> Generate case studies</>}
             </button>
             {data && !loading && (
-              <button onClick={fetchInsights} title="Refresh ideas" className="p-2.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+              <button onClick={fetchInsights} title="Refresh case studies" className="p-2.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                 <RefreshCw size={16} />
               </button>
             )}
@@ -166,7 +172,7 @@ const MarketIdeas = () => {
         {loading && (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <Loader2 size={40} className="animate-spin text-primary" />
-            <p className="text-muted-foreground text-sm">Analyzing your profile & market conditions...</p>
+            <p className="text-muted-foreground text-sm">Building case studies relevant to your learning path…</p>
           </div>
         )}
 
@@ -193,15 +199,15 @@ const MarketIdeas = () => {
                     {/* Dismiss actions */}
                     <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
-                        onClick={() => dismissInvestment(i, "already_invested")}
-                        title="Already invested"
+                        onClick={() => dismissCase(i, "studied")}
+                        title="Mark as studied"
                         className="p-1.5 rounded-lg text-muted-foreground hover:bg-accent/20 hover:text-accent transition-colors"
                       >
                         <Check size={14} />
                       </button>
                       <button
-                        onClick={() => dismissInvestment(i, "not_interested")}
-                        title="Not interested"
+                        onClick={() => dismissCase(i, "not_interested")}
+                        title="Hide"
                         className="p-1.5 rounded-lg text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition-colors"
                       >
                         <X size={14} />
@@ -209,30 +215,32 @@ const MarketIdeas = () => {
                     </div>
                     <div className="flex items-start justify-between mb-3 pr-16">
                       <h3 className="text-lg font-display font-bold text-foreground">{inv.name}</h3>
-                      <Badge className={`shrink-0 text-xs border ${riskColor(inv.riskLevel)}`}>{inv.riskLevel}</Badge>
+                      <Badge className={`shrink-0 text-xs border ${lensColor(inv.riskLevel)}`}>{inv.riskLevel} complexity</Badge>
                     </div>
                     {inv.ticker && inv.ticker !== "N/A" && <span className="text-xs font-mono text-primary mb-3">{inv.ticker}</span>}
                     <p className="text-sm text-muted-foreground leading-relaxed mb-4">{inv.description}</p>
                     <div className="space-y-3 mb-5 flex-1">
-                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Starting Amount</span><p className="text-sm text-foreground font-medium">{inv.startingAmount}</p></div>
-                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Why It's Good</span><p className="text-sm text-foreground">{inv.whyGood}</p></div>
-                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">For You</span><p className="text-sm text-primary/90 italic">{inv.personalizedNote}</p></div>
+                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">The Thesis</span><p className="text-sm text-foreground">{inv.whyGood}</p></div>
+                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Why study this</span><p className="text-sm text-primary/90 italic">{inv.personalizedNote}</p></div>
+                      <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Position-sizing example</span><p className="text-sm text-foreground font-medium">{inv.startingAmount} <span className="text-muted-foreground font-normal">— illustrative only</span></p></div>
                     </div>
                     <button onClick={() => navigate("/investment", { state: { investment: inv } })} className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80 mt-auto">
-                      Explore Further <ArrowRight size={14} />
+                      Walk through the framework <ArrowRight size={14} />
                     </button>
                   </div>
                 );
               })}
             </div>
-            {data.disclaimer && <p className="text-xs text-muted-foreground text-center italic">{data.disclaimer}</p>}
+            <p className="text-xs text-muted-foreground text-center italic">
+              These are educational case studies, not recommendations. Econology is not a registered investment adviser.
+            </p>
           </div>
         )}
 
         {!data && !loading && !error && (
           <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
-            <TrendingUp size={48} className="text-muted-foreground/30" />
-            <p className="text-muted-foreground">Click "Get Latest Investment Ideas" to receive personalized recommendations based on your profile.</p>
+            <GraduationCap size={48} className="text-muted-foreground/30" />
+            <p className="text-muted-foreground">Click <span className="font-semibold">"Generate case studies"</span> to see how an analyst might frame three current names — purely as a teaching exercise.</p>
           </div>
         )}
       </main>

@@ -83,7 +83,7 @@ serve(async (req) => {
     });
 
     const headlinesContext = marketHeadlines
-      ? `\n\nHere are REAL current market headlines for context:\n${marketHeadlines}\n\nUse these to inform your recommendations with up-to-date market awareness.`
+      ? `\n\nHere are REAL current market headlines for context:\n${marketHeadlines}\n\nUse these to anchor your case studies in what's actually happening — but treat them as teaching context, not as triggers to recommend action.`
       : "";
 
     // Add randomization seed to prevent identical responses
@@ -92,44 +92,41 @@ serve(async (req) => {
     const focusCategories = shuffled.slice(0, 5).join(", ");
     const randomSeed = Math.random().toString(36).slice(2, 8);
 
-    const systemPrompt = `You are a LONG-TERM investment strategist for young investors. Based on this user profile: ${userData}, propose 3 UNIQUE and SPECIFIC investments to BUY AND HOLD for the next 3-10+ years.${headlinesContext}
+    const systemPrompt = `You are an EDUCATIONAL finance writer producing TEACHING CASE STUDIES for young learners. Based on this user profile: ${userData}, write 3 case studies showing HOW AN ANALYST WOULD THINK about a specific company, fund, or theme.${headlinesContext}
 
-Positioning vs. other parts of the app:
-- This section is about LONG-TERM thesis-driven investing (multi-year holds, structural trends, compounding).
-- It is NOT about reacting to today's headlines, hedging, or tactical short-term trades — that lives in the AI Insights section of the news page.
-- You may use current headlines as context for *why* a long-term thesis is timely, but every recommendation must make sense as a multi-year position even if the news fades.
+CRITICAL — LEGAL / TONE CONSTRAINTS (non-negotiable):
+- Econology is NOT a registered investment adviser. You are NOT recommending anything.
+- Do NOT use the words "recommend", "buy", "sell", "should invest", "you should", "great pick", "best stock", "I suggest", or anything that sounds like a directional call.
+- Frame every case study as: "Here is a name an analyst might *study* — this is how they'd frame the question."
+- It is OK to lay out the bull thesis, the bear thesis, what to track, and what would invalidate the thesis. It is NOT OK to conclude with a verdict.
+- The optional position-sizing number is purely an ILLUSTRATIVE example to make the framework concrete. Always describe it as "illustrative" or "for the example".
 
-IMPORTANT: Be CREATIVE and VARIED. Focus on these categories this time: ${focusCategories}. Seed: ${randomSeed}.
-- Do NOT always suggest the same generic options like "S&P 500 index fund" or "high-yield savings"
-- Include SPECIFIC fund names, ETF tickers, or platform names
-- Mix different asset classes and risk levels
-- Consider structural long-term trends (demographics, AI, energy transition, emerging markets, etc.)
-- Each recommendation should feel fresh and different from typical generic advice
+VARIETY: Focus on these categories this time: ${focusCategories}. Seed: ${randomSeed}. Vary the names — don't always default to "S&P 500 index fund". Mix asset classes and structural themes (AI, energy, demographics, EM, etc.).
 
-For EACH investment, include a detailed step-by-step execution guide with 5-7 specific, actionable steps that a complete beginner can follow. Steps should include exact platform names, what to click, what documents are needed, and how to place the first order.
+For EACH case study, the "steps" field should be a 5-7 step ANALYST FRAMEWORK WALKTHROUGH (define the thesis, identify drivers, list risks, find data, stress-test bull/bear, decide what would invalidate). Steps must NOT be brokerage instructions ("open a Fidelity account", "place a buy order") — that is what we are explicitly avoiding.
 
-Return ONLY valid JSON in this format:
+Return ONLY valid JSON in this format. The legacy field names are kept for back-compat — interpret their meaning per the comments:
 {
   "investments": [
     {
-      "name": "Specific Investment Name",
+      "name": "Specific company / fund / theme",
       "ticker": "TICKER or N/A",
-      "description": "2-3 sentence description",
-      "startingAmount": "$X",
-      "riskLevel": "Low/Medium/High",
-      "whyGood": "Why this is good for beginners",
-      "personalizedNote": "How this specifically fits THIS user's situation",
+      "description": "2-3 sentence neutral description of the business or theme",
+      "startingAmount": "$X — illustrative only, used only to make the framework concrete",
+      "riskLevel": "Low/Medium/High",  // interpret as analytical complexity, NOT investment risk grade
+      "whyGood": "The thesis as an analyst would frame it — bull case in 2 sentences, then the main risks",
+      "personalizedNote": "Why studying this case is useful for THIS user's learning path (link to a curriculum concept they're working on)",
       "steps": [
-        "Step 1: Specific action with platform name",
-        "Step 2: Next specific action",
-        "Step 3: ...",
-        "Step 4: ...",
-        "Step 5: ..."
+        "Step 1: Define the thesis in one sentence — what would have to be true?",
+        "Step 2: Identify the 2-3 drivers an analyst would track",
+        "Step 3: List the top 3 risks that would invalidate the thesis",
+        "Step 4: Where to find the data (10-K, earnings call, sector reports)",
+        "Step 5: Stress-test — bull case, base case, bear case"
       ]
     }
   ],
-  "marketContext": "1-2 sentence current market summary based on real headlines if available",
-  "disclaimer": "Standard disclaimer"
+  "marketContext": "1-2 sentence neutral summary of the macro backdrop based on real headlines if available — describe, don't prescribe",
+  "disclaimer": "Educational case studies only. Not investment advice. Econology is not a registered investment adviser."
 }`;
 
     const response = await fetch(
@@ -148,7 +145,7 @@ Return ONLY valid JSON in this format:
             {
               role: "user",
               content:
-                `Generate 3 FRESH and UNIQUE investment recommendations I haven't seen before. Be creative and specific — avoid the most obvious generic suggestions. Surprise me with interesting options that still suit a beginner. (variation key: ${randomSeed})`,
+                `Generate 3 fresh and varied teaching case studies — different names, sectors, and complexities than typical examples. Frame each as "how an analyst would think about this", with no buy/sell verdict. (variation key: ${randomSeed})`,
             },
           ],
         }),
