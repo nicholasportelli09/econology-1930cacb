@@ -38,23 +38,28 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
   // ─── BUDGETING & SAVING ─────────────────────────────────────
   {
     id: "sVKQn2I4HDM",
-    title: "How to Make a Budget (The 50/30/20 Rule)",
-    channel: "The Plain Bagel",
-    minutes: 7,
+    title: "Budgeting Basics",
+    channel: "Two Cents",
+    minutes: 6,
     level: "beginner",
     concepts: ["budget-basics", "needs-vs-wants"],
     quickCheck: {
-      q: "Under the 50/30/20 rule, what gets 20%?",
-      options: ["Needs", "Wants", "Savings & extra debt payoff", "Taxes"],
-      correct: 2,
-      explain: "20% targets savings and accelerated debt payoff.",
+      q: "What's the first step to building a useful budget?",
+      options: [
+        "Cut out all fun spending",
+        "Track where your money actually goes today",
+        "Open a new credit card",
+        "Pick a stock to invest in",
+      ],
+      correct: 1,
+      explain: "You can't budget what you haven't measured. Tracking comes first.",
     },
   },
   {
-    id: "1RtDS6RJDqI",
-    title: "Why You Need an Emergency Fund",
-    channel: "The Plain Bagel",
-    minutes: 6,
+    id: "EXFcca45rvI",
+    title: "Where You Should Keep Your Emergency Fund",
+    channel: "George Kamel",
+    minutes: 7,
     level: "beginner",
     concepts: ["emergency-fund", "high-yield-savings"],
     quickCheck: {
@@ -65,10 +70,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "HQzoZfc3GwQ",
-    title: "The Power of Automating Your Finances",
-    channel: "Ben Felix",
-    minutes: 9,
+    id: "EzsKyXMb_1o",
+    title: "Automating Your Finances Will Change Your Life",
+    channel: "I Will Teach You To Be Rich",
+    minutes: 8,
     level: "beginner",
     concepts: ["automation", "budget-basics"],
     quickCheck: {
@@ -86,10 +91,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
 
   // ─── CREDIT & DEBT ──────────────────────────────────────────
   {
-    id: "RtDS6Rk3rNE",
-    title: "Credit Scores Explained",
-    channel: "The Plain Bagel",
-    minutes: 8,
+    id: "f2ortkJfTKw",
+    title: "What is a Credit Score? Kal Penn Explains",
+    channel: "Mashable",
+    minutes: 5,
     level: "beginner",
     concepts: ["credit-score-basics", "credit-utilization"],
     quickCheck: {
@@ -100,10 +105,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "PHe0bXAIuk0",
-    title: "How Credit Cards Work (And How to Use Them)",
+    id: "ImreruIbozU",
+    title: "Things You Should Know About Your Credit Card",
     channel: "Khan Academy",
-    minutes: 10,
+    minutes: 9,
     level: "beginner",
     concepts: ["credit-utilization", "good-debt-bad-debt"],
     quickCheck: {
@@ -119,9 +124,9 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "j5q3oxWho2U",
-    title: "Avalanche vs. Snowball: Which Pays Off Debt Faster?",
-    channel: "Khan Academy",
+    id: "uuKo9a38xxk",
+    title: "Snowball vs Avalanche: Which Debt Payoff Method Is Right For You?",
+    channel: "Clever Girl Finance",
     minutes: 7,
     level: "intermediate",
     concepts: ["debt-payoff-strategies", "good-debt-bad-debt"],
@@ -140,10 +145,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
 
   // ─── INVESTING BASICS ───────────────────────────────────────
   {
-    id: "kkeBpiNMaWM",
-    title: "The Magic of Compound Interest",
+    id: "Rm6UdfRs3gw",
+    title: "Compound Interest Introduction",
     channel: "Khan Academy",
-    minutes: 8,
+    minutes: 6,
     level: "beginner",
     concepts: ["compound-interest"],
     quickCheck: {
@@ -159,10 +164,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "iXXp7iAYrGE",
-    title: "Stocks vs. Bonds: What's the Difference?",
+    id: "I81xqr8HzBE",
+    title: "Why Is Investing Important?",
     channel: "The Plain Bagel",
-    minutes: 9,
+    minutes: 8,
     level: "beginner",
     concepts: ["stocks-vs-bonds"],
     quickCheck: {
@@ -178,10 +183,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "Sh-eo8_XPzQ",
-    title: "Why Index Funds Beat 90% of Active Managers",
+    id: "Nv5CiRSCVxA",
+    title: "The Case for Index Funds",
     channel: "Ben Felix",
-    minutes: 11,
+    minutes: 9,
     level: "intermediate",
     concepts: ["index-funds", "diversification"],
     quickCheck: {
@@ -192,8 +197,8 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "X1qzuPRvsM0",
-    title: "Diversification: Don't Put All Your Eggs in One Basket",
+    id: "Pmlsa5-ruMk",
+    title: "How Diversification Works",
     channel: "The Plain Bagel",
     minutes: 8,
     level: "intermediate",
@@ -211,10 +216,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "X5pvnE6mFkU",
-    title: "Dollar-Cost Averaging Explained",
+    id: "KwR3nxojS0g",
+    title: "Dollar Cost Averaging vs. Lump Sum Investing",
     channel: "Ben Felix",
-    minutes: 7,
+    minutes: 9,
     level: "intermediate",
     concepts: ["dollar-cost-averaging"],
     quickCheck: {
@@ -230,10 +235,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "qq_K-PZl5Vw",
-    title: "401(k) vs Roth IRA: How to Choose",
-    channel: "The Plain Bagel",
-    minutes: 12,
+    id: "ountjL-3dlQ",
+    title: "Which Is Better, 401(k) or Roth IRA?",
+    channel: "Beagle",
+    minutes: 8,
     level: "intermediate",
     concepts: ["retirement-accounts"],
     quickCheck: {
@@ -251,10 +256,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
 
   // ─── MACRO & NEWS LITERACY ──────────────────────────────────
   {
-    id: "T8Ph3Wmd5Lk",
-    title: "Inflation, Explained Simply",
+    id: "ezyzVdEdUBI",
+    title: "Let's Talk Inflation (And How It Will Impact Your Portfolio)",
     channel: "The Plain Bagel",
-    minutes: 9,
+    minutes: 11,
     level: "beginner",
     concepts: ["inflation", "interest-rates"],
     quickCheck: {
@@ -265,10 +270,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "ELQX9vYwGfM",
-    title: "How the Federal Reserve Sets Interest Rates",
-    channel: "Money & Macro",
-    minutes: 12,
+    id: "R8VBRCs2jTU",
+    title: "How Does Raising Interest Rates Control Inflation?",
+    channel: "The Economist",
+    minutes: 8,
     level: "intermediate",
     concepts: ["interest-rates", "inflation"],
     quickCheck: {
@@ -284,9 +289,9 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "GIQOhgz1y8c",
-    title: "What Is a Recession, Really?",
-    channel: "Money & Macro",
+    id: "BHw4NStQsT8",
+    title: "Recession, Hyperinflation, and Stagflation",
+    channel: "CrashCourse",
     minutes: 10,
     level: "intermediate",
     concepts: ["recession", "interest-rates"],
@@ -303,10 +308,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "3KJjsB7Ssm0",
-    title: "The Yield Curve: The Bond Market's Recession Signal",
-    channel: "Patrick Boyle",
-    minutes: 14,
+    id: "bYmzy1ZVqxQ",
+    title: "The Yield Curve Explained: Inverted, Recession, and How to Use It",
+    channel: "Jess Inskip",
+    minutes: 11,
     level: "advanced",
     concepts: ["yield-curve", "interest-rates", "recession"],
     quickCheck: {
@@ -324,9 +329,9 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
 
   // ─── RISK ───────────────────────────────────────────────────
   {
-    id: "L3JqDNNJ6tk",
-    title: "Risk and Reward: There's No Free Lunch",
-    channel: "Ben Felix",
+    id: "SdJ09xm-hP0",
+    title: "All-Time Highs: Should You Invest?",
+    channel: "The Rational Reminder Podcast",
     minutes: 8,
     level: "beginner",
     concepts: ["risk-vs-reward"],
@@ -343,8 +348,8 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "WzD3AYvDLUM",
-    title: "Volatility Is Not the Same as Risk",
+    id: "RxCqxhRsHiY",
+    title: "The Risk of Individual Stocks",
     channel: "Ben Felix",
     minutes: 10,
     level: "intermediate",
@@ -362,10 +367,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
     },
   },
   {
-    id: "kFQUDeu71sM",
-    title: "Asset Allocation: The Most Important Decision",
+    id: "JsMvehwZluk",
+    title: "Revealing My Investment Portfolio",
     channel: "The Plain Bagel",
-    minutes: 11,
+    minutes: 10,
     level: "intermediate",
     concepts: ["asset-allocation", "stocks-vs-bonds"],
     quickCheck: {
@@ -378,10 +383,10 @@ export const CURATED_VIDEOS: CuratedVideo[] = [
 
   // ─── ADVANCED MACRO (gated) ─────────────────────────────────
   {
-    id: "qFc-YoyjOfk",
-    title: "Inside the Swap Market (Advanced)",
+    id: "H1TE1raBg0Q",
+    title: "What Are Swaps? Financial Derivatives Tutorial",
     channel: "Patrick Boyle",
-    minutes: 38,
+    minutes: 14,
     level: "advanced",
     concepts: ["yield-curve", "interest-rates"],
     quickCheck: {
