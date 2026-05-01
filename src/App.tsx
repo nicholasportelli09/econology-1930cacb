@@ -15,6 +15,8 @@ import Quiz from "./pages/Quiz";
 import Dashboard from "./pages/Dashboard";
 import TipArticle from "./pages/TipArticle";
 import Learn from "./pages/Learn";
+import Placement from "./pages/Placement";
+import Lesson from "./pages/Lesson";
 import MarketIdeas from "./pages/MarketIdeas";
 import InvestmentDetail from "./pages/InvestmentDetail";
 import EconomicNews from "./pages/EconomicNews";
@@ -22,7 +24,6 @@ import AskEkon from "./pages/AskEkon";
 import Progress from "./pages/Progress";
 import Settings from "./pages/Settings";
 import BudgetSimulator from "./pages/BudgetSimulator";
-import Videos from "./pages/Videos";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,13 +42,17 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
-            <Route path="/learn" element={<Learn />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/quiz" element={<Quiz />} />
             <Route path="/tip/:tipId" element={<TipArticle />} />
+
+            {/* Legacy onboarding/quiz routes redirect into placement */}
+            <Route path="/onboarding" element={<Placement />} />
+            <Route path="/quiz" element={<Placement />} />
 
             {/* Protected routes */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
+            <Route path="/placement" element={<ProtectedRoute><Placement /></ProtectedRoute>} />
+            <Route path="/lesson/:conceptId" element={<ProtectedRoute><Lesson /></ProtectedRoute>} />
             <Route path="/market" element={<ProtectedRoute><MarketIdeas /></ProtectedRoute>} />
             <Route path="/investment" element={<ProtectedRoute><InvestmentDetail /></ProtectedRoute>} />
             <Route path="/news" element={<ProtectedRoute><EconomicNews /></ProtectedRoute>} />
@@ -55,7 +60,6 @@ const App = () => (
             <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/budget" element={<ProtectedRoute><BudgetSimulator /></ProtectedRoute>} />
-            <Route path="/videos" element={<ProtectedRoute><Videos /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
