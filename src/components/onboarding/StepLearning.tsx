@@ -1,8 +1,7 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { type UserProfile, TOPICS_OF_INTEREST, LEARNING_STYLES } from "@/types/profile";
-import { BookOpen } from "lucide-react";
+import { type UserProfile, CURRICULUM_INTERESTS, EXTRA_INTERESTS, LEARNING_STYLES } from "@/types/profile";
+import { BookOpen, GraduationCap, Newspaper, Check } from "lucide-react";
 
 interface Props {
   profile: UserProfile;
@@ -20,22 +19,55 @@ const StepLearning = ({ profile, update, toggleArrayField }: Props) => (
       <p className="text-slate-600">Almost done! Tell us how you like to learn.</p>
     </div>
 
-    <div className="space-y-4 pt-4">
-      <div className="space-y-3">
-        <Label>Topics of Interest (pick all that apply)</Label>
-        <div className="grid grid-cols-1 gap-3">
-          {TOPICS_OF_INTEREST.map((topic) => (
-            <label
-              key={topic}
-              className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card cursor-pointer transition-colors hover:border-primary/40"
-            >
-              <Checkbox
-                checked={profile.topicsOfInterest.includes(topic)}
-                onCheckedChange={() => toggleArrayField("topicsOfInterest", topic)}
-              />
-              <span className="text-sm text-foreground">{topic}</span>
-            </label>
-          ))}
+    <div className="space-y-5 pt-4">
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <GraduationCap size={16} className="text-primary" />
+          <Label>Learning topics — what you want lessons on</Label>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {CURRICULUM_INTERESTS.map((t) => {
+            const active = profile.topicsOfInterest.includes(t.label);
+            return (
+              <button
+                type="button"
+                key={t.id}
+                onClick={() => toggleArrayField("topicsOfInterest", t.label)}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
+                  active
+                    ? "bg-primary/15 text-primary border-primary/40 shadow-sm"
+                    : "bg-card text-foreground border-border hover:border-primary/40"
+                }`}
+              >
+                {active && <Check size={14} />} {t.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Newspaper size={16} className="text-secondary" />
+          <Label>Also interested in — for news only</Label>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {EXTRA_INTERESTS.map((t) => {
+            const active = profile.topicsOfInterest.includes(t.label);
+            return (
+              <button
+                type="button"
+                key={t.id}
+                onClick={() => toggleArrayField("topicsOfInterest", t.label)}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
+                  active
+                    ? "bg-secondary/20 text-secondary border-secondary/40 shadow-sm"
+                    : "bg-card text-foreground border-border hover:border-secondary/40"
+                }`}
+              >
+                {active && <Check size={14} />} {t.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
