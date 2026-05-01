@@ -17,6 +17,7 @@ import {
 } from "@/lib/literacy";
 import { loadLessonProgress, loadStreak, type LessonProgressRow, type StreakState } from "@/lib/lessons";
 import { CheckCircle2, Lock, Sparkles, ArrowRight, Flame, RotateCcw, Snowflake, PlayCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const Learn = () => {
   const { user, loading } = useAuth();
@@ -67,19 +68,33 @@ const Learn = () => {
       <main className="max-w-4xl mx-auto px-4 md:px-6 py-10 space-y-10">
         {/* Header */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <h1 className="text-2xl md:text-3xl font-display font-bold">Learn</h1>
-            <Link
-              to="/videos"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-            >
-              <PlayCircle size={14} /> Videos
-            </Link>
-          </div>
+          <h1 className="text-2xl md:text-3xl font-display font-bold">Learn</h1>
           <p className="text-muted-foreground text-sm">
             Personalized to your placement. Lessons unlock as you master prerequisites.
           </p>
         </div>
+
+        {/* Watch & Learn promo — mirrors the Economic News banner on Markets */}
+        <Link
+          to="/videos"
+          className="group flex items-center justify-between gap-4 rounded-2xl border-2 border-primary/30 bg-gradient-to-r from-primary/15 via-primary/10 to-accent/10 p-5 hover:border-primary/50 hover:from-primary/20 transition-all card-shadow"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
+              <PlayCircle className="text-primary" size={24} />
+            </div>
+            <div>
+              <h2 className="text-lg font-display font-bold text-foreground flex items-center gap-2">
+                Watch & Learn
+                <Badge className="bg-primary text-primary-foreground text-[10px] uppercase tracking-wider">Daily picks</Badge>
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Hand-picked videos tagged to your curriculum. Watch one, answer a quick check, earn XP.
+              </p>
+            </div>
+          </div>
+          <ArrowRight className="text-primary shrink-0 group-hover:translate-x-1 transition-transform" size={20} />
+        </Link>
 
         {/* Streak + retake */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
