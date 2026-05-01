@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
-import { type UserProfile, defaultProfile, STUDENT_STATUSES, LIVING_SITUATIONS, FINANCIAL_GOALS, TOPICS_OF_INTEREST, LEARNING_STYLES } from "@/types/profile";
+import { type UserProfile, defaultProfile, STUDENT_STATUSES, LIVING_SITUATIONS, FINANCIAL_GOALS, CURRICULUM_INTERESTS, EXTRA_INTERESTS, LEARNING_STYLES, normalizeTopicLabels } from "@/types/profile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,7 +17,9 @@ import { resetTour, startProductTour } from "@/lib/productTour";
 function getProfile(): UserProfile {
   try {
     const stored = localStorage.getItem("econology_profile");
-    return stored ? JSON.parse(stored) : defaultProfile;
+    if (!stored) return defaultProfile;
+    const parsed = JSON.parse(stored) as UserProfile;
+    return { ...parsed, topicsOfInterest: normalizeTopicLabels(parsed.topicsOfInterest) };
   } catch {
     return defaultProfile;
   }
@@ -194,23 +196,49 @@ const Settings = () => {
             </div>
           </div>
 
-          {/* Topics */}
-          <div className="space-y-2">
-            <Label>Topics of Interest</Label>
-            <div className="flex flex-wrap gap-2">
-              {TOPICS_OF_INTEREST.map((t) => (
-                <button
-                  key={t}
-                  onClick={() => toggleArray("topicsOfInterest", t)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                    profile.topicsOfInterest.includes(t)
-                      ? "bg-secondary/20 text-secondary border-secondary/30"
-                      : "bg-muted text-muted-foreground border-border hover:border-secondary/30"
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
+          {/* Topics — split into curriculum dimensions and extras */}
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Learning topics</Label>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Drives lessons & news</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {CURRICULUM_INTERESTS.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => toggleArray("topicsOfInterest", t.label)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                      profile.topicsOfInterest.includes(t.label)
+                        ? "bg-primary/15 text-primary border-primary/30"
+                        : "bg-muted text-muted-foreground border-border hover:border-primary/30"
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Also interested in</Label>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">News only</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {EXTRA_INTERESTS.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => toggleArray("topicsOfInterest", t.label)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                      profile.topicsOfInterest.includes(t.label)
+                        ? "bg-secondary/20 text-secondary border-secondary/30"
+                        : "bg-muted text-muted-foreground border-border hover:border-secondary/30"
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 

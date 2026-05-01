@@ -3,7 +3,7 @@ import { DashboardHeader } from "@/components/DashboardHeader";
 import {
   Newspaper, Loader2, CheckCircle2, Sparkles, TrendingUp, Search, RefreshCw,
 } from "lucide-react";
-import { type UserProfile, defaultProfile } from "@/types/profile";
+import { type UserProfile, defaultProfile, normalizeTopicLabels } from "@/types/profile";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -27,7 +27,9 @@ interface PinnedArticleRow {
 function getProfile(): UserProfile {
   try {
     const stored = localStorage.getItem("econology_profile");
-    return stored ? JSON.parse(stored) : defaultProfile;
+    if (!stored) return defaultProfile;
+    const parsed = JSON.parse(stored) as UserProfile;
+    return { ...parsed, topicsOfInterest: normalizeTopicLabels(parsed.topicsOfInterest) };
   } catch { return defaultProfile; }
 }
 
@@ -374,16 +376,37 @@ const EconomicNews = () => {
               >
                 My Portfolio{portfolioTickers.length > 0 ? ` (${portfolioTickers.length})` : ""}
               </button>
-              {["Crypto", "Forex", "Merger"].map((c) => (
-                <button
-                  key={c}
-                  onClick={() => { setQuery(c.toLowerCase()); fetchHeadlines(c.toLowerCase()); }}
-                  disabled={headlinesLoading}
-                  className="px-3 py-1.5 rounded-full text-xs font-medium border border-border bg-card text-foreground hover:bg-muted transition-colors disabled:opacity-50"
-                >
-                  {c}
-                </button>
-              ))}
+              {(() => {
+                // Build chips from the user's chosen interest tags so the news
+                // filters mirror their Settings/Onboarding selections. Each tag
+                // expands into a query string news APIs understand.
+                const TAG_QUERY: Record<string, string> = {
+                  "Budgeting & Saving": "personal finance",
+                  "Credit & Debt": "credit debt loans",
+                  "Investing Basics": "stock market investing",
+                  "Macro & News": "inflation interest rates fed",
+                  "Risk Management": "volatility hedge risk",
+                  "Crypto": "crypto",
+                  "Real Estate": "real estate housing",
+                  "Taxes": "tax IRS",
+                  "Career & Pay": "salary jobs hiring",
+                };
+                const selected = (profile.topicsOfInterest || [])
+                  .filter((t) => t in TAG_QUERY);
+                const chips = selected.length > 0
+                  ? selected
+                  : ["Investing Basics", "Macro & News", "Crypto"];
+                return chips.map((label) => (
+                  <button
+                    key={label}
+                    onClick={() => { const q = TAG_QUERY[label]; setQuery(q); fetchHeadlines(q); }}
+                    disabled={headlinesLoading}
+                    className="px-3 py-1.5 rounded-full text-xs font-medium border border-border bg-card text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+                  >
+                    {label}
+                  </button>
+                ));
+              })()}
             </div>
 
             {headlinesArticles.length > 0 && !headlinesLoading && (

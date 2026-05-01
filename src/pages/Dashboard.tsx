@@ -15,7 +15,7 @@ import {
   PlayCircle,
   Calculator,
 } from "lucide-react";
-import { type UserProfile, defaultProfile } from "@/types/profile";
+import { type UserProfile, defaultProfile, normalizeTopicLabels } from "@/types/profile";
 import { recordDailyLogin, getLevel } from "@/lib/gamification";
 import { useAuth } from "@/contexts/AuthContext";
 import { loadLiteracyProfile, type LiteracyProfile } from "@/lib/literacy";
@@ -49,7 +49,9 @@ const ALL_TIPS: Tip[] = [
 function getProfile(): UserProfile {
   try {
     const stored = localStorage.getItem("econology_profile");
-    return stored ? JSON.parse(stored) : defaultProfile;
+    if (!stored) return defaultProfile;
+    const parsed = JSON.parse(stored) as UserProfile;
+    return { ...parsed, topicsOfInterest: normalizeTopicLabels(parsed.topicsOfInterest) };
   } catch {
     return defaultProfile;
   }

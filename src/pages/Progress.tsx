@@ -3,7 +3,7 @@ import { TIP_ARTICLES } from "@/data/tipArticles";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { HealthScoreRing } from "@/components/HealthScoreRing";
-import { type UserProfile, defaultProfile, TOPICS_OF_INTEREST } from "@/types/profile";
+import { type UserProfile, defaultProfile, TOPICS_OF_INTEREST, normalizeTopicLabels } from "@/types/profile";
 import {
   getGamification,
   getLevel,
@@ -23,7 +23,9 @@ import {
 function getProfile(): UserProfile {
   try {
     const stored = localStorage.getItem("econology_profile");
-    return stored ? JSON.parse(stored) : defaultProfile;
+    if (!stored) return defaultProfile;
+    const parsed = JSON.parse(stored) as UserProfile;
+    return { ...parsed, topicsOfInterest: normalizeTopicLabels(parsed.topicsOfInterest) };
   } catch {
     return defaultProfile;
   }

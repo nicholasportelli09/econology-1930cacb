@@ -373,10 +373,16 @@ export const CONCEPTS_BY_DIMENSION: Record<Dimension, ConceptNode[]> = {
   risk: CONCEPTS.filter((c) => c.dimension === "risk"),
 };
 
+/**
+ * Labels are kept in lock-step with `CURRICULUM_INTERESTS` in
+ * `src/types/profile.ts` so the Learn dimension a user sees here is the
+ * same string they pick as a topic of interest in onboarding/settings and
+ * the same chip they can filter news by. Update both files together.
+ */
 export const DIMENSION_LABELS: Record<Dimension, string> = {
   budgeting: "Budgeting & Saving",
   credit: "Credit & Debt",
   investing: "Investing Basics",
-  macro: "Macro & News Literacy",
-  risk: "Risk Tolerance",
+  macro: "Macro & News",
+  risk: "Risk Management",
 };
