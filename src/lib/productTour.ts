@@ -128,7 +128,7 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         popover: {
           title: "Track Your Progress 📈",
           description:
-            "See your XP, streak, level, and Financial Health Score. Earn badges as you build money skills.",
+            "See your XP, streak, level, and Learning Progress Score. Earn badges as you build money skills.",
           side: "bottom",
           align: "end",
         },

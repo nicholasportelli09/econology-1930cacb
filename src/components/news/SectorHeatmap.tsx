@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
-import { Loader2, RefreshCw, Flame, TrendingUp, TrendingDown } from "lucide-react";
+import { Loader2, RefreshCw, TrendingUp, TrendingDown, Activity } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 /**
- * S&P 500 sector heatmap — uses SPDR sector ETFs as proxies for the
- * 11 GICS sectors plus SPY itself for the headline index print.
+ * Compact S&P 500 leader / laggard strip — pulls SPY plus the 11 SPDR sector
+ * ETFs and surfaces only the headline index print and the day's best / worst
+ * sector. Replaces the full heatmap to keep the news page focused.
  */
 const SECTORS: { ticker: string; name: string }[] = [
   { ticker: "SPY", name: "S&P 500" },
@@ -24,22 +25,6 @@ const SECTORS: { ticker: string; name: string }[] = [
 
 type Quote = { price: number; change: number; changePercent: number };
 type QuoteMap = Record<string, Quote>;
-
-/** Tailwind background tint based on % move. Uses semantic accent/destructive tokens. */
-function tintFor(pct: number): string {
-  const v = Math.abs(pct);
-  if (!isFinite(pct) || v < 0.1) return "bg-muted/40 border-border";
-  if (pct > 0) {
-    if (v >= 2) return "bg-accent/40 border-accent/50";
-    if (v >= 1) return "bg-accent/25 border-accent/40";
-    if (v >= 0.5) return "bg-accent/15 border-accent/30";
-    return "bg-accent/10 border-accent/20";
-  }
-  if (v >= 2) return "bg-destructive/40 border-destructive/50";
-  if (v >= 1) return "bg-destructive/25 border-destructive/40";
-  if (v >= 0.5) return "bg-destructive/15 border-destructive/30";
-  return "bg-destructive/10 border-destructive/20";
-}
 
 export function SectorHeatmap() {
   const [quotes, setQuotes] = useState<QuoteMap>({});
@@ -75,109 +60,94 @@ export function SectorHeatmap() {
   });
   const top = sorted[0];
   const bottom = sorted[sorted.length - 1];
+  const topQ = top ? quotes[top.ticker] : undefined;
+  const bottomQ = bottom ? quotes[bottom.ticker] : undefined;
+  const ready = !!topQ && !!bottomQ;
 
   return (
-    <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-      <header className="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10 text-primary">
-            <Flame size={20} />
+    <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+      <header className="flex flex-wrap items-center justify-between gap-3 mb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+            <Activity size={16} />
           </div>
           <div>
-            <h2 className="text-lg font-display font-bold text-foreground">S&P 500 Sector Heatmap</h2>
-            <p className="text-xs text-muted-foreground">
-              Daily % move across the 11 GICS sectors (via SPDR sector ETFs).
-            </p>
+            <h2 className="text-sm font-display font-bold text-foreground">S&P 500 — today's pulse</h2>
+            <p className="text-[11px] text-muted-foreground">Index print plus the day's leader and laggard sector.</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {spy && (
-            <span className={cn(
-              "px-2.5 py-1 rounded-md text-xs font-mono font-semibold border",
-              spy.changePercent >= 0
-                ? "bg-accent/15 text-accent border-accent/30"
-                : "bg-destructive/15 text-destructive border-destructive/30"
-            )}>
-              SPY {spy.changePercent >= 0 ? "+" : ""}{spy.changePercent.toFixed(2)}%
-            </span>
-          )}
-          <button
-            onClick={load}
-            disabled={loading}
-            title="Refresh"
-            className="p-2 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50"
-          >
-            {loading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
-          </button>
-        </div>
+        <button
+          onClick={load}
+          disabled={loading}
+          title="Refresh"
+          className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+        >
+          {loading ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+        </button>
       </header>
 
       {error && !loading && (
-        <div className="text-center py-6">
-          <p className="text-destructive text-sm mb-2">{error}</p>
+        <div className="text-center py-4">
+          <p className="text-destructive text-xs mb-1.5">{error}</p>
           <button onClick={load} className="text-xs text-primary hover:underline">Try again</button>
         </div>
       )}
 
-      {loading && Object.keys(quotes).length === 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-          {sectors.map(s => (
-            <div key={s.ticker} className="h-20 rounded-lg bg-muted/40 animate-pulse" />
+      {loading && !ready && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          {[0, 1, 2].map(i => (
+            <div key={i} className="h-14 rounded-lg bg-muted/40 animate-pulse" />
           ))}
         </div>
       )}
 
-      {!error && Object.keys(quotes).length > 0 && (
-        <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            {sectors.map(s => {
-              const q = quotes[s.ticker];
-              const pct = q?.changePercent ?? 0;
-              return (
-                <div
-                  key={s.ticker}
-                  className={cn(
-                    "rounded-lg border p-3 flex flex-col justify-between transition-transform hover:scale-[1.03] cursor-default",
-                    tintFor(pct)
-                  )}
-                  title={q ? `${s.name} (${s.ticker}) — $${q.price.toFixed(2)}` : s.name}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold text-foreground/80">{s.ticker}</span>
-                    {q && (pct >= 0
-                      ? <TrendingUp size={12} className="text-accent" />
-                      : <TrendingDown size={12} className="text-destructive" />)}
-                  </div>
-                  <div className="mt-1">
-                    <p className="text-[11px] leading-tight text-foreground/80 font-medium truncate">{s.name}</p>
-                    <p className={cn(
-                      "text-sm font-mono font-bold mt-0.5",
-                      pct >= 0 ? "text-accent" : "text-destructive"
-                    )}>
-                      {q ? `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%` : "—"}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {top && bottom && quotes[top.ticker] && quotes[bottom.ticker] && (
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground border-t border-border pt-3">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                <span>
-                  Leader: <span className="font-semibold text-accent">{top.name} {quotes[top.ticker].changePercent >= 0 ? "+" : ""}{quotes[top.ticker].changePercent.toFixed(2)}%</span>
-                </span>
-                <span>
-                  Laggard: <span className="font-semibold text-destructive">{bottom.name} {quotes[bottom.ticker].changePercent.toFixed(2)}%</span>
-                </span>
-              </div>
-              {updatedAt && (
-                <span>Updated {updatedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
-              )}
+      {!error && ready && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          {/* SPY */}
+          {spy && (
+            <div className={cn(
+              "rounded-lg border p-3",
+              spy.changePercent >= 0
+                ? "bg-accent/10 border-accent/30"
+                : "bg-destructive/10 border-destructive/30"
+            )}>
+              <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-wider">S&P 500 (SPY)</p>
+              <p className={cn(
+                "text-lg font-mono font-bold mt-0.5",
+                spy.changePercent >= 0 ? "text-accent" : "text-destructive"
+              )}>
+                {spy.changePercent >= 0 ? "+" : ""}{spy.changePercent.toFixed(2)}%
+              </p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">${spy.price.toFixed(2)}</p>
             </div>
           )}
-        </>
+          {/* Leader */}
+          <div className="rounded-lg border bg-accent/10 border-accent/30 p-3">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-accent">
+              <TrendingUp size={11} /> Leader
+            </div>
+            <p className="text-sm font-semibold text-foreground mt-1 truncate">{top!.name}</p>
+            <p className="text-base font-mono font-bold text-accent mt-0.5">
+              {topQ!.changePercent >= 0 ? "+" : ""}{topQ!.changePercent.toFixed(2)}%
+            </p>
+          </div>
+          {/* Laggard */}
+          <div className="rounded-lg border bg-destructive/10 border-destructive/30 p-3">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-destructive">
+              <TrendingDown size={11} /> Laggard
+            </div>
+            <p className="text-sm font-semibold text-foreground mt-1 truncate">{bottom!.name}</p>
+            <p className="text-base font-mono font-bold text-destructive mt-0.5">
+              {bottomQ!.changePercent.toFixed(2)}%
+            </p>
+          </div>
+        </div>
+      )}
+
+      {updatedAt && ready && (
+        <p className="text-[10px] text-muted-foreground text-right mt-2">
+          Updated {updatedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        </p>
       )}
     </section>
   );

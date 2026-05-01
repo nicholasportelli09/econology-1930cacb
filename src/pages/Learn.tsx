@@ -16,7 +16,7 @@ import {
   type LiteracyProfile,
 } from "@/lib/literacy";
 import { loadLessonProgress, loadStreak, type LessonProgressRow, type StreakState } from "@/lib/lessons";
-import { CheckCircle2, Lock, Sparkles, ArrowRight, Flame, RotateCcw, Snowflake, PlayCircle } from "lucide-react";
+import { CheckCircle2, Lock, Sparkles, ArrowRight, Flame, RotateCcw, PlayCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const Learn = () => {
@@ -96,11 +96,10 @@ const Learn = () => {
           <ArrowRight className="text-primary shrink-0 group-hover:translate-x-1 transition-transform" size={20} />
         </Link>
 
-        {/* Streak + retake */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Streak + lessons completed */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <StatCard icon={<Flame size={18} className="text-orange-500" />} label="Current streak" value={`${streak.current} days`} />
           <StatCard icon={<Sparkles size={18} className="text-primary" />} label="Lessons completed" value={`${streak.totalLessons}`} />
-          <StatCard icon={<Snowflake size={18} className="text-blue-500" />} label="Freeze tokens" value={`${streak.freezeTokens} / 2`} />
         </div>
 
         {/* Next up */}

@@ -166,7 +166,7 @@ function computeBadges(state: GamificationState): string[] {
   return ALL_BADGES.filter((b) => b.condition(state)).map((b) => b.id);
 }
 
-// ── Financial Health Score ─────────────────────────────────
+// ── Learning Progress Score ─────────────────────────────────
 export function computeHealthScore(profile: UserProfile, gam: GamificationState): {
   score: number;
   breakdown: { label: string; value: number; max: number }[];
