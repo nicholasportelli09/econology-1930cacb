@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_streak: {
+        Row: {
+          created_at: string
+          current_streak: number
+          freeze_tokens: number
+          id: string
+          last_lesson_date: string | null
+          longest_streak: number
+          total_lessons: number
+          total_xp: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_streak?: number
+          freeze_tokens?: number
+          id?: string
+          last_lesson_date?: string | null
+          longest_streak?: number
+          total_lessons?: number
+          total_xp?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_streak?: number
+          freeze_tokens?: number
+          id?: string
+          last_lesson_date?: string | null
+          longest_streak?: number
+          total_lessons?: number
+          total_xp?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ekon_usage: {
         Row: {
           created_at: string
@@ -125,6 +164,93 @@ export type Database = {
           id?: string
           token?: string
           used_at?: string | null
+        }
+        Relationships: []
+      }
+      lesson_progress: {
+        Row: {
+          attempts: number
+          completed_at: string
+          concept_id: string
+          created_at: string
+          id: string
+          quiz_score: number
+          quiz_total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          completed_at?: string
+          concept_id: string
+          created_at?: string
+          id?: string
+          quiz_score?: number
+          quiz_total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          completed_at?: string
+          concept_id?: string
+          created_at?: string
+          id?: string
+          quiz_score?: number
+          quiz_total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      literacy_profiles: {
+        Row: {
+          created_at: string
+          diagnostic_count: number
+          diagnostic_taken_at: string
+          id: string
+          mastered_concepts: string[]
+          score_budgeting: number
+          score_credit: number
+          score_investing: number
+          score_macro: number
+          score_risk: number
+          unknown_concepts: string[]
+          updated_at: string
+          user_id: string
+          weak_concepts: string[]
+        }
+        Insert: {
+          created_at?: string
+          diagnostic_count?: number
+          diagnostic_taken_at?: string
+          id?: string
+          mastered_concepts?: string[]
+          score_budgeting?: number
+          score_credit?: number
+          score_investing?: number
+          score_macro?: number
+          score_risk?: number
+          unknown_concepts?: string[]
+          updated_at?: string
+          user_id: string
+          weak_concepts?: string[]
+        }
+        Update: {
+          created_at?: string
+          diagnostic_count?: number
+          diagnostic_taken_at?: string
+          id?: string
+          mastered_concepts?: string[]
+          score_budgeting?: number
+          score_credit?: number
+          score_investing?: number
+          score_macro?: number
+          score_risk?: number
+          unknown_concepts?: string[]
+          updated_at?: string
+          user_id?: string
+          weak_concepts?: string[]
         }
         Relationships: []
       }
