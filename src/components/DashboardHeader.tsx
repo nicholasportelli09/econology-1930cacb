@@ -13,6 +13,7 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  PlayCircle,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -25,6 +26,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 const NAV_ITEMS = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, tour: "nav-dashboard" },
   { to: "/learn", label: "Learn", icon: BookOpen, tour: "nav-learn" },
+  { to: "/videos", label: "Videos", icon: PlayCircle, tour: "nav-videos" },
   { to: "/news", label: "Economic News", icon: Newspaper, tour: "nav-news" },
   { to: "/market", label: "Market Ideas", icon: TrendingUp, tour: "nav-market" },
   { to: "/ask", label: "Ask Ekon", icon: MessageCircle, tour: "nav-ask" },
