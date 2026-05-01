@@ -34,6 +34,8 @@ import {
   Sparkles,
   Lock,
   Info,
+  Shuffle,
+  RefreshCw,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -81,6 +83,11 @@ const Videos = () => {
   const [loading, setLoading] = useState(true);
   const [filterDim, setFilterDim] = useState<Dimension | "all">("all");
   const [activeVideo, setActiveVideo] = useState<CuratedVideo | null>(null);
+  /** Bumped to reshuffle the daily picks on demand. */
+  const [shuffleSeed, setShuffleSeed] = useState(0);
+  /** How many videos to reveal in the main grid. */
+  const PAGE_SIZE = 9;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
     if (!user) {
@@ -133,11 +140,39 @@ const Videos = () => {
   }, [completedConcepts, watched, literacy]);
 
   const filteredVideos = useMemo(() => {
-    return CURATED_VIDEOS.filter((v) => {
+    const pool = CURATED_VIDEOS.filter((v) => {
       if (filterDim === "all") return true;
       return v.concepts.some((c) => CONCEPT_BY_ID[c]?.dimension === filterDim);
     });
-  }, [filterDim]);
+    // Deterministic daily seed → catalog rotates every day, same for every visit
+    // that day, but reshuffles when the user hits "Shuffle".
+    const dayKey = new Date().toISOString().slice(0, 10);
+    const seedStr = `${dayKey}|${filterDim}|${shuffleSeed}`;
+    let h = 2166136261;
+    for (let i = 0; i < seedStr.length; i++) {
+      h ^= seedStr.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    const rand = () => {
+      h = Math.imul(h ^ (h >>> 15), 2246822507);
+      h = Math.imul(h ^ (h >>> 13), 3266489909);
+      return ((h ^= h >>> 16) >>> 0) / 4294967296;
+    };
+    const arr = [...pool];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, [filterDim, shuffleSeed]);
+
+  // Reset visible window whenever the filter or shuffle changes
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [filterDim, shuffleSeed]);
+
+  const visibleVideos = filteredVideos.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredVideos.length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -246,31 +281,43 @@ const Videos = () => {
 
         {/* Dimension filter */}
         <section className="space-y-4">
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={() => setFilterDim("all")}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                filterDim === "all"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              All topics
-            </button>
-            {ALL_DIMENSIONS.map((d) => (
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
-                key={d}
-                onClick={() => setFilterDim(d)}
+                onClick={() => setFilterDim("all")}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  filterDim === d
+                  filterDim === "all"
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {DIMENSION_LABELS[d]}
+                All topics
               </button>
-            ))}
+              {ALL_DIMENSIONS.map((d) => (
+                <button
+                  key={d}
+                  onClick={() => setFilterDim(d)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    filterDim === d
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {DIMENSION_LABELS[d]}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setShuffleSeed((s) => s + 1)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              title="Shuffle today's picks"
+            >
+              <Shuffle size={14} /> Shuffle
+            </button>
           </div>
+          <p className="text-xs text-muted-foreground">
+            Fresh picks every day · {filteredVideos.length} videos in this view
+          </p>
 
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -285,21 +332,45 @@ const Videos = () => {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredVideos.map((v, i) => {
-                const locked = !allowed(v);
-                return (
-                  <VideoCard
-                    key={v.id}
-                    video={v}
-                    watched={watched.has(v.id)}
-                    locked={locked}
-                    delayMs={i * 30}
-                    onPlay={() => !locked && setActiveVideo(v)}
-                  />
-                );
-              })}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {visibleVideos.map((v, i) => {
+                  const locked = !allowed(v);
+                  return (
+                    <VideoCard
+                      key={v.id}
+                      video={v}
+                      watched={watched.has(v.id)}
+                      locked={locked}
+                      delayMs={i * 30}
+                      onPlay={() => !locked && setActiveVideo(v)}
+                    />
+                  );
+                })}
+              </div>
+              {hasMore && (
+                <div className="flex justify-center pt-4">
+                  <button
+                    onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-primary/40 hover:bg-muted transition-colors"
+                  >
+                    <RefreshCw size={15} /> Load more videos
+                  </button>
+                </div>
+              )}
+              {!hasMore && filteredVideos.length > PAGE_SIZE && (
+                <div className="flex justify-center pt-4">
+                  <button
+                    onClick={() => {
+                      setShuffleSeed((s) => s + 1);
+                    }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-primary/40 hover:bg-muted transition-colors"
+                  >
+                    <Shuffle size={15} /> Shuffle for new picks
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </section>
       </main>
