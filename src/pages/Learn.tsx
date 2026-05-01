@@ -16,7 +16,7 @@ import {
   type LiteracyProfile,
 } from "@/lib/literacy";
 import { loadLessonProgress, loadStreak, type LessonProgressRow, type StreakState } from "@/lib/lessons";
-import { CheckCircle2, Lock, Sparkles, ArrowRight, Flame, RotateCcw, Snowflake } from "lucide-react";
+import { CheckCircle2, Lock, Sparkles, ArrowRight, Flame, RotateCcw, Snowflake, PlayCircle } from "lucide-react";
 
 const Learn = () => {
   const { user, loading } = useAuth();
@@ -67,7 +67,15 @@ const Learn = () => {
       <main className="max-w-4xl mx-auto px-4 md:px-6 py-10 space-y-10">
         {/* Header */}
         <div className="space-y-2">
-          <h1 className="text-2xl md:text-3xl font-display font-bold">Learn</h1>
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <h1 className="text-2xl md:text-3xl font-display font-bold">Learn</h1>
+            <Link
+              to="/videos"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <PlayCircle size={14} /> Videos
+            </Link>
+          </div>
           <p className="text-muted-foreground text-sm">
             Personalized to your placement. Lessons unlock as you master prerequisites.
           </p>
