@@ -26,23 +26,53 @@ function buildCorsHeaders(req: Request) {
 const DAILY_LIMIT = 10;
 const FINNHUB_API_KEY = Deno.env.get("FINNHUB_API_KEY");
 
-function getUSMarketStatus(now: Date = new Date()) {
+type MarketSession = {
+  name: string;
+  tz: string;
+  openMin: number;
+  closeMin: number;
+  hours: string;
+  region: string;
+};
+
+const MARKETS: MarketSession[] = [
+  { name: "US (NYSE/Nasdaq)", tz: "America/New_York", openMin: 9*60+30, closeMin: 16*60, hours: "9:30am–4:00pm ET", region: "US" },
+  { name: "London (LSE)", tz: "Europe/London", openMin: 8*60, closeMin: 16*60+30, hours: "8:00am–4:30pm London", region: "Europe" },
+  { name: "Euronext / Frankfurt (Xetra)", tz: "Europe/Paris", openMin: 9*60, closeMin: 17*60+30, hours: "9:00am–5:30pm CET", region: "Europe" },
+  { name: "Tokyo (TSE)", tz: "Asia/Tokyo", openMin: 9*60, closeMin: 15*60, hours: "9:00am–3:00pm JST (lunch 11:30–12:30)", region: "Asia" },
+  { name: "Hong Kong (HKEX)", tz: "Asia/Hong_Kong", openMin: 9*60+30, closeMin: 16*60, hours: "9:30am–4:00pm HKT (lunch 12:00–13:00)", region: "Asia" },
+  { name: "Shanghai (SSE)", tz: "Asia/Shanghai", openMin: 9*60+30, closeMin: 15*60, hours: "9:30am–3:00pm CST (lunch 11:30–13:00)", region: "Asia" },
+];
+
+function getLocalParts(now: Date, tz: string) {
   const fmt = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,
+    timeZone: tz, weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,
   });
   const parts = fmt.formatToParts(now);
   const weekday = parts.find(p => p.type === "weekday")?.value ?? "";
   const hour = Number(parts.find(p => p.type === "hour")?.value ?? "0");
   const minute = Number(parts.find(p => p.type === "minute")?.value ?? "0");
+  return { weekday, minutes: hour*60 + minute };
+}
+
+function getMarketStatus(m: MarketSession, now: Date = new Date()) {
+  const { weekday, minutes } = getLocalParts(now, m.tz);
   const isWeekend = weekday === "Sat" || weekday === "Sun";
-  const minutesET = hour * 60 + minute;
-  const inSession = minutesET >= 9 * 60 + 30 && minutesET < 16 * 60;
+  const inSession = minutes >= m.openMin && minutes < m.closeMin;
   const isOpen = !isWeekend && inSession;
+  return { name: m.name, region: m.region, hours: m.hours, isOpen, isWeekend, weekday };
+}
+
+function getAllMarketStatuses(now: Date = new Date()) {
+  return MARKETS.map(m => getMarketStatus(m, now));
+}
+
+function getUSMarketStatus(now: Date = new Date()) {
+  const us = getMarketStatus(MARKETS[0], now);
   let label = "Markets open (US regular session)";
-  if (isWeekend) label = `Markets closed — ${weekday === "Sat" ? "Saturday" : "Sunday"}. US equities don't trade on weekends; the latest print is Friday's close.`;
-  else if (!isOpen) label = "Markets closed — outside US regular session (9:30am–4:00pm ET). The latest print is the most recent close.";
-  return { isOpen, isWeekend, weekday, label };
+  if (us.isWeekend) label = `US markets closed — ${us.weekday === "Sat" ? "Saturday" : "Sunday"}. US equities don't trade on weekends; the latest print is Friday's close.`;
+  else if (!us.isOpen) label = "US markets closed — outside 9:30am–4:00pm ET. The latest print is the most recent close.";
+  return { isOpen: us.isOpen, isWeekend: us.isWeekend, weekday: us.weekday, label };
 }
 
 async function getStockPrice(symbol: string): Promise<string> {
