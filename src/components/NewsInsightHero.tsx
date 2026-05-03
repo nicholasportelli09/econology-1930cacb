@@ -198,7 +198,7 @@ export default function NewsInsightHero() {
             </Link>
             {tieIn && (
               <Link
-                to="/learn"
+                to={`/lesson/${tieIn.conceptId}`}
                 onClick={() => setOpen(false)}
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline"
               >
