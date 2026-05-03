@@ -26,6 +26,25 @@ function buildCorsHeaders(req: Request) {
 const DAILY_LIMIT = 10;
 const FINNHUB_API_KEY = Deno.env.get("FINNHUB_API_KEY");
 
+function getUSMarketStatus(now: Date = new Date()) {
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,
+  });
+  const parts = fmt.formatToParts(now);
+  const weekday = parts.find(p => p.type === "weekday")?.value ?? "";
+  const hour = Number(parts.find(p => p.type === "hour")?.value ?? "0");
+  const minute = Number(parts.find(p => p.type === "minute")?.value ?? "0");
+  const isWeekend = weekday === "Sat" || weekday === "Sun";
+  const minutesET = hour * 60 + minute;
+  const inSession = minutesET >= 9 * 60 + 30 && minutesET < 16 * 60;
+  const isOpen = !isWeekend && inSession;
+  let label = "Markets open (US regular session)";
+  if (isWeekend) label = `Markets closed — ${weekday === "Sat" ? "Saturday" : "Sunday"}. US equities don't trade on weekends; the latest print is Friday's close.`;
+  else if (!isOpen) label = "Markets closed — outside US regular session (9:30am–4:00pm ET). The latest print is the most recent close.";
+  return { isOpen, isWeekend, weekday, label };
+}
+
 async function getStockPrice(symbol: string): Promise<string> {
   if (!FINNHUB_API_KEY) return JSON.stringify({ error: "Stock data unavailable" });
   try {
@@ -34,6 +53,7 @@ async function getStockPrice(symbol: string): Promise<string> {
     if (!resp.ok) return JSON.stringify({ error: `Finnhub returned ${resp.status}` });
     const d = await resp.json();
     if (!d || d.c === 0 || d.c == null) return JSON.stringify({ error: `No data for ${symbol}` });
+    const status = getUSMarketStatus();
     return JSON.stringify({
       symbol: symbol.toUpperCase(),
       price: d.c,
@@ -43,6 +63,15 @@ async function getStockPrice(symbol: string): Promise<string> {
       low: d.l,
       open: d.o,
       previousClose: d.pc,
+      marketStatus: {
+        isOpen: status.isOpen,
+        isWeekend: status.isWeekend,
+        note: status.label,
+      },
+      priceAsOf: status.isOpen ? "live intraday" : "last close (markets currently closed)",
+      changeNote: status.isOpen
+        ? "change/changePercent reflect today's intraday move vs. previous close"
+        : "change/changePercent are stale — they reflect the LAST trading session's move vs. the prior close, NOT a move 'today'. Do not say the stock is up/down today.",
     });
   } catch (e) {
     return JSON.stringify({ error: e instanceof Error ? e.message : "Failed" });
@@ -148,7 +177,11 @@ serve(async (req) => {
       : profile.quizScore <= 3 ? "Intermediate"
       : "Advanced";
 
+    const marketStatus = getUSMarketStatus();
     const systemPrompt = `You are Ekon — a friendly, personalized AI financial tutor inside the Econology app. Help students and young adults learn money skills with simple explanations, real-world examples, and encouragement. You can fetch live stock prices when asked (call the get_stock_price tool). Never use jargon without explaining it. Never judge.
+
+MARKET STATUS (right now): ${marketStatus.label}
+IMPORTANT: When markets are closed (weekends, holidays, or outside 9:30am–4:00pm ET), do NOT describe price changes as happening "today" or "yesterday". The change/changePercent fields from get_stock_price reflect the LAST trading session's move, not a current move. Phrase it like "as of Friday's close, MSFT finished up X%" or "the most recent session ended +X%". Always make the closed-market caveat clear.
 
 USER PROFILE:
 - Name: ${profile?.name || "Friend"}
