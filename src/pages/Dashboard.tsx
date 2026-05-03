@@ -195,7 +195,9 @@ const Dashboard = () => {
             <div data-tour="daily-lesson">
               <DailyLesson />
             </div>
-            <NewsInsightHero />
+            <div data-tour="news-hero">
+              <NewsInsightHero />
+            </div>
           </div>
           <div className="lg:col-span-1" data-tour="daily-plan">
             <DailyPlan />
@@ -203,10 +205,12 @@ const Dashboard = () => {
         </section>
 
         {/* At-a-glance summary */}
-        <DashboardSummary />
+        <div data-tour="summary">
+          <DashboardSummary />
+        </div>
 
         {/* Tips */}
-        <section className="space-y-5">
+        <section className="space-y-5" data-tour="reading">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-display font-semibold text-foreground">Recommended Reading</h2>
             <button

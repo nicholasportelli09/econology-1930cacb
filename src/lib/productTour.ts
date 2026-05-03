@@ -43,12 +43,23 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
       markTourSeen();
       opts?.onFinish?.();
     },
+    onPopoverRender: (popover) => {
+      // Inject a "Skip tour" button into every step's footer.
+      const footer = popover.wrapper.querySelector(".driver-popover-footer");
+      if (!footer || footer.querySelector(".econology-tour-skip")) return;
+      const skip = document.createElement("button");
+      skip.textContent = "Skip tour";
+      skip.className = "econology-tour-skip";
+      skip.type = "button";
+      skip.addEventListener("click", () => d.destroy());
+      footer.prepend(skip);
+    },
     steps: [
       {
         popover: {
           title: "Welcome to Econology 👋",
           description:
-            "Quick 60-second tour of everything you can do here. You'll learn money, markets, and build real financial habits — daily.",
+            "Take a quick tour (about 90 seconds) to see everything Econology can do — daily lessons, AI insights, market ideas, and more. Hit <b>Skip tour</b> anytime to jump straight in.",
           side: "over",
           align: "center",
         },
@@ -58,7 +69,17 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         popover: {
           title: "Your Daily Lesson 📚",
           description:
-            "Every day a fresh micro-lesson: explanation → real example → quick check. Your streak builds here.",
+            "A fresh 3-minute micro-lesson every day: explanation → real example → quick check. Finishing one builds your streak and earns XP.",
+          side: "bottom",
+          align: "start",
+        },
+      },
+      {
+        element: '[data-tour="news-hero"]',
+        popover: {
+          title: "Today's Market Story 📈",
+          description:
+            "An AI-generated headline tied to whatever you're learning right now — so the news always connects to the concept on your plate.",
           side: "bottom",
           align: "start",
         },
@@ -68,9 +89,29 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         popover: {
           title: "Today's Plan ✅",
           description:
-            "A short checklist of money habits to do today. Tick them off as you go.",
+            "A 5-step daily checklist that mixes learning, market awareness, and habits. Complete it to keep your streak alive.",
           side: "left",
           align: "start",
+        },
+      },
+      {
+        element: '[data-tour="summary"]',
+        popover: {
+          title: "At-a-glance Summary",
+          description:
+            "Your portfolio movers, current streak, and level/XP — all in one strip so you know where you stand instantly.",
+          side: "top",
+          align: "center",
+        },
+      },
+      {
+        element: '[data-tour="reading"]',
+        popover: {
+          title: "Recommended Reading 📖",
+          description:
+            "Three deep-dive articles picked just for you based on your placement and goals. Refresh anytime to get a new set.",
+          side: "top",
+          align: "center",
         },
       },
       {
@@ -78,7 +119,7 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         popover: {
           title: "Learn Hub",
           description:
-            "Dozens of deep-dive articles on budgeting, investing, credit, taxes, and more. Search any topic.",
+            "Your full curriculum: dozens of micro-lessons across budgeting, credit, investing, macro, and risk. Lessons unlock as you master prerequisites.",
           side: isMobile ? "bottom" : "bottom",
           align: "center",
         },
@@ -88,7 +129,7 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         popover: {
           title: "Economic News 📰",
           description:
-            "Live market headlines + AI insights tailored to YOUR portfolio. Add tickers, see live charts, get short-term tactical moves.",
+            "Live headlines + AI insights tailored to <b>your</b> portfolio. Add tickers, see live quotes, and get short-term tactical takes — plus a daily digest.",
           side: "bottom",
           align: "center",
         },
@@ -98,7 +139,7 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         popover: {
           title: "Market Ideas 💡",
           description:
-            "Ideas to explore — see how an analyst might frame a company or theme. Educational only, not financial advice.",
+            "Three fresh ideas every day with thesis, risks, and what to watch. See how an analyst frames a company or theme. Educational only — not financial advice.",
           side: "bottom",
           align: "center",
         },
@@ -108,7 +149,7 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         popover: {
           title: "Curated Videos 🎥",
           description:
-            "Hand-picked finance YouTubers — no clickbait, no get-rich-quick. Refresh anytime for new picks.",
+            "Hand-picked finance YouTubers — no clickbait, no get-rich-quick schemes. Watch one, answer a quick check, earn XP.",
           side: "bottom",
           align: "center",
         },
@@ -118,9 +159,29 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         popover: {
           title: "Ask Ekon 🤖",
           description:
-            "Your personal AI tutor. Ask anything — from 'what's a Roth IRA?' to 'should I refinance my loans?' — and get answers tailored to YOU.",
+            "Your personal AI tutor. Ask anything — from \"what's a Roth IRA?\" to \"should I refinance my loans?\" — and get answers tailored to your profile and goals.",
           side: "bottom",
           align: "center",
+        },
+      },
+      {
+        element: '[data-tour="notifications"]',
+        popover: {
+          title: "Notifications 🔔",
+          description:
+            "Daily lesson reminders, market alerts on your tickers, and digest emails. Tweak frequency anytime in Settings.",
+          side: "bottom",
+          align: "end",
+        },
+      },
+      {
+        element: '[data-tour="theme-toggle"]',
+        popover: {
+          title: "Light & Dark 🌗",
+          description:
+            "Flip between light and dark mode whenever you want. We default to light to keep things crisp.",
+          side: "bottom",
+          align: "end",
         },
       },
       {
@@ -128,7 +189,17 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         popover: {
           title: "Track Your Progress 📈",
           description:
-            "See your XP, streak, level, and Learning Progress Score. Earn badges as you build money skills.",
+            "See your XP, streak, level, and mastery by dimension. Earn achievements as you build real money skills over time.",
+          side: "bottom",
+          align: "end",
+        },
+      },
+      {
+        element: '[data-tour="profile-menu"]',
+        popover: {
+          title: "Settings & Placement",
+          description:
+            "Open this menu anytime to update your profile, re-take the placement diagnostic, or replay this tour from Settings.",
           side: "bottom",
           align: "end",
         },
@@ -138,7 +209,7 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         popover: {
           title: "Quick Hub Access",
           description:
-            "These cards jump you into any section in one click. You can replay this tour anytime from Settings.",
+            "Shortcut cards into Learn, Markets, Videos, and the Budget Simulator — one click to anywhere in the app.",
           side: "top",
           align: "center",
         },
@@ -147,7 +218,7 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
         popover: {
           title: "You're all set! 🎉",
           description:
-            "Tap a daily lesson, add a stock, or just ask Ekon a question to get started. Welcome aboard.",
+            "Tap today's lesson, add a stock, or ask Ekon anything to get started. You can replay this tour anytime from <b>Settings → Replay tour</b>. Welcome aboard.",
           side: "over",
           align: "center",
         },
