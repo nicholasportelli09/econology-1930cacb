@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { getUSMarketStatus } from "@/lib/marketStatus";
 
 interface StockQuote {
   price: number;
@@ -32,6 +33,8 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
   const [activeChart, setActiveChart] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const marketStatus = getUSMarketStatus();
+  const showChange = marketStatus.isOpen;
 
   const fetchQuotes = useCallback(async () => {
     if (tickers.length === 0) return;
@@ -154,13 +157,22 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
         <div className="flex items-center gap-2">
           <Briefcase size={16} className="text-primary" />
           <span className="text-sm font-semibold text-foreground">My Portfolio</span>
-          <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-accent">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+          {marketStatus.isOpen ? (
+            <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-accent" title={marketStatus.reason}>
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+              </span>
+              Live prices
             </span>
-            Live prices
-          </span>
+          ) : (
+            <span
+              className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground border border-border bg-muted/50 px-1.5 py-0.5 rounded"
+              title={marketStatus.reason}
+            >
+              {marketStatus.isWeekend ? "Markets closed · weekend" : "Markets closed"}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -259,10 +271,14 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
                     {isActive ? "Viewing" : "View chart"}
                   </span>
                   {q && q.price > 0 && (
-                    <span className={`flex items-center gap-0.5 text-xs font-medium ${isUp ? "text-accent" : "text-destructive"}`}>
-                      {isUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                      {isUp ? "+" : ""}{q.changePercent.toFixed(2)}%
-                    </span>
+                    showChange ? (
+                      <span className={`flex items-center gap-0.5 text-xs font-medium ${isUp ? "text-accent" : "text-destructive"}`}>
+                        {isUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                        {isUp ? "+" : ""}{q.changePercent.toFixed(2)}%
+                      </span>
+                    ) : (
+                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Last close</span>
+                    )
                   )}
                   {quotesLoading && !q && (
                     <Loader2 size={12} className="animate-spin text-muted-foreground" />
@@ -299,10 +315,16 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
                 <span className="text-base font-bold text-foreground">
                   ${quotes[activeChart].price.toFixed(2)}
                 </span>
-                <span className={`flex items-center gap-0.5 text-sm font-semibold ${quotes[activeChart].change >= 0 ? "text-accent" : "text-destructive"}`}>
-                  {quotes[activeChart].change >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                  {quotes[activeChart].change >= 0 ? "+" : ""}{quotes[activeChart].changePercent.toFixed(2)}%
-                </span>
+                {showChange ? (
+                  <span className={`flex items-center gap-0.5 text-sm font-semibold ${quotes[activeChart].change >= 0 ? "text-accent" : "text-destructive"}`}>
+                    {quotes[activeChart].change >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                    {quotes[activeChart].change >= 0 ? "+" : ""}{quotes[activeChart].changePercent.toFixed(2)}%
+                  </span>
+                ) : (
+                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground border border-border bg-muted/50 px-2 py-0.5 rounded" title={marketStatus.reason}>
+                    {marketStatus.isWeekend ? "Last close · weekend" : "Last close"}
+                  </span>
+                )}
               </>
             )}
           </div>

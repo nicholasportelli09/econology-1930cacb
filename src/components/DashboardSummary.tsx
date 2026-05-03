@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { getGamification, getLevel } from "@/lib/gamification";
 import { loadStreak } from "@/lib/lessons";
+import { getUSMarketStatus } from "@/lib/marketStatus";
 
 interface Mover {
   ticker: string;
@@ -81,15 +82,20 @@ export default function DashboardSummary() {
       ? "…"
       : tickerCount === 0
       ? "No tickers yet"
-      : movers && movers.length > 0
+      : movers && movers.length > 0 && getUSMarketStatus().isOpen
       ? movers
           .map((m) => `${m.ticker} ${m.changePercent >= 0 ? "+" : ""}${m.changePercent.toFixed(1)}%`)
           .join(" · ")
       : `${tickerCount} ${tickerCount === 1 ? "ticker" : "tickers"}`;
 
+  const mktStatus = getUSMarketStatus();
   const portfolioHint =
     tickerCount === 0
       ? "Add your first stock"
+      : !mktStatus.isOpen
+      ? mktStatus.isWeekend
+        ? "Markets closed · weekend"
+        : "Markets closed · last close"
       : topMover
       ? `Today's mover: ${topMover.ticker} ${topMover.changePercent >= 0 ? "+" : ""}${topMover.changePercent.toFixed(1)}%`
       : "View company news";
