@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, Newspaper, Loader2 } from "lucide-react";
+import { ArrowRight, Sparkles, Newspaper, Loader2, Target, Lightbulb, ExternalLink } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { loadLiteracyProfile, pickNextConcept } from "@/lib/literacy";
 import { loadLessonProgress } from "@/lib/lessons";
 import { CONCEPT_BY_ID, DIMENSION_LABELS, type Dimension } from "@/data/conceptGraph";
 import { type UserProfile, defaultProfile } from "@/types/profile";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 interface NewsItem {
   title: string;
@@ -36,6 +37,7 @@ export default function NewsInsightHero() {
   const [tieIn, setTieIn] = useState<{ dim: Dimension; conceptId: string; title: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -113,10 +115,8 @@ export default function NewsInsightHero() {
   }
 
   return (
-    <Link
-      to="/news"
-      className="block rounded-xl border border-primary/30 bg-gradient-to-br from-primary/8 via-card to-accent/8 p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all group"
-    >
+    <>
+    <section className="rounded-xl border border-primary/30 bg-gradient-to-br from-primary/8 via-card to-accent/8 p-5">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-primary">
           <Sparkles size={13} /> Today's market story
@@ -138,9 +138,77 @@ export default function NewsInsightHero() {
           </span>
         </div>
       )}
-      <div className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary group-hover:gap-2.5 transition-all">
-        Read the 2-minute explainer <ArrowRight size={14} />
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary/90 rounded-lg px-3 py-1.5 transition-colors"
+        >
+          Read the 2-minute explainer <ArrowRight size={14} />
+        </button>
+        <Link
+          to="/news"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-primary transition-colors"
+        >
+          See all headlines <ExternalLink size={12} />
+        </Link>
       </div>
-    </Link>
+    </section>
+
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-primary mb-1">
+            <Sparkles size={12} /> 2-minute explainer · {item.category}
+          </div>
+          <DialogTitle className="text-xl font-display leading-snug">{item.title}</DialogTitle>
+          <DialogDescription className="text-sm leading-relaxed pt-2">
+            {item.summary}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 mt-2">
+          <div className="rounded-lg border border-border bg-muted/30 p-4">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground mb-2">
+              <Target size={14} className="text-primary" /> Why it matters
+            </div>
+            <p className="text-sm text-foreground/85 leading-relaxed">{item.impact}</p>
+          </div>
+          <div className="rounded-lg border border-accent/30 bg-accent/5 p-4">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground mb-2">
+              <Lightbulb size={14} className="text-accent" /> What you can do
+            </div>
+            <p className="text-sm text-foreground/85 leading-relaxed">{item.action}</p>
+          </div>
+          {tieIn && (
+            <div className="flex items-start gap-2 text-xs text-foreground/80 bg-primary/5 border border-primary/20 rounded-lg px-3 py-2.5">
+              <Newspaper size={14} className="text-primary shrink-0 mt-0.5" />
+              <span>
+                Ties to your current lesson on <span className="font-semibold">{tieIn.title}</span>
+                <span className="text-muted-foreground"> ({DIMENSION_LABELS[tieIn.dim]})</span>.
+              </span>
+            </div>
+          )}
+          <div className="flex flex-wrap gap-2 pt-1">
+            <Link
+              to="/news"
+              onClick={() => setOpen(false)}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+            >
+              See all headlines <ArrowRight size={12} />
+            </Link>
+            {tieIn && (
+              <Link
+                to="/learn"
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline"
+              >
+                Open the related lesson <ArrowRight size={12} />
+              </Link>
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
