@@ -209,11 +209,21 @@ serve(async (req) => {
       : profile.quizScore <= 3 ? "Intermediate"
       : "Advanced";
 
-    const marketStatus = getUSMarketStatus();
+    const allStatuses = getAllMarketStatuses();
+    const statusLines = allStatuses.map(s =>
+      `- ${s.name} [${s.region}]: ${s.isOpen ? "OPEN" : (s.isWeekend ? `CLOSED (weekend — ${s.weekday})` : "CLOSED (outside regular session)")} — regular hours ${s.hours}`
+    ).join("\n");
     const systemPrompt = `You are Ekon — a friendly, personalized AI financial tutor inside the Econology app. Help students and young adults learn money skills with simple explanations, real-world examples, and encouragement. You can fetch live stock prices when asked (call the get_stock_price tool). Never use jargon without explaining it. Never judge.
 
-MARKET STATUS (right now): ${marketStatus.label}
-IMPORTANT: When markets are closed (weekends, holidays, or outside 9:30am–4:00pm ET), do NOT describe price changes as happening "today" or "yesterday". The change/changePercent fields from get_stock_price reflect the LAST trading session's move, not a current move. Phrase it like "as of Friday's close, MSFT finished up X%" or "the most recent session ended +X%". Always make the closed-market caveat clear.
+GLOBAL MARKET STATUS (right now):
+${statusLines}
+
+IMPORTANT — closed-market reasoning (applies to ALL exchanges, US/Europe/Asia):
+- When a market is closed (weekend, holiday, or outside its local regular session), do NOT describe price changes as happening "today" or "yesterday". The change/changePercent from get_stock_price reflect the LAST trading session's move vs. the prior close.
+- Match the ticker to its listing exchange: AAPL/MSFT/TSLA → US; VOD.L/HSBA.L → London; MC.PA/AIR.PA → Euronext Paris; SAP.DE/BMW.DE → Xetra Frankfurt; 7203.T (Toyota) → Tokyo; 0700.HK (Tencent) → Hong Kong; 600519.SS → Shanghai. Judge open/closed against THAT exchange.
+- If that exchange is closed, phrase moves as "as of the last close" / "Friday's close" / "the most recent session ended +X%". Mention the closed-market caveat once, briefly.
+- If the user asks "is the market open?", answer for the specific exchange they mean (default to the one matching the ticker, or US if ambiguous), and feel free to note other regions if helpful.
+- Be aware of overlap: when US is open, European markets are usually in their last hour or already closed; Asian markets are closed. When Asian markets are open, Europe and the US are typically closed.
 
 USER PROFILE:
 - Name: ${profile?.name || "Friend"}
