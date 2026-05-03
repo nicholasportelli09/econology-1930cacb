@@ -71,11 +71,15 @@ export function DashboardHeader({ initials = "U" }: Props) {
             <BarChart3 size={16} />
             <span className="hidden sm:inline">Progress</span>
           </button>
-          <NotificationsBell />
-          <ThemeToggle />
+          <div data-tour="notifications">
+            <NotificationsBell />
+          </div>
+          <div data-tour="theme-toggle">
+            <ThemeToggle />
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="rounded-full ring-2 ring-border hover:ring-primary/50 transition-all">
+              <button data-tour="profile-menu" className="rounded-full ring-2 ring-border hover:ring-primary/50 transition-all">
                 <Avatar className="h-9 w-9">
                   <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">
                     {initials}
