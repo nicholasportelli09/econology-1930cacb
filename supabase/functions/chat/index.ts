@@ -84,6 +84,9 @@ async function getStockPrice(symbol: string): Promise<string> {
     const d = await resp.json();
     if (!d || d.c === 0 || d.c == null) return JSON.stringify({ error: `No data for ${symbol}` });
     const status = getUSMarketStatus();
+    const allRegions = getAllMarketStatuses().map(s => ({
+      name: s.name, region: s.region, isOpen: s.isOpen, isWeekend: s.isWeekend, hours: s.hours,
+    }));
     return JSON.stringify({
       symbol: symbol.toUpperCase(),
       price: d.c,
@@ -97,11 +100,10 @@ async function getStockPrice(symbol: string): Promise<string> {
         isOpen: status.isOpen,
         isWeekend: status.isWeekend,
         note: status.label,
+        allRegions,
       },
-      priceAsOf: status.isOpen ? "live intraday" : "last close (markets currently closed)",
-      changeNote: status.isOpen
-        ? "change/changePercent reflect today's intraday move vs. previous close"
-        : "change/changePercent are stale — they reflect the LAST trading session's move vs. the prior close, NOT a move 'today'. Do not say the stock is up/down today.",
+      priceAsOf: "Interpret against the listing exchange's session — see marketStatus.allRegions to know which exchange is open right now.",
+      changeNote: "If the listing exchange is currently closed (weekend, holiday, or outside its local hours), change/changePercent reflect the LAST trading session's move vs. the prior close — NOT a move 'today'. Only describe it as a 'today' move when that specific exchange is open.",
     });
   } catch (e) {
     return JSON.stringify({ error: e instanceof Error ? e.message : "Failed" });
