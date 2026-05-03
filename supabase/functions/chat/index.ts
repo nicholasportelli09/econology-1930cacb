@@ -26,23 +26,53 @@ function buildCorsHeaders(req: Request) {
 const DAILY_LIMIT = 10;
 const FINNHUB_API_KEY = Deno.env.get("FINNHUB_API_KEY");
 
-function getUSMarketStatus(now: Date = new Date()) {
+type MarketSession = {
+  name: string;
+  tz: string;
+  openMin: number;
+  closeMin: number;
+  hours: string;
+  region: string;
+};
+
+const MARKETS: MarketSession[] = [
+  { name: "US (NYSE/Nasdaq)", tz: "America/New_York", openMin: 9*60+30, closeMin: 16*60, hours: "9:30am–4:00pm ET", region: "US" },
+  { name: "London (LSE)", tz: "Europe/London", openMin: 8*60, closeMin: 16*60+30, hours: "8:00am–4:30pm London", region: "Europe" },
+  { name: "Euronext / Frankfurt (Xetra)", tz: "Europe/Paris", openMin: 9*60, closeMin: 17*60+30, hours: "9:00am–5:30pm CET", region: "Europe" },
+  { name: "Tokyo (TSE)", tz: "Asia/Tokyo", openMin: 9*60, closeMin: 15*60, hours: "9:00am–3:00pm JST (lunch 11:30–12:30)", region: "Asia" },
+  { name: "Hong Kong (HKEX)", tz: "Asia/Hong_Kong", openMin: 9*60+30, closeMin: 16*60, hours: "9:30am–4:00pm HKT (lunch 12:00–13:00)", region: "Asia" },
+  { name: "Shanghai (SSE)", tz: "Asia/Shanghai", openMin: 9*60+30, closeMin: 15*60, hours: "9:30am–3:00pm CST (lunch 11:30–13:00)", region: "Asia" },
+];
+
+function getLocalParts(now: Date, tz: string) {
   const fmt = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,
+    timeZone: tz, weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,
   });
   const parts = fmt.formatToParts(now);
   const weekday = parts.find(p => p.type === "weekday")?.value ?? "";
   const hour = Number(parts.find(p => p.type === "hour")?.value ?? "0");
   const minute = Number(parts.find(p => p.type === "minute")?.value ?? "0");
+  return { weekday, minutes: hour*60 + minute };
+}
+
+function getMarketStatus(m: MarketSession, now: Date = new Date()) {
+  const { weekday, minutes } = getLocalParts(now, m.tz);
   const isWeekend = weekday === "Sat" || weekday === "Sun";
-  const minutesET = hour * 60 + minute;
-  const inSession = minutesET >= 9 * 60 + 30 && minutesET < 16 * 60;
+  const inSession = minutes >= m.openMin && minutes < m.closeMin;
   const isOpen = !isWeekend && inSession;
+  return { name: m.name, region: m.region, hours: m.hours, isOpen, isWeekend, weekday };
+}
+
+function getAllMarketStatuses(now: Date = new Date()) {
+  return MARKETS.map(m => getMarketStatus(m, now));
+}
+
+function getUSMarketStatus(now: Date = new Date()) {
+  const us = getMarketStatus(MARKETS[0], now);
   let label = "Markets open (US regular session)";
-  if (isWeekend) label = `Markets closed — ${weekday === "Sat" ? "Saturday" : "Sunday"}. US equities don't trade on weekends; the latest print is Friday's close.`;
-  else if (!isOpen) label = "Markets closed — outside US regular session (9:30am–4:00pm ET). The latest print is the most recent close.";
-  return { isOpen, isWeekend, weekday, label };
+  if (us.isWeekend) label = `US markets closed — ${us.weekday === "Sat" ? "Saturday" : "Sunday"}. US equities don't trade on weekends; the latest print is Friday's close.`;
+  else if (!us.isOpen) label = "US markets closed — outside 9:30am–4:00pm ET. The latest print is the most recent close.";
+  return { isOpen: us.isOpen, isWeekend: us.isWeekend, weekday: us.weekday, label };
 }
 
 async function getStockPrice(symbol: string): Promise<string> {
@@ -54,6 +84,9 @@ async function getStockPrice(symbol: string): Promise<string> {
     const d = await resp.json();
     if (!d || d.c === 0 || d.c == null) return JSON.stringify({ error: `No data for ${symbol}` });
     const status = getUSMarketStatus();
+    const allRegions = getAllMarketStatuses().map(s => ({
+      name: s.name, region: s.region, isOpen: s.isOpen, isWeekend: s.isWeekend, hours: s.hours,
+    }));
     return JSON.stringify({
       symbol: symbol.toUpperCase(),
       price: d.c,
@@ -67,11 +100,10 @@ async function getStockPrice(symbol: string): Promise<string> {
         isOpen: status.isOpen,
         isWeekend: status.isWeekend,
         note: status.label,
+        allRegions,
       },
-      priceAsOf: status.isOpen ? "live intraday" : "last close (markets currently closed)",
-      changeNote: status.isOpen
-        ? "change/changePercent reflect today's intraday move vs. previous close"
-        : "change/changePercent are stale — they reflect the LAST trading session's move vs. the prior close, NOT a move 'today'. Do not say the stock is up/down today.",
+      priceAsOf: "Interpret against the listing exchange's session — see marketStatus.allRegions to know which exchange is open right now.",
+      changeNote: "If the listing exchange is currently closed (weekend, holiday, or outside its local hours), change/changePercent reflect the LAST trading session's move vs. the prior close — NOT a move 'today'. Only describe it as a 'today' move when that specific exchange is open.",
     });
   } catch (e) {
     return JSON.stringify({ error: e instanceof Error ? e.message : "Failed" });
@@ -177,11 +209,21 @@ serve(async (req) => {
       : profile.quizScore <= 3 ? "Intermediate"
       : "Advanced";
 
-    const marketStatus = getUSMarketStatus();
+    const allStatuses = getAllMarketStatuses();
+    const statusLines = allStatuses.map(s =>
+      `- ${s.name} [${s.region}]: ${s.isOpen ? "OPEN" : (s.isWeekend ? `CLOSED (weekend — ${s.weekday})` : "CLOSED (outside regular session)")} — regular hours ${s.hours}`
+    ).join("\n");
     const systemPrompt = `You are Ekon — a friendly, personalized AI financial tutor inside the Econology app. Help students and young adults learn money skills with simple explanations, real-world examples, and encouragement. You can fetch live stock prices when asked (call the get_stock_price tool). Never use jargon without explaining it. Never judge.
 
-MARKET STATUS (right now): ${marketStatus.label}
-IMPORTANT: When markets are closed (weekends, holidays, or outside 9:30am–4:00pm ET), do NOT describe price changes as happening "today" or "yesterday". The change/changePercent fields from get_stock_price reflect the LAST trading session's move, not a current move. Phrase it like "as of Friday's close, MSFT finished up X%" or "the most recent session ended +X%". Always make the closed-market caveat clear.
+GLOBAL MARKET STATUS (right now):
+${statusLines}
+
+IMPORTANT — closed-market reasoning (applies to ALL exchanges, US/Europe/Asia):
+- When a market is closed (weekend, holiday, or outside its local regular session), do NOT describe price changes as happening "today" or "yesterday". The change/changePercent from get_stock_price reflect the LAST trading session's move vs. the prior close.
+- Match the ticker to its listing exchange: AAPL/MSFT/TSLA → US; VOD.L/HSBA.L → London; MC.PA/AIR.PA → Euronext Paris; SAP.DE/BMW.DE → Xetra Frankfurt; 7203.T (Toyota) → Tokyo; 0700.HK (Tencent) → Hong Kong; 600519.SS → Shanghai. Judge open/closed against THAT exchange.
+- If that exchange is closed, phrase moves as "as of the last close" / "Friday's close" / "the most recent session ended +X%". Mention the closed-market caveat once, briefly.
+- If the user asks "is the market open?", answer for the specific exchange they mean (default to the one matching the ticker, or US if ambiguous), and feel free to note other regions if helpful.
+- Be aware of overlap: when US is open, European markets are usually in their last hour or already closed; Asian markets are closed. When Asian markets are open, Europe and the US are typically closed.
 
 USER PROFILE:
 - Name: ${profile?.name || "Friend"}
