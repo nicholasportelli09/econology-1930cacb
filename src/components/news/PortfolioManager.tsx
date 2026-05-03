@@ -33,6 +33,8 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
   const [activeChart, setActiveChart] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const marketStatus = getUSMarketStatus();
+  const showChange = marketStatus.isOpen;
 
   const fetchQuotes = useCallback(async () => {
     if (tickers.length === 0) return;
@@ -155,13 +157,22 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
         <div className="flex items-center gap-2">
           <Briefcase size={16} className="text-primary" />
           <span className="text-sm font-semibold text-foreground">My Portfolio</span>
-          <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-accent">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+          {marketStatus.isOpen ? (
+            <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-accent" title={marketStatus.reason}>
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+              </span>
+              Live prices
             </span>
-            Live prices
-          </span>
+          ) : (
+            <span
+              className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground border border-border bg-muted/50 px-1.5 py-0.5 rounded"
+              title={marketStatus.reason}
+            >
+              {marketStatus.isWeekend ? "Markets closed · weekend" : "Markets closed"}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <button
