@@ -96,7 +96,7 @@ const MarketIdeas = () => {
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
-      <main className="max-w-screen-2xl mx-auto px-4 md:px-10 lg:px-16 py-8 space-y-8">
+      <main className="max-w-[1320px] mx-auto px-4 md:px-10 lg:px-6 py-8 space-y-8">
         {/* Educational-only banner — single, concise */}
         <div className="flex items-center gap-3 rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-2.5">
           <AlertTriangle className="text-destructive shrink-0" size={16} />

@@ -80,7 +80,7 @@ const BudgetSimulator = () => {
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
-      <main className="max-w-screen-2xl mx-auto px-4 md:px-10 lg:px-16 py-8 space-y-8">
+      <main className="max-w-[1320px] mx-auto px-4 md:px-10 lg:px-6 py-8 space-y-8">
         <section>
           <h1 className="text-3xl font-display font-bold text-foreground mb-2">Budget Simulator</h1>
           <p className="text-muted-foreground">Drag the sliders to see how your money allocation affects your savings over time.</p>
