@@ -80,7 +80,7 @@ const Progress = () => {
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
-      <main className="max-w-screen-2xl mx-auto px-4 md:px-10 lg:px-16 py-8 space-y-8">
+      <main className="max-w-[1320px] mx-auto px-4 md:px-10 lg:px-6 py-8 space-y-8">
         <section className="flex items-start justify-between">
           <div>
             <h1 className="text-3xl font-display font-bold text-foreground mb-2">Progress Overview</h1>
