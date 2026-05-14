@@ -294,6 +294,7 @@ const EconomicNews = () => {
           <p className="text-muted-foreground">{emptyText}</p>
         </div>
       )}
+    </>
   );
 
   return (
