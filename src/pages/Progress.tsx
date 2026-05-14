@@ -5,6 +5,7 @@ import { DashboardHeader } from "@/components/DashboardHeader";
 import { HealthScoreRing } from "@/components/HealthScoreRing";
 import { type UserProfile, defaultProfile, TOPICS_OF_INTEREST, normalizeTopicLabels } from "@/types/profile";
 import {
+import { Seo } from "@/components/Seo";
   getGamification,
   getLevel,
   ALL_BADGES,
@@ -77,6 +78,8 @@ const Progress = () => {
   const [showMethodology, setShowMethodology] = useState(false);
 
   return (
+    <>
+      <Seo title="Progress — Econology" description="Track your XP, streaks, completed lessons, and Financial Health Score over time." path="/progress" type="website" />
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
@@ -316,6 +319,7 @@ const Progress = () => {
         </button>
       </main>
     </div>
+    </>
   );
 };
 

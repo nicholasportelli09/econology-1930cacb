@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle2, MessageCircle } from "lucide-react";
 import { TIP_ARTICLES } from "@/data/tipArticles";
 import { Button } from "@/components/ui/button";
+import { Seo } from "@/components/Seo";
 
 const TipArticle = () => {
   const { tipId } = useParams<{ tipId: string }>();
@@ -33,6 +34,8 @@ const TipArticle = () => {
   }
 
   return (
+    <>
+      <Seo title="Deep dive — Econology" description="An Econology deep dive — long-form, plain-English explanation of a money or markets concept." path="/tip" type="article" jsonLd={{"@context":"https://schema.org","@type":"Article","headline":"Deep dive — Econology","description":"An Econology deep dive — long-form, plain-English explanation of a money or markets concept."}} />
     <div className="min-h-screen bg-background">
       <div className="max-w-3xl mx-auto px-4 md:px-8 py-8 space-y-8">
         {/* Back */}
@@ -84,6 +87,7 @@ const TipArticle = () => {
         </Button>
       </div>
     </div>
+    </>
   );
 };
 

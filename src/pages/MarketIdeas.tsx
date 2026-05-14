@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import {
+import { Seo } from "@/components/Seo";
   GraduationCap,
   Loader2,
   AlertTriangle,
@@ -93,6 +94,8 @@ const MarketIdeas = () => {
   };
 
   return (
+    <>
+      <Seo title="Market ideas — Econology" description="AI-generated investment ideas with step-by-step execution walkthroughs and plain-English risk assessments." path="/market" type="website" />
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
@@ -233,6 +236,7 @@ const MarketIdeas = () => {
         )}
       </main>
     </div>
+    </>
   );
 };
 

@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Sparkles, SkipForward, CheckCircle2, XCircle, Mi
 import { useAuth } from "@/contexts/AuthContext";
 import { PLACEMENT_QUESTIONS } from "@/data/placementQuestions";
 import {
+import { Seo } from "@/components/Seo";
   scorePlacement,
   saveLiteracyProfile,
   type PlacementAnswers,
@@ -65,6 +66,8 @@ const Placement = () => {
   }
 
   return (
+    <>
+      <Seo title="Placement quiz — Econology" description="Take the placement quiz so Econology can tailor your daily lessons to your current knowledge level." path="/placement" type="website" />
     <div
       className="min-h-screen relative overflow-hidden flex flex-col"
       style={{
@@ -257,5 +260,6 @@ function PlacementResults({
         </button>
       </div>
     </div>
+    </>
   );
 }

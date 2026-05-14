@@ -4,6 +4,7 @@ import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
 import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Seo } from "@/components/Seo";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ const Index = () => {
   const secondaryCtaLabel = hasSession ? "Continue to Dashboard" : "Get Started — It's Free";
 
   return (
+    <>
+      <Seo title="Econology — The Science of Smart Money" description="Master money and markets with daily lessons, live market insights, AI-curated economic news, and an AI tutor built for students and young investors." path="/" type="website" jsonLd={{"@context":"https://schema.org","@type":"WebSite","name":"Econology","url":"https://econology.lovable.app/"}} />
     <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
       {/* Animated gradient orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -158,6 +161,7 @@ const Index = () => {
         <p>© 2026 Econology · The science of smart money</p>
       </footer>
     </div>
+    </>
   );
 };
 

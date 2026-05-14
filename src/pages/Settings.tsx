@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { type YouTubeCreator, DEFAULT_CREATORS, getCreators, saveCreators } from "@/data/youtubeCreators";
 import { resetTour, startProductTour } from "@/lib/productTour";
+import { Seo } from "@/components/Seo";
 
 function getProfile(): UserProfile {
   try {
@@ -117,6 +118,8 @@ const Settings = () => {
   };
 
   return (
+    <>
+      <Seo title="Settings — Econology" description="Manage your profile, notification preferences, learning topics, and reset your knowledge quiz." path="/settings" type="website" />
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
@@ -436,6 +439,7 @@ const Settings = () => {
         </div>
       </main>
     </div>
+    </>
   );
 };
 

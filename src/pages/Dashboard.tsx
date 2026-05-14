@@ -7,6 +7,7 @@ import DashboardSummary from "@/components/DashboardSummary";
 import NewsInsightHero from "@/components/NewsInsightHero";
 import { hasSeenTour, startProductTour } from "@/lib/productTour";
 import {
+import { Seo } from "@/components/Seo";
   X,
   ArrowRight,
   RefreshCw,
@@ -169,6 +170,8 @@ const Dashboard = () => {
     : "U";
 
   return (
+    <>
+      <Seo title="Dashboard — Econology" description="Your personalized hub: today's lesson, market pulse, goals, and Financial Health Score." path="/dashboard" type="website" />
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
@@ -273,6 +276,7 @@ const Dashboard = () => {
         </section>
       </main>
     </div>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import {
+import { Seo } from "@/components/Seo";
   Newspaper, Loader2, CheckCircle2, Sparkles, TrendingUp, Search, RefreshCw,
 } from "lucide-react";
 import { type UserProfile, defaultProfile, normalizeTopicLabels } from "@/types/profile";
@@ -297,6 +298,8 @@ const EconomicNews = () => {
   );
 
   return (
+    <>
+      <Seo title="Economic news — Econology" description="Curated macro and ticker news with personalized AI insights and a daily digest tailored to your portfolio." path="/news" type="website" />
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
@@ -502,6 +505,7 @@ const EconomicNews = () => {
         </Tabs>
       </main>
     </div>
+    </>
   );
 };
 

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { defaultProfile, type UserProfile } from "@/types/profile";
 import { supabase } from "@/integrations/supabase/client";
+import { Seo } from "@/components/Seo";
 
 const DAILY_LIMIT = 10;
 
@@ -191,6 +192,8 @@ export default function AskEkon() {
   const hasMessages = messages.length > 0;
 
   return (
+    <>
+      <Seo title="Ask Ekon — Econology" description="Chat with Ekon, your AI tutor for money, markets, and economics. Get clear answers grounded in real data." path="/ask" type="website" />
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
       {/* Ambient gradient orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden -z-0">
@@ -312,5 +315,6 @@ export default function AskEkon() {
         </div>
       </div>
     </div>
+    </>
   );
 }

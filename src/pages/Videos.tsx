@@ -4,6 +4,7 @@ import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import {
+import { Seo } from "@/components/Seo";
   CURATED_VIDEOS,
   VIDEO_BY_ID,
   type CuratedVideo,
@@ -175,6 +176,8 @@ const Videos = () => {
   const hasMore = visibleCount < filteredVideos.length;
 
   return (
+    <>
+      <Seo title="Videos — Econology" description="Curated finance videos from approved YouTube creators, shuffled by an AI engine to match your interests." path="/videos" type="website" />
     <div className="min-h-screen bg-background">
       <DashboardHeader initials={initials} />
 
@@ -648,6 +651,7 @@ function ActiveVideoCard({
         </div>
       </div>
     </section>
+    </>
   );
 }
 
