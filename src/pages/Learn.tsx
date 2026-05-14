@@ -1,9 +1,9 @@
+import { Seo } from "@/components/Seo";
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-import { Seo } from "@/components/Seo";
   CONCEPTS_BY_DIMENSION,
   DIMENSION_LABELS,
   type Dimension,

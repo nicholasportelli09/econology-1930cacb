@@ -1,3 +1,4 @@
+import { Seo } from "@/components/Seo";
 import { useMemo, useState } from "react";
 import { TIP_ARTICLES } from "@/data/tipArticles";
 import { useNavigate } from "react-router-dom";
@@ -5,7 +6,6 @@ import { DashboardHeader } from "@/components/DashboardHeader";
 import { HealthScoreRing } from "@/components/HealthScoreRing";
 import { type UserProfile, defaultProfile, TOPICS_OF_INTEREST, normalizeTopicLabels } from "@/types/profile";
 import {
-import { Seo } from "@/components/Seo";
   getGamification,
   getLevel,
   ALL_BADGES,

@@ -1,7 +1,7 @@
+import { Seo } from "@/components/Seo";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import {
-import { Seo } from "@/components/Seo";
   Newspaper, Loader2, CheckCircle2, Sparkles, TrendingUp, Search, RefreshCw,
 } from "lucide-react";
 import { type UserProfile, defaultProfile, normalizeTopicLabels } from "@/types/profile";

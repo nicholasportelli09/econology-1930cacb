@@ -1,3 +1,4 @@
+import { Seo } from "@/components/Seo";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
@@ -5,7 +6,6 @@ import { ArrowLeft, ArrowRight, Sparkles, SkipForward, CheckCircle2, XCircle, Mi
 import { useAuth } from "@/contexts/AuthContext";
 import { PLACEMENT_QUESTIONS } from "@/data/placementQuestions";
 import {
-import { Seo } from "@/components/Seo";
   scorePlacement,
   saveLiteracyProfile,
   type PlacementAnswers,

@@ -1,3 +1,4 @@
+import { Seo } from "@/components/Seo";
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -7,7 +8,6 @@ import DashboardSummary from "@/components/DashboardSummary";
 import NewsInsightHero from "@/components/NewsInsightHero";
 import { hasSeenTour, startProductTour } from "@/lib/productTour";
 import {
-import { Seo } from "@/components/Seo";
   X,
   ArrowRight,
   RefreshCw,

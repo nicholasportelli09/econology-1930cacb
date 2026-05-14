@@ -1,8 +1,8 @@
+import { Seo } from "@/components/Seo";
 import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import {
-import { Seo } from "@/components/Seo";
   GraduationCap,
   Loader2,
   AlertTriangle,

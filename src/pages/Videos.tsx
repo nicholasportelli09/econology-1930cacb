@@ -1,10 +1,10 @@
+import { Seo } from "@/components/Seo";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import {
-import { Seo } from "@/components/Seo";
   CURATED_VIDEOS,
   VIDEO_BY_ID,
   type CuratedVideo,
