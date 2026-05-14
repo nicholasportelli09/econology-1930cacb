@@ -34,9 +34,8 @@ const TipArticle = () => {
   }
 
   return (
-    <>
-      <Seo title="Deep dive — Econology" description="An Econology deep dive — long-form, plain-English explanation of a money or markets concept." path="/tip" type="article" jsonLd={{"@context":"https://schema.org","@type":"Article","headline":"Deep dive — Econology","description":"An Econology deep dive — long-form, plain-English explanation of a money or markets concept."}} />
     <div className="min-h-screen bg-background">
+      <Seo title="Deep dive — Econology" description="An Econology deep dive — long-form, plain-English explanation of a money or markets concept." path="/tip" type="article" jsonLd={{"@context":"https://schema.org","@type":"Article","headline":"Deep dive — Econology","description":"An Econology deep dive — long-form, plain-English explanation of a money or markets concept."}} />
       <div className="max-w-3xl mx-auto px-4 md:px-8 py-8 space-y-8">
         {/* Back */}
         <button
@@ -87,7 +86,6 @@ const TipArticle = () => {
         </Button>
       </div>
     </div>
-    </>
   );
 };
 

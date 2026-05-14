@@ -66,8 +66,6 @@ const Placement = () => {
   }
 
   return (
-    <>
-      <Seo title="Placement quiz — Econology" description="Take the placement quiz so Econology can tailor your daily lessons to your current knowledge level." path="/placement" type="website" />
     <div
       className="min-h-screen relative overflow-hidden flex flex-col"
       style={{
@@ -75,6 +73,7 @@ const Placement = () => {
           "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))",
       }}
     >
+      <Seo title="Placement quiz — Econology" description="Take the placement quiz so Econology can tailor your daily lessons to your current knowledge level." path="/placement" type="website" />
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/8 blur-[120px] animate-pulse" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-accent/8 blur-[120px] animate-pulse" style={{ animationDelay: "1.5s" }} />
 
@@ -260,6 +259,5 @@ function PlacementResults({
         </button>
       </div>
     </div>
-    </>
   );
 }

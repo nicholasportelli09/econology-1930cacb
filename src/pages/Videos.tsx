@@ -176,9 +176,8 @@ const Videos = () => {
   const hasMore = visibleCount < filteredVideos.length;
 
   return (
-    <>
-      <Seo title="Videos — Econology" description="Curated finance videos from approved YouTube creators, shuffled by an AI engine to match your interests." path="/videos" type="website" />
     <div className="min-h-screen bg-background">
+      <Seo title="Videos — Econology" description="Curated finance videos from approved YouTube creators, shuffled by an AI engine to match your interests." path="/videos" type="website" />
       <DashboardHeader initials={initials} />
 
       <main className="max-w-[1320px] mx-auto px-4 md:px-10 lg:px-6 py-8 space-y-10">
@@ -651,7 +650,6 @@ function ActiveVideoCard({
         </div>
       </div>
     </section>
-    </>
   );
 }
 

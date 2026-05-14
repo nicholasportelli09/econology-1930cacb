@@ -64,9 +64,8 @@ const Learn = () => {
   const offerRetake = shouldOfferRetake(profile.takenAt, streak.totalLessons);
 
   return (
-    <>
-      <Seo title="Learn — Econology" description="Browse 55+ deep dives across investing, markets, macro, and personal finance. Pick a topic and start learning." path="/learn" type="website" jsonLd={{"@context":"https://schema.org","@type":"Course","name":"Learn — Econology","description":"Browse 55+ deep dives across investing, markets, macro, and personal finance. Pick a topic and start learning.","provider":{"@type":"Organization","name":"Econology","url":"https://econology.lovable.app/"}}} />
     <div className="min-h-screen bg-background">
+      <Seo title="Learn — Econology" description="Browse 55+ deep dives across investing, markets, macro, and personal finance. Pick a topic and start learning." path="/learn" type="website" jsonLd={{"@context":"https://schema.org","@type":"Course","name":"Learn — Econology","description":"Browse 55+ deep dives across investing, markets, macro, and personal finance. Pick a topic and start learning.","provider":{"@type":"Organization","name":"Econology","url":"https://econology.lovable.app/"}}} />
       <DashboardHeader />
       <main className="max-w-4xl mx-auto px-4 md:px-6 py-10 space-y-10">
         {/* Header */}
@@ -235,7 +234,6 @@ function ConceptTile({ concept, done, locked }: { concept: ConceptNode; done: bo
         <Lock size={14} className="text-muted-foreground shrink-0" />
       ) : null}
     </div>
-    </>
   );
 
   if (locked) {

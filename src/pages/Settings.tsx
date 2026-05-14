@@ -118,9 +118,8 @@ const Settings = () => {
   };
 
   return (
-    <>
-      <Seo title="Settings — Econology" description="Manage your profile, notification preferences, learning topics, and reset your knowledge quiz." path="/settings" type="website" />
     <div className="min-h-screen bg-background">
+      <Seo title="Settings — Econology" description="Manage your profile, notification preferences, learning topics, and reset your knowledge quiz." path="/settings" type="website" />
       <DashboardHeader initials={initials} />
 
       <main className="max-w-2xl mx-auto px-4 md:px-8 py-8 space-y-8">
@@ -439,7 +438,6 @@ const Settings = () => {
         </div>
       </main>
     </div>
-    </>
   );
 };
 

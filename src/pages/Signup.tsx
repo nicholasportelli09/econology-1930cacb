@@ -62,9 +62,8 @@ export default function Signup() {
   };
 
   return (
-    <>
-      <Seo title="Sign up — Econology" description="Create your free Econology account and start mastering money and markets with daily lessons and AI tutoring." path="/signup" type="website" />
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
+      <Seo title="Sign up — Econology" description="Create your free Econology account and start mastering money and markets with daily lessons and AI tutoring." path="/signup" type="website" />
       {/* Animated gradient orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
@@ -139,6 +138,5 @@ export default function Signup() {
         </div>
       </div>
     </div>
-    </>
   );
 }

@@ -62,9 +62,8 @@ const InvestmentDetail = () => {
       ];
 
   return (
-    <>
-      <Seo title="Investment detail — Econology" description="Step-by-step execution walkthrough and risk assessment for an Econology market idea." path="/investment" type="article" />
     <div className="min-h-screen bg-background">
+      <Seo title="Investment detail — Econology" description="Step-by-step execution walkthrough and risk assessment for an Econology market idea." path="/investment" type="article" />
       <div className="max-w-3xl mx-auto px-4 md:px-8 py-8 space-y-8">
         {/* Back */}
         <button
@@ -188,7 +187,6 @@ const InvestmentDetail = () => {
         </Button>
       </div>
     </div>
-    </>
   );
 };
 

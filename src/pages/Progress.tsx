@@ -78,9 +78,8 @@ const Progress = () => {
   const [showMethodology, setShowMethodology] = useState(false);
 
   return (
-    <>
-      <Seo title="Progress — Econology" description="Track your XP, streaks, completed lessons, and Financial Health Score over time." path="/progress" type="website" />
     <div className="min-h-screen bg-background">
+      <Seo title="Progress — Econology" description="Track your XP, streaks, completed lessons, and Financial Health Score over time." path="/progress" type="website" />
       <DashboardHeader initials={initials} />
 
       <main className="max-w-[1320px] mx-auto px-4 md:px-10 lg:px-6 py-8 space-y-8">
@@ -319,7 +318,6 @@ const Progress = () => {
         </button>
       </main>
     </div>
-    </>
   );
 };
 

@@ -78,9 +78,8 @@ const BudgetSimulator = () => {
     : "U";
 
   return (
-    <>
-      <Seo title="Budget simulator — Econology" description="Allocate income across needs, wants, and savings, and project five years of compounded savings." path="/budget" type="website" />
     <div className="min-h-screen bg-background">
+      <Seo title="Budget simulator — Econology" description="Allocate income across needs, wants, and savings, and project five years of compounded savings." path="/budget" type="website" />
       <DashboardHeader initials={initials} />
 
       <main className="max-w-[1320px] mx-auto px-4 md:px-10 lg:px-6 py-8 space-y-8">
@@ -223,7 +222,6 @@ const BudgetSimulator = () => {
         </div>
       </main>
     </div>
-    </>
   );
 };
 

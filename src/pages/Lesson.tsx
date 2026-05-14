@@ -97,9 +97,8 @@ const Lesson = () => {
   };
 
   return (
-    <>
-      <Seo title="Lesson — Econology" description="A short, focused Econology lesson with examples and a quick check for understanding." path="/lesson" type="article" jsonLd={{"@context":"https://schema.org","@type":"Course","name":"Lesson — Econology","description":"A short, focused Econology lesson with examples and a quick check for understanding.","provider":{"@type":"Organization","name":"Econology","url":"https://econology.lovable.app/"}}} />
     <div className="min-h-screen bg-background">
+      <Seo title="Lesson — Econology" description="A short, focused Econology lesson with examples and a quick check for understanding." path="/lesson" type="article" jsonLd={{"@context":"https://schema.org","@type":"Course","name":"Lesson — Econology","description":"A short, focused Econology lesson with examples and a quick check for understanding.","provider":{"@type":"Organization","name":"Econology","url":"https://econology.lovable.app/"}}} />
       <DashboardHeader />
       <main className="max-w-2xl mx-auto px-4 md:px-6 py-10 space-y-8">
         <div>
@@ -319,7 +318,6 @@ function ResultStep({
         Continue
       </button>
     </div>
-    </>
   );
 }
 
