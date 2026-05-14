@@ -37,6 +37,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <OfflineBanner />
+          <main>
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Index />} />
@@ -65,6 +66,7 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </main>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

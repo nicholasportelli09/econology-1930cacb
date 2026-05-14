@@ -1,3 +1,4 @@
+import { Seo } from "@/components/Seo";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import {
@@ -293,11 +294,11 @@ const EconomicNews = () => {
           <p className="text-muted-foreground">{emptyText}</p>
         </div>
       )}
-    </>
   );
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title="Economic news — Econology" description="Curated macro and ticker news with personalized AI insights and a daily digest tailored to your portfolio." path="/news" type="website" />
       <DashboardHeader initials={initials} />
 
       <main className="max-w-[1320px] mx-auto px-4 md:px-10 lg:px-6 py-8 space-y-6">

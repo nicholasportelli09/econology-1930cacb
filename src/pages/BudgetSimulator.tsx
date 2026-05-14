@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { recordBudgetSim, getGamification } from "@/lib/gamification";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import { DollarSign, PiggyBank, TrendingUp, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Seo } from "@/components/Seo";
 
 function getProfile(): UserProfile {
   try {
@@ -78,6 +79,7 @@ const BudgetSimulator = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title="Budget simulator — Econology" description="Allocate income across needs, wants, and savings, and project five years of compounded savings." path="/budget" type="website" />
       <DashboardHeader initials={initials} />
 
       <main className="max-w-[1320px] mx-auto px-4 md:px-10 lg:px-6 py-8 space-y-8">

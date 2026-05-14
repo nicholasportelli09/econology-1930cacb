@@ -1,3 +1,4 @@
+import { Seo } from "@/components/Seo";
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -64,6 +65,7 @@ const Learn = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title="Learn — Econology" description="Browse 55+ deep dives across investing, markets, macro, and personal finance. Pick a topic and start learning." path="/learn" type="website" jsonLd={{"@context":"https://schema.org","@type":"Course","name":"Learn — Econology","description":"Browse 55+ deep dives across investing, markets, macro, and personal finance. Pick a topic and start learning.","provider":{"@type":"Organization","name":"Econology","url":"https://econology.lovable.app/"}}} />
       <DashboardHeader />
       <main className="max-w-4xl mx-auto px-4 md:px-6 py-10 space-y-10">
         {/* Header */}

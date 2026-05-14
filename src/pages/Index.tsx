@@ -4,6 +4,7 @@ import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
 import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Seo } from "@/components/Seo";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
+      <Seo title="Econology — The Science of Smart Money" description="Master money and markets with daily lessons, live market insights, AI-curated economic news, and an AI tutor built for students and young investors." path="/" type="website" jsonLd={{"@context":"https://schema.org","@type":"WebSite","name":"Econology","url":"https://econology.lovable.app/"}} />
       {/* Animated gradient orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
@@ -39,7 +41,7 @@ const Index = () => {
       {/* Hero */}
       <section className="relative z-10 flex flex-col items-center text-center px-6 pt-6 pb-16 md:pt-10 md:pb-20 w-full">
         <div className="-mb-4 md:-mb-6">
-          <img src={logoSrc} alt="Econology logo" className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px] animate-float" loading="eager" />
+          <img src={logoSrc} alt="Econology logo" width={180} height={180} className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px] animate-float" loading="eager" fetchPriority="high" />
         </div>
         <h1 className="text-4xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
           <span className="gradient-text">Econology</span>

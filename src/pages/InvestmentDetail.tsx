@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, MessageCircle, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Seo } from "@/components/Seo";
 
 interface CaseStudy {
   name: string;
@@ -62,6 +63,7 @@ const InvestmentDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title="Investment detail — Econology" description="Step-by-step execution walkthrough and risk assessment for an Econology market idea." path="/investment" type="article" />
       <div className="max-w-3xl mx-auto px-4 md:px-8 py-8 space-y-8">
         {/* Back */}
         <button

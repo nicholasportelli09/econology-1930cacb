@@ -1,3 +1,4 @@
+import { Seo } from "@/components/Seo";
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -170,6 +171,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title="Dashboard — Econology" description="Your personalized hub: today's lesson, market pulse, goals, and Financial Health Score." path="/dashboard" type="website" />
       <DashboardHeader initials={initials} />
 
       <main className="max-w-[1320px] mx-auto px-4 md:px-10 lg:px-6 py-10 md:py-14 space-y-12 md:space-y-14">

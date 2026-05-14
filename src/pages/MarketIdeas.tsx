@@ -1,3 +1,4 @@
+import { Seo } from "@/components/Seo";
 import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -94,6 +95,7 @@ const MarketIdeas = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title="Market ideas — Econology" description="AI-generated investment ideas with step-by-step execution walkthroughs and plain-English risk assessments." path="/market" type="website" />
       <DashboardHeader initials={initials} />
 
       <main className="max-w-[1320px] mx-auto px-4 md:px-10 lg:px-6 py-8 space-y-8">
