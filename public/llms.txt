@@ -1,0 +1,26 @@
+# Econology
+
+> A daily system for mastering money and markets — personalized lessons, real-time market insights, economic news, and an AI tutor (Ekon) for students and young investors.
+
+Econology blends short daily lessons (Duolingo-style), live market data, AI-curated economic news, a budget simulator, and contextual tutoring. Authentication uses Google OAuth and email OTP. Market data comes from Finnhub, news from Marketaux and NewsAPI, video content from curated YouTube creators.
+
+## Pages
+
+- [Home](/): Product overview and sign-up entry point.
+- [Login](/login): Sign in with Google or email OTP.
+- [Sign up](/signup): Create a new Econology account.
+- [Dashboard](/dashboard): Personalized hub with daily lesson, market pulse, and goals.
+- [Learn](/learn): Categorized topic grid covering 55+ finance and economics deep dives.
+- [Market Ideas](/market): AI-generated investment recommendations with execution walkthroughs.
+- [Economic News](/news): Curated macro and ticker news with personalized AI insights.
+- [Ask Ekon](/ask): Conversational AI tutor for finance and markets.
+- [Progress](/progress): XP, streaks, and Financial Health Score tracking.
+- [Budget Simulator](/budget): Income allocator and 5-year savings projection.
+- [Videos](/videos): Curated YouTube finance content from approved creators.
+- [Placement](/placement): Initial knowledge assessment quiz.
+
+## Optional
+
+- [Settings](/settings): Profile, notification, and topic preferences.
+- [Tip article](/tip/): Long-form article pages (dynamic by tip id).
+- [Lesson](/lesson/): Individual concept lessons (dynamic by concept id).
