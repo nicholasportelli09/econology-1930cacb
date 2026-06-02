@@ -7,6 +7,7 @@ import FeatureCard from "@/components/FeatureCard";
 import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Seo } from "@/components/Seo";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -80,12 +81,21 @@ const Index = () => {
           <EconologyLogo size={40} />
           <span className="font-display text-xl font-bold gradient-text">Econology</span>
         </div>
-        <button
-          onClick={() => navigate(hasSession ? "/dashboard" : "/login")}
-          className="px-5 py-2.5 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-lg glow-shadow"
-        >
-          {hasSession ? "Go to Dashboard" : "Sign In"}
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" })}
+            className="text-sm font-semibold transition-colors hover:opacity-80"
+            style={{ color: "hsl(240 30% 25%)" }}
+          >
+            FAQ
+          </button>
+          <button
+            onClick={() => navigate(hasSession ? "/dashboard" : "/login")}
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-lg glow-shadow"
+          >
+            {hasSession ? "Go to Dashboard" : "Sign In"}
+          </button>
+        </div>
       </nav>
 
       {/* Hero */}
@@ -216,6 +226,34 @@ const Index = () => {
             {secondaryCtaLabel}
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
           </button>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full scroll-mt-20">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-10" style={{ color: "hsl(240 30% 20%)" }}>
+            Frequently Asked Questions
+          </h2>
+          <Accordion type="single" collapsible className="w-full space-y-3">
+            {[
+              { q: "What is Econology?", a: "Econology is a daily learning system that helps young adults and students master money and markets through bite-sized lessons, real market insights, and an AI tutor." },
+              { q: "Is it free to use?", a: "Yes — Econology is completely free. Create an account and start building your financial confidence right away." },
+              { q: "How does the daily lesson work?", a: "Each day you get one short, personalized lesson based on your goals and current knowledge. Complete it, earn XP, and watch your literacy score grow." },
+              { q: "Can I track real stocks?", a: "Absolutely. Add tickers to your portfolio, get live quotes, and see relevant news filtered to your investments." },
+              { q: "Is my data secure?", a: "We use industry-standard encryption and never share your personal data with third parties. Your privacy is our priority." },
+              { q: "How do I reset my learning progress?", a: "Head to Settings and you can reset your quiz scores or topic selections at any time." },
+            ].map((faq, i) => (
+              <AccordionItem key={i} value={`faq-${i}`} className="rounded-xl border px-4 md:px-6" style={{ borderColor: "rgba(0,0,0,0.08)", background: "rgba(255,255,255,0.5)" }}>
+                <AccordionTrigger className="text-sm md:text-base font-semibold text-left py-4" style={{ color: "hsl(240 30% 20%)" }}>
+                  {faq.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-sm leading-relaxed pb-4" style={{ color: "hsl(240 15% 45%)" }}>
+                  {faq.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </section>
 
