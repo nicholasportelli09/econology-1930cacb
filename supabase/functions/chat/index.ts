@@ -1,5 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "npm:zod@3.23.8";
+
+const ChatBodySchema = z.object({
+  messages: z.array(z.object({
+    role: z.enum(["system", "user", "assistant", "tool"]),
+    content: z.union([z.string().max(8000), z.array(z.any())]).optional(),
+  })).min(1).max(40),
+  profile: z.record(z.any()).optional(),
+});
 
 const ALLOWED_ORIGINS = [
   "https://www.econology.app",
@@ -135,6 +144,7 @@ serve(async (req) => {
   // SECURITY: hard-fail for unauthenticated requests — prevents rate-limit bypass
   const _token = req.headers.get('Authorization')?.replace('Bearer ', '');
   if (!_token) {
+    console.warn("auth_failure", { fn: "chat", ip: req.headers.get("x-forwarded-for") || "unknown", reason: "missing_token" });
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
   }
   const _authResp = await fetch(
@@ -142,12 +152,19 @@ serve(async (req) => {
     { headers: { 'Authorization': `Bearer ${_token}`, 'apikey': Deno.env.get('SUPABASE_ANON_KEY') ?? '' } }
   );
   if (!_authResp.ok) {
+    console.warn("auth_failure", { fn: "chat", ip: req.headers.get("x-forwarded-for") || "unknown", reason: "invalid_token", status: _authResp.status });
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
   }
 
 
   try {
-    const { messages, profile } = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsed = ChatBodySchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: "Invalid request body", details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const { messages, profile } = parsed.data;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 

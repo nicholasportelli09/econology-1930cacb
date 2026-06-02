@@ -1,4 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "npm:zod@3.23.8";
+
+const BodySchema = z.object({
+  tickers: z.string().min(1).max(500),
+});
 
 const ALLOWED_ORIGINS = [
   "https://www.econology.app",
@@ -31,6 +36,7 @@ serve(async (req) => {
   // SECURITY: verify authenticated Econology user via Supabase JWT
   const _token = req.headers.get('Authorization')?.replace('Bearer ', '');
   if (!_token) {
+    console.warn("auth_failure", { fn: "stock-quote", ip: req.headers.get("x-forwarded-for") || "unknown", reason: "missing_token" });
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
   }
   const _authResp = await fetch(
@@ -38,6 +44,7 @@ serve(async (req) => {
     { headers: { 'Authorization': `Bearer ${_token}`, 'apikey': Deno.env.get('SUPABASE_ANON_KEY') ?? '' } }
   );
   if (!_authResp.ok) {
+    console.warn("auth_failure", { fn: "stock-quote", ip: req.headers.get("x-forwarded-for") || "unknown", reason: "invalid_token", status: _authResp.status });
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
   }
 
@@ -46,12 +53,16 @@ serve(async (req) => {
     const FINNHUB_API_KEY = Deno.env.get("FINNHUB_API_KEY");
     if (!FINNHUB_API_KEY) throw new Error("FINNHUB_API_KEY is not configured");
 
-    const { tickers } = await req.json();
-    if (!tickers || !String(tickers).trim()) {
-      throw new Error("tickers parameter is required");
+    const rawBody = await req.json().catch(() => null);
+    const parsed = BodySchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: "Invalid request body", details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    const { tickers } = parsed.data;
 
-    const tickerList = String(tickers).trim().toUpperCase().split(",").map(t => t.trim()).filter(Boolean);
+    const tickerList = tickers.trim().toUpperCase().split(",").map(t => t.trim())
+      .filter(t => /^[A-Z0-9.\-]{1,10}$/.test(t));
     const quotes: Record<string, any> = {};
 
     await Promise.all(

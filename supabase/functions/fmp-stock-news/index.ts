@@ -1,4 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "npm:zod@3.23.8";
+
+const BodySchema = z.object({
+  tickers: z.string().max(500).optional().default(""),
+  category: z.string().max(50).optional().default("general"),
+  limit: z.number().int().min(1).max(50).optional().default(15),
+});
 
 const ALLOWED_ORIGINS = [
   "https://www.econology.app",
@@ -31,6 +38,7 @@ serve(async (req) => {
   // SECURITY: verify authenticated Econology user via Supabase JWT
   const _token = req.headers.get('Authorization')?.replace('Bearer ', '');
   if (!_token) {
+    console.warn("auth_failure", { fn: "fmp-stock-news", ip: req.headers.get("x-forwarded-for") || "unknown", reason: "missing_token" });
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
   }
   const _authResp = await fetch(
@@ -38,6 +46,7 @@ serve(async (req) => {
     { headers: { 'Authorization': `Bearer ${_token}`, 'apikey': Deno.env.get('SUPABASE_ANON_KEY') ?? '' } }
   );
   if (!_authResp.ok) {
+    console.warn("auth_failure", { fn: "fmp-stock-news", ip: req.headers.get("x-forwarded-for") || "unknown", reason: "invalid_token", status: _authResp.status });
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
   }
 
@@ -45,7 +54,13 @@ serve(async (req) => {
     const FINNHUB_API_KEY = Deno.env.get("FINNHUB_API_KEY");
     if (!FINNHUB_API_KEY) throw new Error("FINNHUB_API_KEY is not configured");
 
-    const { tickers, category = "general", limit = 15 } = await req.json();
+    const rawBody = await req.json().catch(() => ({}));
+    const parsed = BodySchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: "Invalid request body", details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const { tickers, category, limit } = parsed.data;
 
     let url: string;
     if (tickers && tickers.trim()) {
