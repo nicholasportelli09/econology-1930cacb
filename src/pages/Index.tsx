@@ -81,12 +81,21 @@ const Index = () => {
           <EconologyLogo size={40} />
           <span className="font-display text-xl font-bold gradient-text">Econology</span>
         </div>
-        <button
-          onClick={() => navigate(hasSession ? "/dashboard" : "/login")}
-          className="px-5 py-2.5 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-lg glow-shadow"
-        >
-          {hasSession ? "Go to Dashboard" : "Sign In"}
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" })}
+            className="text-sm font-semibold transition-colors hover:opacity-80"
+            style={{ color: "hsl(240 30% 25%)" }}
+          >
+            FAQ
+          </button>
+          <button
+            onClick={() => navigate(hasSession ? "/dashboard" : "/login")}
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-lg glow-shadow"
+          >
+            {hasSession ? "Go to Dashboard" : "Sign In"}
+          </button>
+        </div>
       </nav>
 
       {/* Hero */}
