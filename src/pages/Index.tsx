@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
@@ -13,6 +14,15 @@ const Index = () => {
   const ctaLabel = hasSession ? "Continue to Dashboard" : "Start Your Journey";
   const ctaTarget = hasSession ? "/dashboard" : "/signup";
   const secondaryCtaLabel = hasSession ? "Continue to Dashboard" : "Get Started — It's Free";
+
+  const fadeUp = {
+    hidden: { opacity: 0, y: 24 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+  };
+  const container = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
@@ -40,25 +50,33 @@ const Index = () => {
 
       {/* Hero */}
       <section className="relative z-10 flex flex-col items-center text-center px-6 pt-6 pb-16 md:pt-10 md:pb-20 w-full">
-        <div className="-mb-4 md:-mb-6">
-          <img src={logoSrc} alt="Econology logo" width={180} height={180} className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px] animate-float" loading="eager" fetchPriority="high" />
-        </div>
-        <h1 className="text-4xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
-          <span className="gradient-text">Econology</span>
-        </h1>
-        <p className="text-lg md:text-2xl mb-3 max-w-2xl font-bold" style={{ color: "hsl(240 30% 25%)" }}>
-          A daily system for mastering money and markets
-        </p>
-        <p className="text-base md:text-lg mb-10 max-w-2xl leading-relaxed font-semibold" style={{ color: "hsl(240 20% 40%)" }}>
-          Learn faster with simple explanations, real examples, and daily progress.
-        </p>
-        <button
-          onClick={() => navigate(ctaTarget)}
-          className="group flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow"
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="flex flex-col items-center"
         >
-          {ctaLabel}
-          <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-        </button>
+          <motion.div variants={fadeUp} className="-mb-4 md:-mb-6">
+            <img src={logoSrc} alt="Econology logo" width={180} height={180} className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px] animate-float" loading="eager" fetchPriority="high" />
+          </motion.div>
+          <motion.h1 variants={fadeUp} className="text-4xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
+            <span className="gradient-text">Econology</span>
+          </motion.h1>
+          <motion.p variants={fadeUp} className="text-lg md:text-2xl mb-3 max-w-2xl font-bold" style={{ color: "hsl(240 30% 25%)" }}>
+            A daily system for mastering money and markets
+          </motion.p>
+          <motion.p variants={fadeUp} className="text-base md:text-lg mb-10 max-w-2xl leading-relaxed font-semibold" style={{ color: "hsl(240 20% 40%)" }}>
+            Learn faster with simple explanations, real examples, and daily progress.
+          </motion.p>
+          <motion.button
+            variants={fadeUp}
+            onClick={() => navigate(ctaTarget)}
+            className="group flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow"
+          >
+            {ctaLabel}
+            <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+          </motion.button>
+        </motion.div>
       </section>
 
       {/* Feature cards */}
