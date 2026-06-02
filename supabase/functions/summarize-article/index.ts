@@ -1,4 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "npm:zod@3.23.8";
+
+const ArticleSchema = z.object({
+  title: z.string().max(500).optional().default(""),
+  text: z.string().max(20000).optional().default(""),
+  site: z.string().max(200).optional().default(""),
+  symbol: z.string().max(40).optional().default(""),
+}).passthrough();
+
+const BodySchema = z.object({
+  mode: z.enum(["single", "digest"]).optional().default("single"),
+  profile: z.record(z.any()).optional(),
+  article: z.union([ArticleSchema, z.array(ArticleSchema).max(30)]),
+});
 
 const ALLOWED_ORIGINS = [
   "https://www.econology.app",
@@ -31,6 +45,7 @@ serve(async (req) => {
   // SECURITY: verify authenticated Econology user via Supabase JWT
   const _token = req.headers.get('Authorization')?.replace('Bearer ', '');
   if (!_token) {
+    console.warn("auth_failure", { fn: "summarize-article", ip: req.headers.get("x-forwarded-for") || "unknown", reason: "missing_token" });
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
   }
   const _authResp = await fetch(
@@ -38,6 +53,7 @@ serve(async (req) => {
     { headers: { 'Authorization': `Bearer ${_token}`, 'apikey': Deno.env.get('SUPABASE_ANON_KEY') ?? '' } }
   );
   if (!_authResp.ok) {
+    console.warn("auth_failure", { fn: "summarize-article", ip: req.headers.get("x-forwarded-for") || "unknown", reason: "invalid_token", status: _authResp.status });
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
   }
 
@@ -46,7 +62,13 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const { article, profile, mode = "single" } = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    const parsed = BodySchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: "Invalid request body", details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const { article, profile, mode } = parsed.data;
     // mode: "single" = summarize one article, "digest" = summarize multiple articles
 
     let userPrompt: string;

@@ -1,4 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "npm:zod@3.23.8";
+
+const BodySchema = z.object({
+  imageBase64: z.string().min(20).max(8_000_000),
+  mimeType: z.string().max(50).optional(),
+});
 
 const ALLOWED_ORIGINS = [
   "https://www.econology.app",
@@ -29,6 +35,7 @@ serve(async (req) => {
   // Verify auth
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token) {
+    console.warn("auth_failure", { fn: "portfolio-from-image", ip: req.headers.get("x-forwarded-for") || "unknown", reason: "missing_token" });
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
   }
   const authResp = await fetch(
@@ -36,16 +43,18 @@ serve(async (req) => {
     { headers: { Authorization: `Bearer ${token}`, apikey: Deno.env.get("SUPABASE_ANON_KEY") ?? "" } }
   );
   if (!authResp.ok) {
+    console.warn("auth_failure", { fn: "portfolio-from-image", ip: req.headers.get("x-forwarded-for") || "unknown", reason: "invalid_token", status: authResp.status });
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
   }
 
   try {
-    const { imageBase64, mimeType } = await req.json();
-    if (!imageBase64 || typeof imageBase64 !== "string") {
-      return new Response(JSON.stringify({ error: "imageBase64 required" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const rawBody = await req.json().catch(() => null);
+    const parsed = BodySchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: "Invalid request body", details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    const { imageBase64, mimeType } = parsed.data;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
