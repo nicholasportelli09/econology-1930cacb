@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
@@ -23,6 +24,45 @@ const Index = () => {
     hidden: {},
     show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
   };
+
+  const taglineFull = "A daily system for mastering money and markets";
+  const subFull = "Learn faster with simple explanations, real examples, and daily progress.";
+  const [tagline, setTagline] = useState("");
+  const [sub, setSub] = useState("");
+  const [phase, setPhase] = useState<"idle" | "tagline" | "sub" | "done">("idle");
+
+  useEffect(() => {
+    const start = setTimeout(() => setPhase("tagline"), 900);
+    return () => clearTimeout(start);
+  }, []);
+
+  useEffect(() => {
+    if (phase !== "tagline") return;
+    let i = 0;
+    const id = setInterval(() => {
+      i++;
+      setTagline(taglineFull.slice(0, i));
+      if (i >= taglineFull.length) {
+        clearInterval(id);
+        setTimeout(() => setPhase("sub"), 300);
+      }
+    }, 35);
+    return () => clearInterval(id);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "sub") return;
+    let i = 0;
+    const id = setInterval(() => {
+      i++;
+      setSub(subFull.slice(0, i));
+      if (i >= subFull.length) {
+        clearInterval(id);
+        setPhase("done");
+      }
+    }, 20);
+    return () => clearInterval(id);
+  }, [phase]);
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
@@ -62,11 +102,17 @@ const Index = () => {
           <motion.h1 variants={fadeUp} className="text-4xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
             <span className="gradient-text">Econology</span>
           </motion.h1>
-          <motion.p variants={fadeUp} className="text-lg md:text-2xl mb-3 max-w-2xl font-bold" style={{ color: "hsl(240 30% 25%)" }}>
-            A daily system for mastering money and markets
+          <motion.p variants={fadeUp} className="text-lg md:text-2xl mb-3 max-w-2xl font-bold min-h-[1.75rem] md:min-h-[2.25rem]" style={{ color: "hsl(240 30% 25%)" }}>
+            {tagline}
+            {phase !== "done" && phase !== "sub" && (
+              <span className="inline-block w-[2px] h-[1em] align-middle ml-0.5 bg-current animate-pulse" />
+            )}
           </motion.p>
-          <motion.p variants={fadeUp} className="text-base md:text-lg mb-10 max-w-2xl leading-relaxed font-semibold" style={{ color: "hsl(240 20% 40%)" }}>
-            Learn faster with simple explanations, real examples, and daily progress.
+          <motion.p variants={fadeUp} className="text-base md:text-lg mb-10 max-w-2xl leading-relaxed font-semibold min-h-[1.75rem]" style={{ color: "hsl(240 20% 40%)" }}>
+            {sub}
+            {phase === "sub" && (
+              <span className="inline-block w-[2px] h-[1em] align-middle ml-0.5 bg-current animate-pulse" />
+            )}
           </motion.p>
           <motion.button
             variants={fadeUp}
