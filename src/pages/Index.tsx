@@ -303,63 +303,33 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="relative z-10 mt-8" style={{ background: "hsl(232 38% 16%)", color: "hsl(230 25% 85%)" }}>
-        <div className="max-w-6xl mx-auto px-6 md:px-12 py-14 md:py-20">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
-            {/* Brand + CTA */}
-            <div className="md:col-span-5">
-              <div className="flex items-center gap-3 mb-5">
-                <img src={logoSrc} alt="Econology logo" width={44} height={44} className="object-contain" />
-                <span className="font-display text-2xl font-bold text-white">Econology</span>
-              </div>
-              <p className="text-sm leading-relaxed mb-6 max-w-sm" style={{ color: "hsl(230 20% 70%)" }}>
-                A daily system for mastering money and markets — simple explanations, real examples, and steady progress.
-              </p>
-              <button
-                onClick={() => navigate(ctaTarget)}
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-semibold transition-colors"
-                style={{ background: "hsl(230 80% 88%)", color: "hsl(232 50% 18%)" }}
-              >
-                {hasSession ? "Open Dashboard" : "Get Started Free"}
-                <ArrowRight size={16} />
-              </button>
+        <div className="max-w-6xl mx-auto px-6 md:px-12 py-10 md:py-14">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-3">
+              <img src={logoSrc} alt="Econology logo" width={36} height={36} className="object-contain" />
+              <span className="font-display text-lg font-bold text-white">Econology</span>
             </div>
 
-            {/* Link columns */}
-            <div className="md:col-span-2">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Learn</h4>
-              <ul className="space-y-3 text-sm">
-                <li><button onClick={() => navigate("/learn")} className="hover:text-white transition-colors">Deep Dives</button></li>
-                <li><button onClick={() => navigate("/market")} className="hover:text-white transition-colors">Market Ideas</button></li>
-                <li><button onClick={() => navigate("/news")} className="hover:text-white transition-colors">Economic News</button></li>
-                <li><button onClick={() => navigate("/videos")} className="hover:text-white transition-colors">Videos</button></li>
-                <li><button onClick={() => navigate("/budget")} className="hover:text-white transition-colors">Budget Simulator</button></li>
-              </ul>
+            <div className="flex flex-wrap items-center justify-center gap-5 text-sm" style={{ color: "hsl(230 20% 70%)" }}>
+              <button onClick={() => navigate("/learn")} className="hover:text-white transition-colors">Learn</button>
+              <button onClick={() => navigate("/market")} className="hover:text-white transition-colors">Markets</button>
+              <button onClick={() => navigate("/news")} className="hover:text-white transition-colors">News</button>
+              <button onClick={() => navigate("/ask")} className="hover:text-white transition-colors">Ask Ekon</button>
+              <button onClick={() => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" })} className="hover:text-white transition-colors">FAQ</button>
+              <button onClick={() => navigate("/login")} className="hover:text-white transition-colors">Sign In</button>
             </div>
 
-            <div className="md:col-span-2">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Account</h4>
-              <ul className="space-y-3 text-sm">
-                <li><button onClick={() => navigate("/signup")} className="hover:text-white transition-colors">Sign Up</button></li>
-                <li><button onClick={() => navigate("/login")} className="hover:text-white transition-colors">Sign In</button></li>
-                <li><button onClick={() => navigate("/dashboard")} className="hover:text-white transition-colors">Dashboard</button></li>
-                <li><button onClick={() => navigate("/settings")} className="hover:text-white transition-colors">Settings</button></li>
-                <li><button onClick={() => navigate("/progress")} className="hover:text-white transition-colors">Progress</button></li>
-              </ul>
-            </div>
-
-            <div className="md:col-span-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Resources</h4>
-              <ul className="space-y-3 text-sm">
-                <li><button onClick={() => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" })} className="hover:text-white transition-colors">FAQ</button></li>
-                <li><button onClick={() => navigate("/ask")} className="hover:text-white transition-colors">Ask Ekon (AI Tutor)</button></li>
-                <li><button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="hover:text-white transition-colors">Back to Top</button></li>
-              </ul>
-            </div>
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="text-xs uppercase tracking-wider hover:text-white transition-colors"
+              style={{ color: "hsl(230 18% 60%)" }}
+            >
+              Back to Top ↑
+            </button>
           </div>
 
-          <div className="mt-12 pt-6 border-t flex flex-col md:flex-row items-center justify-between gap-3 text-xs" style={{ borderColor: "hsl(232 30% 25%)", color: "hsl(230 18% 65%)" }}>
+          <div className="mt-8 pt-5 border-t text-center text-xs" style={{ borderColor: "hsl(232 30% 25%)", color: "hsl(230 18% 60%)" }}>
             <p>© 2026 Econology · The science of smart money</p>
-            <p>Built for students and young investors.</p>
           </div>
         </div>
       </footer>
