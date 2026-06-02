@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import EconologyLogo from "@/components/EconologyLogo";
+import logoSrc from "@/assets/econology-logo.png";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Mail, Lock, User } from "lucide-react";
+import { Loader2, Mail, Lock, User, Sparkles, Flame, Trophy } from "lucide-react";
 import { Seo } from "@/components/Seo";
 
 export default function Signup() {
@@ -62,26 +63,60 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
+    <div className="min-h-screen flex items-center justify-center px-4 py-10 relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
       <Seo title="Sign up — Econology" description="Create your free Econology account and start mastering money and markets with daily lessons and AI tutoring." path="/signup" type="website" />
       {/* Animated gradient orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
+        <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full bg-accent/10 blur-[120px] animate-pulse" style={{ animationDelay: "2s" }} />
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/10 blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md space-y-8">
-        <div className="flex flex-col items-center gap-3">
-          <EconologyLogo size={56} />
-          <h1 className="text-2xl font-display font-bold" style={{ color: "hsl(240 30% 20%)" }}>Create Account</h1>
-          <p className="text-sm" style={{ color: "hsl(240 20% 40%)" }}>Start building your financial knowledge</p>
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative z-10 w-full max-w-md space-y-6"
+      >
+        <div className="flex flex-col items-center gap-2 text-center">
+          <img src={logoSrc} alt="Econology logo" width={80} height={80} className="object-contain w-[80px] h-[80px] animate-float" />
+          <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight gradient-text leading-none">
+            Create Account
+          </h1>
+          <p className="text-sm font-semibold" style={{ color: "hsl(240 20% 40%)" }}>
+            Start mastering money and markets — free, forever.
+          </p>
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+            {[
+              { icon: Sparkles, label: "5-min daily lesson" },
+              { icon: Flame, label: "Build a streak" },
+              { icon: Trophy, label: "Earn XP" },
+            ].map(({ icon: Icon, label }) => (
+              <span
+                key={label}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border"
+                style={{ background: "rgba(255,255,255,0.6)", borderColor: "rgba(0,0,0,0.08)", color: "hsl(240 30% 25%)" }}
+              >
+                <Icon size={11} className="text-accent" />
+                {label}
+              </span>
+            ))}
+          </div>
         </div>
 
-        <div className="space-y-4 rounded-xl border border-white/40 bg-white/60 backdrop-blur-sm p-6">
+        <div
+          className="space-y-4 rounded-2xl border p-6 md:p-7"
+          style={{
+            background: "rgba(255,255,255,0.7)",
+            backdropFilter: "blur(16px)",
+            borderColor: "rgba(255,255,255,0.8)",
+            boxShadow: "0 30px 80px -20px hsla(245, 60%, 40%, 0.25)",
+          }}
+        >
           <Button
             type="button"
             variant="outline"
-            className="w-full bg-white/70 border-white/50 hover:bg-white/90"
+            className="w-full h-11 bg-white border-white/60 hover:bg-white/90 font-semibold"
             style={{ color: "hsl(240 20% 25%)" }}
             disabled={googleLoading}
             onClick={handleGoogleSignIn}
@@ -96,47 +131,51 @@ export default function Signup() {
 
           <div className="relative my-2">
             <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-black/10" /></div>
-            <div className="relative flex justify-center text-xs uppercase"><span className="bg-white/60 px-2" style={{ color: "hsl(240 15% 50%)" }}>or</span></div>
+            <div className="relative flex justify-center text-[11px] uppercase tracking-widest font-semibold"><span className="bg-white px-3" style={{ color: "hsl(240 15% 50%)" }}>or with email</span></div>
           </div>
 
-          <form onSubmit={handleSignup} className="space-y-4">
+          <form onSubmit={handleSignup} className="space-y-3.5">
             <div className="space-y-2">
-              <label className="text-sm font-medium" style={{ color: "hsl(240 20% 25%)" }}>Name</label>
+              <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: "hsl(240 20% 35%)" }}>Name</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "hsl(240 15% 50%)" }} />
-                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="pl-10 bg-white border-white/60 text-slate-900 placeholder:text-slate-400" required />
+                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="pl-10 h-11 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-primary/40" required />
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium" style={{ color: "hsl(240 20% 25%)" }}>Email</label>
+              <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: "hsl(240 20% 35%)" }}>Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "hsl(240 15% 50%)" }} />
-                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="pl-10 bg-white border-white/60 text-slate-900 placeholder:text-slate-400" required />
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="pl-10 h-11 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-primary/40" required />
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium" style={{ color: "hsl(240 20% 25%)" }}>Password</label>
+              <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: "hsl(240 20% 35%)" }}>Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "hsl(240 15% 50%)" }} />
-                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 characters" className="pl-10 bg-white border-white/60 text-slate-900 placeholder:text-slate-400" required />
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 characters" className="pl-10 h-11 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-primary/40" required />
               </div>
             </div>
-            <Button type="submit" disabled={loading} className="w-full gradient-bg text-primary-foreground font-semibold shadow-lg glow-shadow transition-all hover:opacity-90 hover:shadow-xl">
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create Account"}
+            <Button type="submit" disabled={loading} className="w-full h-11 mt-2 gradient-bg text-primary-foreground font-display font-semibold text-base shadow-lg glow-shadow transition-all hover:opacity-90 hover:shadow-xl">
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create Free Account"}
             </Button>
           </form>
+
+          <p className="text-[11px] text-center pt-1" style={{ color: "hsl(240 15% 50%)" }}>
+            By signing up you agree to our Terms & Privacy Policy.
+          </p>
         </div>
 
         <div className="text-center space-y-2 text-sm">
           <p style={{ color: "hsl(240 15% 45%)" }}>
             Already have an account?{" "}
-            <Link to="/login" className="text-primary hover:underline font-medium">Sign In</Link>
+            <Link to="/login" className="text-primary hover:underline font-semibold">Sign In</Link>
           </p>
           <Link to="/" className="block transition-colors hover:opacity-80" style={{ color: "hsl(240 15% 45%)" }}>
             ← Back to landing page
           </Link>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
