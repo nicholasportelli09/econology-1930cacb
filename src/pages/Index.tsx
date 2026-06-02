@@ -7,6 +7,7 @@ import FeatureCard from "@/components/FeatureCard";
 import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Seo } from "@/components/Seo";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 
 const Index = () => {
   const navigate = useNavigate();
