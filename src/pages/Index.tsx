@@ -5,6 +5,7 @@ import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
 import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, Shield } from "lucide-react";
+import { Sparkles, TrendingUp, MessageCircle, Flame, Trophy, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Seo } from "@/components/Seo";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
@@ -139,6 +140,126 @@ const Index = () => {
             {ctaLabel}
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
           </motion.button>
+
+          {/* Quick proof pills — what you actually get */}
+          <motion.div variants={fadeUp} className="mt-6 flex flex-wrap items-center justify-center gap-2 max-w-2xl">
+            {[
+              { icon: Flame, label: "5-min daily lesson" },
+              { icon: TrendingUp, label: "Live market data" },
+              { icon: MessageCircle, label: "AI tutor — Ask Ekon" },
+              { icon: Trophy, label: "XP + streaks" },
+              { icon: Zap, label: "Free forever" },
+            ].map(({ icon: Icon, label }) => (
+              <span
+                key={label}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border"
+                style={{ background: "rgba(255,255,255,0.6)", borderColor: "rgba(0,0,0,0.08)", color: "hsl(240 30% 25%)" }}
+              >
+                <Icon size={13} className="text-accent" />
+                {label}
+              </span>
+            ))}
+          </motion.div>
+
+          {/* Product preview — shows what the app actually looks/feels like */}
+          <motion.div
+            variants={fadeUp}
+            className="mt-12 w-full max-w-5xl"
+          >
+            <div
+              className="rounded-3xl border p-4 md:p-6 shadow-2xl"
+              style={{
+                background: "rgba(255,255,255,0.7)",
+                backdropFilter: "blur(16px)",
+                borderColor: "rgba(255,255,255,0.8)",
+                boxShadow: "0 30px 80px -20px hsla(245, 60%, 40%, 0.25)",
+              }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Daily lesson card */}
+                <div className="rounded-2xl p-5 text-left border" style={{ background: "white", borderColor: "rgba(0,0,0,0.06)" }}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
+                      <Sparkles size={15} className="text-primary-foreground" />
+                    </div>
+                    <div className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "hsl(270 60% 50%)" }}>
+                      Today's Lesson
+                    </div>
+                  </div>
+                  <div className="font-display font-bold text-base mb-1" style={{ color: "hsl(240 30% 20%)" }}>
+                    Compound interest, demystified
+                  </div>
+                  <div className="text-xs mb-4 leading-relaxed" style={{ color: "hsl(240 15% 45%)" }}>
+                    Why $50/month at 19 beats $200/month at 35.
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] font-semibold">
+                    <span className="flex items-center gap-1" style={{ color: "hsl(240 20% 40%)" }}>
+                      <Flame size={12} className="text-orange-500" /> 7-day streak
+                    </span>
+                    <span style={{ color: "hsl(270 60% 50%)" }}>+25 XP</span>
+                  </div>
+                  <div className="mt-3 h-1.5 rounded-full overflow-hidden" style={{ background: "hsl(240 20% 92%)" }}>
+                    <div className="h-full gradient-bg" style={{ width: "68%" }} />
+                  </div>
+                </div>
+
+                {/* Live markets card */}
+                <div className="rounded-2xl p-5 text-left border" style={{ background: "white", borderColor: "rgba(0,0,0,0.06)" }}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "hsl(150 60% 45%)" }}>
+                      <TrendingUp size={15} className="text-white" />
+                    </div>
+                    <div className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "hsl(150 60% 35%)" }}>
+                      Your Watchlist
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {[
+                      { sym: "AAPL", px: "232.41", chg: "+1.24%", up: true },
+                      { sym: "NVDA", px: "178.06", chg: "+3.12%", up: true },
+                      { sym: "TSLA", px: "289.55", chg: "-0.84%", up: false },
+                    ].map((r) => (
+                      <div key={r.sym} className="flex items-center justify-between text-sm">
+                        <span className="font-bold" style={{ color: "hsl(240 30% 20%)" }}>{r.sym}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs" style={{ color: "hsl(240 15% 45%)" }}>${r.px}</span>
+                          <span className="text-xs font-semibold" style={{ color: r.up ? "hsl(150 60% 40%)" : "hsl(0 70% 50%)" }}>
+                            {r.chg}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 pt-3 border-t text-[11px] font-semibold" style={{ borderColor: "rgba(0,0,0,0.06)", color: "hsl(240 20% 40%)" }}>
+                    Live quotes · explained in plain English
+                  </div>
+                </div>
+
+                {/* Ask Ekon card */}
+                <div className="rounded-2xl p-5 text-left border" style={{ background: "white", borderColor: "rgba(0,0,0,0.06)" }}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "hsl(270 60% 55%)" }}>
+                      <MessageCircle size={15} className="text-white" />
+                    </div>
+                    <div className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "hsl(270 60% 50%)" }}>
+                      Ask Ekon
+                    </div>
+                  </div>
+                  <div className="space-y-2 text-xs">
+                    <div className="inline-block max-w-full rounded-2xl rounded-tl-sm px-3 py-2 font-medium" style={{ background: "hsl(240 20% 94%)", color: "hsl(240 30% 25%)" }}>
+                      Should I open a Roth IRA at 18?
+                    </div>
+                    <div className="inline-block max-w-full rounded-2xl rounded-tr-sm px-3 py-2 ml-auto font-medium gradient-bg text-primary-foreground">
+                      Yes — tax-free growth for 47+ years. Start with $25/mo in a low-fee index fund.
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t text-[11px] font-semibold" style={{ borderColor: "rgba(0,0,0,0.06)", color: "hsl(240 20% 40%)" }}>
+                    Personalized to your goals & age
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
       </section>
 
