@@ -26,6 +26,13 @@ const Index = () => {
     show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
   };
 
+  // Scroll-reveal preset: sections fade + rise as they enter the viewport
+  const reveal = {
+    hidden: { opacity: 0, y: 40 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
+  };
+  const revealViewport = { once: true, amount: 0.2 };
+
   const taglineFull = "A daily system for mastering money and markets";
   const subFull = "Learn faster with simple explanations, real examples, and daily progress.";
   const [tagline, setTagline] = useState("");
@@ -136,31 +143,49 @@ const Index = () => {
       </section>
 
       {/* Feature cards */}
-      <section className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full">
+      <motion.section
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={revealViewport}
+        className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full"
+      >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <motion.div variants={reveal}>
           <FeatureCard
             icon={<Lightbulb size={24} />}
             title="Daily Tips"
             description="Bite-sized financial wisdom personalized to your goals. Learn one concept every day."
           />
+          </motion.div>
+          <motion.div variants={reveal}>
           <FeatureCard
             icon={<BookOpen size={24} />}
             title="Deep Dives"
             description="Comprehensive guides with real examples and actionable steps you can take today."
           />
+          </motion.div>
+          <motion.div variants={reveal}>
           <FeatureCard
             icon={<Newspaper size={24} />}
             title="Economic News"
             description="Current events explained simply and tailored to your situation and interests."
           />
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* How it works */}
-      <section className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full">
-        <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-12" style={{ color: "hsl(240 30% 20%)" }}>
+      <motion.section
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={revealViewport}
+        className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full"
+      >
+        <motion.h2 variants={reveal} className="text-2xl md:text-3xl font-display font-bold text-center mb-12" style={{ color: "hsl(240 30% 20%)" }}>
           How It Works
-        </h2>
+        </motion.h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {[
             { step: "1", title: "Tell us about you", desc: "Answer a few questions about your financial goals, situation, and what you want to learn.", icon: Brain },
@@ -169,7 +194,7 @@ const Index = () => {
           ].map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.step} className="flex flex-col items-center text-center">
+              <motion.div key={item.step} variants={reveal} className="flex flex-col items-center text-center">
                 <div className="w-14 h-14 rounded-2xl gradient-bg flex items-center justify-center mb-4">
                   <Icon size={24} className="text-primary-foreground" />
                 </div>
@@ -178,14 +203,20 @@ const Index = () => {
                 </div>
                 <h3 className="text-lg font-display font-bold mb-2" style={{ color: "hsl(240 30% 20%)" }}>{item.title}</h3>
                 <p className="text-sm leading-relaxed" style={{ color: "hsl(240 15% 45%)" }}>{item.desc}</p>
-              </div>
+              </motion.div>
             );
           })}
         </div>
-      </section>
+      </motion.section>
 
       {/* What you'll learn */}
-      <section className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full">
+      <motion.section
+        variants={reveal}
+        initial="hidden"
+        whileInView="show"
+        viewport={revealViewport}
+        className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full"
+      >
         <div className="max-w-4xl mx-auto rounded-2xl p-8 md:p-12" style={{ background: "rgba(255,255,255,0.5)", backdropFilter: "blur(12px)" }}>
           <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-8" style={{ color: "hsl(240 30% 20%)" }}>
             What You'll Learn
@@ -208,10 +239,16 @@ const Index = () => {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* CTA */}
-      <section className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full">
+      <motion.section
+        variants={reveal}
+        initial="hidden"
+        whileInView="show"
+        viewport={revealViewport}
+        className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full"
+      >
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-display font-bold mb-4" style={{ color: "hsl(240 30% 20%)" }}>
             Ready to take control of your finances?
@@ -227,10 +264,17 @@ const Index = () => {
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
           </button>
         </div>
-      </section>
+      </motion.section>
 
       {/* FAQ */}
-      <section id="faq" className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full scroll-mt-20">
+      <motion.section
+        id="faq"
+        variants={reveal}
+        initial="hidden"
+        whileInView="show"
+        viewport={revealViewport}
+        className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full scroll-mt-20"
+      >
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-10" style={{ color: "hsl(240 30% 20%)" }}>
             Frequently Asked Questions
@@ -255,11 +299,69 @@ const Index = () => {
             ))}
           </Accordion>
         </div>
-      </section>
+      </motion.section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t py-8 text-center text-sm" style={{ borderColor: "rgba(0,0,0,0.08)", color: "hsl(240 15% 50%)" }}>
-        <p>© 2026 Econology · The science of smart money</p>
+      <footer className="relative z-10 mt-8" style={{ background: "hsl(232 38% 16%)", color: "hsl(230 25% 85%)" }}>
+        <div className="max-w-6xl mx-auto px-6 md:px-12 py-14 md:py-20">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
+            {/* Brand + CTA */}
+            <div className="md:col-span-5">
+              <div className="flex items-center gap-3 mb-5">
+                <img src={logoSrc} alt="Econology logo" width={44} height={44} className="object-contain" />
+                <span className="font-display text-2xl font-bold text-white">Econology</span>
+              </div>
+              <p className="text-sm leading-relaxed mb-6 max-w-sm" style={{ color: "hsl(230 20% 70%)" }}>
+                A daily system for mastering money and markets — simple explanations, real examples, and steady progress.
+              </p>
+              <button
+                onClick={() => navigate(ctaTarget)}
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-semibold transition-colors"
+                style={{ background: "hsl(230 80% 88%)", color: "hsl(232 50% 18%)" }}
+              >
+                {hasSession ? "Open Dashboard" : "Get Started Free"}
+                <ArrowRight size={16} />
+              </button>
+            </div>
+
+            {/* Link columns */}
+            <div className="md:col-span-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Learn</h4>
+              <ul className="space-y-3 text-sm">
+                <li><button onClick={() => navigate("/learn")} className="hover:text-white transition-colors">Deep Dives</button></li>
+                <li><button onClick={() => navigate("/market")} className="hover:text-white transition-colors">Market Ideas</button></li>
+                <li><button onClick={() => navigate("/news")} className="hover:text-white transition-colors">Economic News</button></li>
+                <li><button onClick={() => navigate("/videos")} className="hover:text-white transition-colors">Videos</button></li>
+                <li><button onClick={() => navigate("/budget")} className="hover:text-white transition-colors">Budget Simulator</button></li>
+              </ul>
+            </div>
+
+            <div className="md:col-span-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Account</h4>
+              <ul className="space-y-3 text-sm">
+                <li><button onClick={() => navigate("/signup")} className="hover:text-white transition-colors">Sign Up</button></li>
+                <li><button onClick={() => navigate("/login")} className="hover:text-white transition-colors">Sign In</button></li>
+                <li><button onClick={() => navigate("/dashboard")} className="hover:text-white transition-colors">Dashboard</button></li>
+                <li><button onClick={() => navigate("/settings")} className="hover:text-white transition-colors">Settings</button></li>
+                <li><button onClick={() => navigate("/progress")} className="hover:text-white transition-colors">Progress</button></li>
+              </ul>
+            </div>
+
+            <div className="md:col-span-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Resources</h4>
+              <ul className="space-y-3 text-sm">
+                <li><button onClick={() => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" })} className="hover:text-white transition-colors">FAQ</button></li>
+                <li><button onClick={() => navigate("/ask")} className="hover:text-white transition-colors">Ask Ekon (AI Tutor)</button></li>
+                <li><button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="hover:text-white transition-colors">Back to Top</button></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-12 pt-6 border-t flex flex-col md:flex-row items-center justify-between gap-3 text-xs" style={{ borderColor: "hsl(232 30% 25%)", color: "hsl(230 18% 65%)" }}>
+            <p>© 2026 Econology · The science of smart money</p>
+            <p>Built for students and young investors.</p>
+          </div>
+        </div>
       </footer>
     </div>
   );
