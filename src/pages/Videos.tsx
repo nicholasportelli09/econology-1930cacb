@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { DEFAULT_CREATORS, getCreators } from "@/data/youtubeCreators";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import {
   CURATED_VIDEOS,
@@ -89,6 +91,83 @@ const Videos = () => {
   /** How many videos to reveal in the main grid. */
   const PAGE_SIZE = 9;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  // ─── Live "Fresh from creators" rail ───────────────────────────────
+  type FreshVideo = {
+    id: string;
+    title: string;
+    channelName: string;
+    channelId: string;
+    published: string;
+    thumbnail: string;
+    description: string;
+  };
+  const FRESH_CACHE_KEY = "econology_fresh_videos_v1";
+  const FRESH_TTL_MS = 30 * 60 * 1000; // 30 minutes
+  const [freshVideos, setFreshVideos] = useState<FreshVideo[]>(() => {
+    try {
+      const raw = localStorage.getItem(FRESH_CACHE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw) as { fetchedAt: number; videos: FreshVideo[] };
+      if (Date.now() - parsed.fetchedAt > FRESH_TTL_MS) return [];
+      return parsed.videos ?? [];
+    } catch {
+      return [];
+    }
+  });
+  const [freshLoading, setFreshLoading] = useState(false);
+  const [freshActive, setFreshActive] = useState<FreshVideo | null>(null);
+
+  const fetchFresh = async (force = false) => {
+    if (!user) return;
+    if (!force) {
+      try {
+        const raw = localStorage.getItem(FRESH_CACHE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw) as { fetchedAt: number; videos: FreshVideo[] };
+          if (Date.now() - parsed.fetchedAt < FRESH_TTL_MS && parsed.videos?.length) {
+            setFreshVideos(parsed.videos);
+            return;
+          }
+        }
+      } catch { /* ignore */ }
+    }
+    setFreshLoading(true);
+    try {
+      const creators = getCreators?.() ?? DEFAULT_CREATORS;
+      const channelIds = creators.map((c) => c.channelId);
+      const { data, error } = await supabase.functions.invoke("youtube-videos", {
+        body: { channelIds, userProfile: profile },
+      });
+      if (error) throw error;
+      const vids: FreshVideo[] = data?.videos ?? [];
+      setFreshVideos(vids);
+      localStorage.setItem(
+        FRESH_CACHE_KEY,
+        JSON.stringify({ fetchedAt: Date.now(), videos: vids }),
+      );
+    } catch (e) {
+      console.error("fresh videos error", e);
+    } finally {
+      setFreshLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    fetchFresh(false);
+    // Auto-refresh every 30 min while page is open
+    const id = setInterval(() => fetchFresh(true), FRESH_TTL_MS);
+    const onVis = () => {
+      if (document.visibilityState === "visible") fetchFresh(false);
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
