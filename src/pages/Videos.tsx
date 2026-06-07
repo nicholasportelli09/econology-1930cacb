@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { DEFAULT_CREATORS, getCreators } from "@/data/youtubeCreators";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import {
   CURATED_VIDEOS,
@@ -57,6 +59,25 @@ function getProfile(): UserProfile {
   }
 }
 
+function relativeTime(iso: string): string {
+  if (!iso) return "";
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return "";
+  const diff = Date.now() - then;
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}d ago`;
+  const w = Math.floor(d / 7);
+  if (w < 5) return `${w}w ago`;
+  const mo = Math.floor(d / 30);
+  if (mo < 12) return `${mo}mo ago`;
+  return `${Math.floor(d / 365)}y ago`;
+}
+
 const LEVEL_BADGE: Record<VideoLevel, string> = {
   beginner: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
   intermediate: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
@@ -89,6 +110,83 @@ const Videos = () => {
   /** How many videos to reveal in the main grid. */
   const PAGE_SIZE = 9;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  // ─── Live "Fresh from creators" rail ───────────────────────────────
+  type FreshVideo = {
+    id: string;
+    title: string;
+    channelName: string;
+    channelId: string;
+    published: string;
+    thumbnail: string;
+    description: string;
+  };
+  const FRESH_CACHE_KEY = "econology_fresh_videos_v1";
+  const FRESH_TTL_MS = 30 * 60 * 1000; // 30 minutes
+  const [freshVideos, setFreshVideos] = useState<FreshVideo[]>(() => {
+    try {
+      const raw = localStorage.getItem(FRESH_CACHE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw) as { fetchedAt: number; videos: FreshVideo[] };
+      if (Date.now() - parsed.fetchedAt > FRESH_TTL_MS) return [];
+      return parsed.videos ?? [];
+    } catch {
+      return [];
+    }
+  });
+  const [freshLoading, setFreshLoading] = useState(false);
+  const [freshActive, setFreshActive] = useState<FreshVideo | null>(null);
+
+  const fetchFresh = async (force = false) => {
+    if (!user) return;
+    if (!force) {
+      try {
+        const raw = localStorage.getItem(FRESH_CACHE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw) as { fetchedAt: number; videos: FreshVideo[] };
+          if (Date.now() - parsed.fetchedAt < FRESH_TTL_MS && parsed.videos?.length) {
+            setFreshVideos(parsed.videos);
+            return;
+          }
+        }
+      } catch { /* ignore */ }
+    }
+    setFreshLoading(true);
+    try {
+      const creators = getCreators?.() ?? DEFAULT_CREATORS;
+      const channelIds = creators.map((c) => c.channelId);
+      const { data, error } = await supabase.functions.invoke("youtube-videos", {
+        body: { channelIds, userProfile: profile },
+      });
+      if (error) throw error;
+      const vids: FreshVideo[] = data?.videos ?? [];
+      setFreshVideos(vids);
+      localStorage.setItem(
+        FRESH_CACHE_KEY,
+        JSON.stringify({ fetchedAt: Date.now(), videos: vids }),
+      );
+    } catch (e) {
+      console.error("fresh videos error", e);
+    } finally {
+      setFreshLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    fetchFresh(false);
+    // Auto-refresh every 30 min while page is open
+    const id = setInterval(() => fetchFresh(true), FRESH_TTL_MS);
+    const onVis = () => {
+      if (document.visibilityState === "visible") fetchFresh(false);
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
@@ -280,6 +378,114 @@ const Videos = () => {
             </div>
           </section>
         )}
+
+        {/* Fresh from creators — live RSS, auto-refreshes */}
+        {!activeVideo && (
+          <section className="space-y-4 animate-fade-in">
+            <div className="flex items-end justify-between gap-3 flex-wrap">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Sparkles size={18} className="text-primary" />
+                  <h2 className="text-xl font-display font-semibold text-foreground">
+                    Fresh from creators
+                  </h2>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    Live
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Newest uploads from our vetted finance creators · updates every 30 min
+                </p>
+              </div>
+              <button
+                onClick={() => fetchFresh(true)}
+                disabled={freshLoading}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+              >
+                <RefreshCw size={14} className={freshLoading ? "animate-spin" : ""} />
+                {freshLoading ? "Refreshing" : "Refresh"}
+              </button>
+            </div>
+
+            {freshLoading && freshVideos.length === 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
+                    <Skeleton className="aspect-video w-full" />
+                    <div className="p-3 space-y-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-1/2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : freshVideos.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No fresh uploads right now — check back soon.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {freshVideos.slice(0, 8).map((v, i) => (
+                  <button
+                    key={v.id}
+                    onClick={() => setFreshActive(v)}
+                    className="group text-left rounded-xl border border-border bg-card overflow-hidden card-shadow hover:-translate-y-0.5 hover:border-primary/30 transition-all duration-200 animate-fade-in"
+                    style={{ animationDelay: `${i * 30}ms` }}
+                  >
+                    <div className="relative aspect-video bg-muted">
+                      <img
+                        src={v.thumbnail}
+                        alt={v.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center">
+                          <Play size={20} className="text-primary-foreground ml-0.5" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-3 space-y-1">
+                      <h3 className="text-sm font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                        {v.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {v.channelName} · {relativeTime(v.published)}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Fresh video player dialog */}
+        <Dialog open={!!freshActive} onOpenChange={(o) => !o && setFreshActive(null)}>
+          <DialogContent className="max-w-3xl p-0 overflow-hidden">
+            {freshActive && (
+              <>
+                <div className="relative aspect-video bg-black">
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${freshActive.id}?autoplay=1&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3`}
+                    title={freshActive.title}
+                    className="absolute inset-0 w-full h-full"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+                <div className="p-5">
+                  <h3 className="font-display text-lg font-semibold text-foreground leading-snug">
+                    {freshActive.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {freshActive.channelName} · {relativeTime(freshActive.published)}
+                  </p>
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* Dimension filter */}
         <section className="space-y-4">
