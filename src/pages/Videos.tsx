@@ -360,6 +360,114 @@ const Videos = () => {
           </section>
         )}
 
+        {/* Fresh from creators — live RSS, auto-refreshes */}
+        {!activeVideo && (
+          <section className="space-y-4 animate-fade-in">
+            <div className="flex items-end justify-between gap-3 flex-wrap">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Sparkles size={18} className="text-primary" />
+                  <h2 className="text-xl font-display font-semibold text-foreground">
+                    Fresh from creators
+                  </h2>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    Live
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Newest uploads from our vetted finance creators · updates every 30 min
+                </p>
+              </div>
+              <button
+                onClick={() => fetchFresh(true)}
+                disabled={freshLoading}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+              >
+                <RefreshCw size={14} className={freshLoading ? "animate-spin" : ""} />
+                {freshLoading ? "Refreshing" : "Refresh"}
+              </button>
+            </div>
+
+            {freshLoading && freshVideos.length === 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
+                    <Skeleton className="aspect-video w-full" />
+                    <div className="p-3 space-y-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-1/2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : freshVideos.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No fresh uploads right now — check back soon.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {freshVideos.slice(0, 8).map((v, i) => (
+                  <button
+                    key={v.id}
+                    onClick={() => setFreshActive(v)}
+                    className="group text-left rounded-xl border border-border bg-card overflow-hidden card-shadow hover:-translate-y-0.5 hover:border-primary/30 transition-all duration-200 animate-fade-in"
+                    style={{ animationDelay: `${i * 30}ms` }}
+                  >
+                    <div className="relative aspect-video bg-muted">
+                      <img
+                        src={v.thumbnail}
+                        alt={v.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center">
+                          <Play size={20} className="text-primary-foreground ml-0.5" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-3 space-y-1">
+                      <h3 className="text-sm font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                        {v.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {v.channelName} · {relativeTime(v.published)}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Fresh video player dialog */}
+        <Dialog open={!!freshActive} onOpenChange={(o) => !o && setFreshActive(null)}>
+          <DialogContent className="max-w-3xl p-0 overflow-hidden">
+            {freshActive && (
+              <>
+                <div className="relative aspect-video bg-black">
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${freshActive.id}?autoplay=1&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3`}
+                    title={freshActive.title}
+                    className="absolute inset-0 w-full h-full"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+                <div className="p-5">
+                  <h3 className="font-display text-lg font-semibold text-foreground leading-snug">
+                    {freshActive.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {freshActive.channelName} · {relativeTime(freshActive.published)}
+                  </p>
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
+
         {/* Dimension filter */}
         <section className="space-y-4">
           <div className="flex items-center justify-between gap-3 flex-wrap">
