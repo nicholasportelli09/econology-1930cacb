@@ -141,6 +141,9 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
       import("@/lib/analytics").then(({ track }) =>
         newOnes.forEach((t) => track("watchlist_ticker_added", { ticker: t, source: "screenshot" })),
       );
+      import("@/lib/productAnalytics").then(({ trackProduct }) => {
+        newOnes.forEach(() => void trackProduct("watchlist_ticker_added"));
+      });
     } catch (e: any) {
       toast({ title: "Import failed", description: e.message || "Could not read screenshot", variant: "destructive" });
     } finally {
