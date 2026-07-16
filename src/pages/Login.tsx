@@ -116,6 +116,11 @@ export default function Login() {
           <Link to="/" className="block transition-colors hover:opacity-80" style={{ color: "hsl(240 15% 45%)" }}>
             ← Back to landing page
           </Link>
+          <p className="text-[11px]" style={{ color: "hsl(240 15% 55%)" }}>
+            <Link to="/privacy" className="hover:underline">Privacy</Link>
+            {" · "}
+            <Link to="/terms" className="hover:underline">Terms</Link>
+          </p>
         </div>
       </div>
     </div>
