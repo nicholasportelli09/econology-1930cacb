@@ -175,33 +175,21 @@ var add_portfolio_ticker_default = defineTool4({
 });
 
 // src/lib/mcp/tools/list-pinned-articles.ts
-import { createClient as createClient3 } from "npm:@supabase/supabase-js@^2.97.0";
 import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.22.2";
-function supabaseForUser3(ctx) {
-  const url = globalThis.Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL;
-  const key = globalThis.Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ?? globalThis.Deno?.env.get("SUPABASE_ANON_KEY") ?? process.env.SUPABASE_PUBLISHABLE_KEY;
-  return createClient3(url, key, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
 var list_pinned_articles_default = defineTool5({
   name: "list_pinned_articles",
   title: "List my pinned articles",
   description: "Returns economic-news articles the signed-in user has pinned in Econology.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async (_input, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
-    }
-    const { data, error } = await supabaseForUser3(ctx).from("pinned_articles").select("*").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(50);
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+  handler: withAuthAndTrace("list_pinned_articles", async (_input, _ctx, { traceId, supabase, userId }) => {
+    const { data, error } = await supabase.from("pinned_articles").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(50);
+    if (error) return dbError("list_pinned_articles", traceId, "select", error);
     return {
       content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
-      structuredContent: { articles: data ?? [] }
+      structuredContent: { articles: data ?? [], traceId }
     };
-  }
+  })
 });
 
 // src/lib/mcp/index.ts
