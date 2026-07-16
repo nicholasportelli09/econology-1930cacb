@@ -100,48 +100,35 @@ var get_profile_default = defineTool({
 });
 
 // src/lib/mcp/tools/get-progress.ts
-import { createClient as createClient2 } from "npm:@supabase/supabase-js@^2.97.0";
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.22.2";
-function supabaseForUser2(ctx) {
-  const url = globalThis.Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL;
-  const key = globalThis.Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ?? globalThis.Deno?.env.get("SUPABASE_ANON_KEY") ?? process.env.SUPABASE_PUBLISHABLE_KEY;
-  return createClient2(url, key, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
 var get_progress_default = defineTool2({
   name: "get_progress",
   title: "Get my learning progress",
   description: "Returns the signed-in user's current streak, XP, and recent lesson progress in Econology.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async (_input, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
-    }
-    const supabase = supabaseForUser2(ctx);
+  handler: withAuthAndTrace("get_progress", async (_input, _ctx, { traceId, supabase, userId }) => {
     const [streakRes, lessonsRes] = await Promise.all([
-      supabase.from("daily_streak").select("*").eq("user_id", ctx.getUserId()).maybeSingle(),
-      supabase.from("lesson_progress").select("*").eq("user_id", ctx.getUserId()).order("updated_at", { ascending: false }).limit(20)
+      supabase.from("daily_streak").select("*").eq("user_id", userId).maybeSingle(),
+      supabase.from("lesson_progress").select("*").eq("user_id", userId).order("updated_at", { ascending: false }).limit(20)
     ]);
-    if (streakRes.error) return { content: [{ type: "text", text: streakRes.error.message }], isError: true };
-    if (lessonsRes.error) return { content: [{ type: "text", text: lessonsRes.error.message }], isError: true };
-    const payload = { streak: streakRes.data ?? null, recent_lessons: lessonsRes.data ?? [] };
+    if (streakRes.error) return dbError("get_progress", traceId, "select_streak", streakRes.error);
+    if (lessonsRes.error) return dbError("get_progress", traceId, "select_lessons", lessonsRes.error);
+    const payload = { streak: streakRes.data ?? null, recent_lessons: lessonsRes.data ?? [], traceId };
     return {
       content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
       structuredContent: payload
     };
-  }
+  })
 });
 
 // src/lib/mcp/tools/list-portfolio.ts
-import { createClient as createClient3 } from "npm:@supabase/supabase-js@^2.97.0";
+import { createClient as createClient2 } from "npm:@supabase/supabase-js@^2.97.0";
 import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.22.2";
-function supabaseForUser3(ctx) {
+function supabaseForUser2(ctx) {
   const url = globalThis.Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL;
   const key = globalThis.Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ?? globalThis.Deno?.env.get("SUPABASE_ANON_KEY") ?? process.env.SUPABASE_PUBLISHABLE_KEY;
-  return createClient3(url, key, {
+  return createClient2(url, key, {
     global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
     auth: { persistSession: false, autoRefreshToken: false }
   });
@@ -156,7 +143,7 @@ var list_portfolio_default = defineTool3({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const { data, error } = await supabaseForUser3(ctx).from("user_portfolio").select("*").eq("user_id", ctx.getUserId());
+    const { data, error } = await supabaseForUser2(ctx).from("user_portfolio").select("*").eq("user_id", ctx.getUserId());
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
       content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
@@ -166,13 +153,13 @@ var list_portfolio_default = defineTool3({
 });
 
 // src/lib/mcp/tools/add-portfolio-ticker.ts
-import { createClient as createClient4 } from "npm:@supabase/supabase-js@^2.97.0";
+import { createClient as createClient3 } from "npm:@supabase/supabase-js@^2.97.0";
 import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.22.2";
 import { z } from "npm:zod@^4.4.3";
-function supabaseForUser4(ctx) {
+function supabaseForUser3(ctx) {
   const url = globalThis.Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL;
   const key = globalThis.Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ?? globalThis.Deno?.env.get("SUPABASE_ANON_KEY") ?? process.env.SUPABASE_PUBLISHABLE_KEY;
-  return createClient4(url, key, {
+  return createClient3(url, key, {
     global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
     auth: { persistSession: false, autoRefreshToken: false }
   });
@@ -190,7 +177,7 @@ var add_portfolio_ticker_default = defineTool4({
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
     const symbol = ticker.toUpperCase();
-    const { data, error } = await supabaseForUser4(ctx).from("user_portfolio").upsert({ user_id: ctx.getUserId(), ticker: symbol }, { onConflict: "user_id,ticker" }).select();
+    const { data, error } = await supabaseForUser3(ctx).from("user_portfolio").upsert({ user_id: ctx.getUserId(), ticker: symbol }, { onConflict: "user_id,ticker" }).select();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
       content: [{ type: "text", text: `Added ${symbol} to your portfolio.` }],
@@ -200,12 +187,12 @@ var add_portfolio_ticker_default = defineTool4({
 });
 
 // src/lib/mcp/tools/list-pinned-articles.ts
-import { createClient as createClient5 } from "npm:@supabase/supabase-js@^2.97.0";
+import { createClient as createClient4 } from "npm:@supabase/supabase-js@^2.97.0";
 import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.22.2";
-function supabaseForUser5(ctx) {
+function supabaseForUser4(ctx) {
   const url = globalThis.Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL;
   const key = globalThis.Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ?? globalThis.Deno?.env.get("SUPABASE_ANON_KEY") ?? process.env.SUPABASE_PUBLISHABLE_KEY;
-  return createClient5(url, key, {
+  return createClient4(url, key, {
     global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
     auth: { persistSession: false, autoRefreshToken: false }
   });
@@ -220,7 +207,7 @@ var list_pinned_articles_default = defineTool5({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const { data, error } = await supabaseForUser5(ctx).from("pinned_articles").select("*").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(50);
+    const { data, error } = await supabaseForUser4(ctx).from("pinned_articles").select("*").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(50);
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
       content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
