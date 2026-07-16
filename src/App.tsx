@@ -27,6 +27,8 @@ import BudgetSimulator from "./pages/BudgetSimulator";
 import Videos from "./pages/Videos";
 import OAuthConsent from "./pages/OAuthConsent";
 import NotFound from "./pages/NotFound";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +48,8 @@ const App = () => (
             <Route path="/signup" element={<Signup />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/tip/:tipId" element={<TipArticle />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
 
             {/* OAuth consent for external MCP clients */}
             <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />

@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://econology.lovable.app/</loc><priority>1.0</priority></url>
-  <url><loc>https://econology.lovable.app/learn</loc><priority>0.8</priority></url>
-  <url><loc>https://econology.lovable.app/login</loc><priority>0.6</priority></url>
-  <url><loc>https://econology.lovable.app/signup</loc><priority>0.6</priority></url>
-  <url><loc>https://econology.lovable.app/verify-email</loc><priority>0.3</priority></url>
-  <url><loc>https://econology.lovable.app/onboarding</loc><priority>0.5</priority></url>
-  <url><loc>https://econology.lovable.app/quiz</loc><priority>0.5</priority></url>
-  <url><loc>https://econology.lovable.app/placement</loc><priority>0.5</priority></url>
-  <url><loc>https://econology.lovable.app/dashboard</loc><priority>0.9</priority></url>
-  <url><loc>https://econology.lovable.app/market</loc><priority>0.7</priority></url>
-  <url><loc>https://econology.lovable.app/news</loc><priority>0.7</priority></url>
-  <url><loc>https://econology.lovable.app/ask</loc><priority>0.7</priority></url>
-  <url><loc>https://econology.lovable.app/progress</loc><priority>0.5</priority></url>
-  <url><loc>https://econology.lovable.app/settings</loc><priority>0.4</priority></url>
-  <url><loc>https://econology.lovable.app/budget</loc><priority>0.6</priority></url>
-  <url><loc>https://econology.lovable.app/videos</loc><priority>0.6</priority></url>
+  <url><loc>https://www.econology.app/</loc><priority>1.0</priority></url>
+  <url><loc>https://www.econology.app/learn</loc><priority>0.8</priority></url>
+  <url><loc>https://www.econology.app/login</loc><priority>0.6</priority></url>
+  <url><loc>https://www.econology.app/signup</loc><priority>0.6</priority></url>
+  <url><loc>https://www.econology.app/verify-email</loc><priority>0.3</priority></url>
+  <url><loc>https://www.econology.app/onboarding</loc><priority>0.5</priority></url>
+  <url><loc>https://www.econology.app/quiz</loc><priority>0.5</priority></url>
+  <url><loc>https://www.econology.app/placement</loc><priority>0.5</priority></url>
+  <url><loc>https://www.econology.app/dashboard</loc><priority>0.9</priority></url>
+  <url><loc>https://www.econology.app/market</loc><priority>0.7</priority></url>
+  <url><loc>https://www.econology.app/news</loc><priority>0.7</priority></url>
+  <url><loc>https://www.econology.app/ask</loc><priority>0.7</priority></url>
+  <url><loc>https://www.econology.app/progress</loc><priority>0.5</priority></url>
+  <url><loc>https://www.econology.app/settings</loc><priority>0.4</priority></url>
+  <url><loc>https://www.econology.app/budget</loc><priority>0.6</priority></url>
+  <url><loc>https://www.econology.app/videos</loc><priority>0.6</priority></url>
+  <url><loc>https://www.econology.app/privacy</loc><priority>0.3</priority></url>
+  <url><loc>https://www.econology.app/terms</loc><priority>0.3</priority></url>
 </urlset>

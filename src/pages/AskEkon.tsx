@@ -9,6 +9,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { defaultProfile, type UserProfile } from "@/types/profile";
 import { supabase } from "@/integrations/supabase/client";
 import { Seo } from "@/components/Seo";
+import { Disclaimer } from "@/components/Disclaimer";
+import { AIBadge } from "@/components/AIBadge";
+import { ReportIssue } from "@/components/ReportIssue";
 
 const DAILY_LIMIT = 10;
 
@@ -203,6 +206,9 @@ export default function AskEkon() {
       <DashboardHeader initials={initials} />
 
       <div className="flex-1 overflow-hidden flex flex-col max-w-3xl mx-auto w-full relative z-10">
+        <div className="px-4 pt-3">
+          <Disclaimer />
+        </div>
         <ScrollArea className="flex-1 p-4" ref={scrollRef}>
           {!hasMessages ? (
             <div className="flex flex-col items-center justify-center h-full min-h-[65vh] gap-8 animate-fade-in">
@@ -263,6 +269,10 @@ export default function AskEkon() {
                     </div>
                   ) : (
                     <div className="max-w-[80%] rounded-2xl rounded-bl-md px-4 py-3 bg-card border border-border text-foreground shadow-sm">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <AIBadge />
+                        <ReportIssue contentType="ai_tutor" contentReference={msg.content.slice(0, 200)} />
+                      </div>
                       <div className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
                         <ReactMarkdown>{msg.content}</ReactMarkdown>
                       </div>

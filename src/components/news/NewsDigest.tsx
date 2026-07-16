@@ -3,6 +3,8 @@ import { Sparkles, Loader2, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { type UserProfile } from "@/types/profile";
 import ReactMarkdown from "react-markdown";
+import { AIBadge } from "@/components/AIBadge";
+import { ReportIssue } from "@/components/ReportIssue";
 
 interface Article {
   title: string;
@@ -78,8 +80,14 @@ export function NewsDigest({ articles, profile }: NewsDigestProps) {
               <p className="text-sm text-muted-foreground">Analyzing all articles and personalizing for you...</p>
             </div>
           ) : (
-            <div className="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed">
-              <ReactMarkdown>{digest!}</ReactMarkdown>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <AIBadge label="AI-generated digest" />
+                <ReportIssue contentType="ai_digest" contentReference={`digest:${articles.length}-articles`} />
+              </div>
+              <div className="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed">
+                <ReactMarkdown>{digest!}</ReactMarkdown>
+              </div>
             </div>
           )}
         </div>

@@ -415,7 +415,7 @@ const Index = () => {
               { q: "Is it free to use?", a: "Yes — Econology is completely free. Create an account and start building your financial confidence right away." },
               { q: "How does the daily lesson work?", a: "Each day you get one short, personalized lesson based on your goals and current knowledge. Complete it, earn XP, and watch your literacy score grow." },
               { q: "Can I track real stocks?", a: "Absolutely. Add tickers to your portfolio, get live quotes, and see relevant news filtered to your investments." },
-              { q: "Is my data secure?", a: "We use industry-standard encryption and never share your personal data with third parties. Your privacy is our priority." },
+              { q: "How does Econology handle my data?", a: "We use encryption in transit, row-level database security, and only share data with the service providers we need to run each feature (see our Privacy Notice). No online service can promise perfect security, but we work to keep the risk low and only collect what a feature actually needs." },
               { q: "How do I reset my learning progress?", a: "Head to Settings and you can reset your quiz scores or topic selections at any time." },
             ].map((faq, i) => (
               <AccordionItem key={i} value={`faq-${i}`} className="rounded-xl border px-4 md:px-6" style={{ borderColor: "rgba(0,0,0,0.08)", background: "rgba(255,255,255,0.5)" }}>
@@ -447,6 +447,8 @@ const Index = () => {
               <button onClick={() => navigate("/ask")} className="hover:text-white transition-colors">Ask Ekon</button>
               <button onClick={() => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" })} className="hover:text-white transition-colors">FAQ</button>
               <button onClick={() => navigate("/login")} className="hover:text-white transition-colors">Sign In</button>
+              <button onClick={() => navigate("/privacy")} className="hover:text-white transition-colors">Privacy</button>
+              <button onClick={() => navigate("/terms")} className="hover:text-white transition-colors">Terms</button>
             </div>
 
             <button
@@ -460,6 +462,7 @@ const Index = () => {
 
           <div className="mt-8 pt-5 border-t text-center text-xs" style={{ borderColor: "hsl(232 30% 25%)", color: "hsl(230 18% 60%)" }}>
             <p>© 2026 Econology · The science of smart money</p>
+            <p className="mt-2">Educational content only — not financial advice.</p>
           </div>
         </div>
       </footer>
