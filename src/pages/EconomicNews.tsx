@@ -16,6 +16,9 @@ import { PortfolioManager } from "@/components/news/PortfolioManager";
 import { PinnedArticles } from "@/components/news/PinnedArticles";
 import { SectorHeatmap } from "@/components/news/SectorHeatmap";
 import { useAuth } from "@/contexts/AuthContext";
+import { Disclaimer } from "@/components/Disclaimer";
+import { AIBadge } from "@/components/AIBadge";
+import { ReportIssue } from "@/components/ReportIssue";
 
 /* ── Types ── */
 interface AiNewsItem { title: string; summary: string; impact: string; action: string; category: string; }
@@ -310,6 +313,7 @@ const EconomicNews = () => {
       <DashboardHeader initials={initials} />
 
       <main className="max-w-[1320px] mx-auto px-4 md:px-10 lg:px-6 py-8 space-y-6">
+        <Disclaimer />
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground flex items-center gap-3">
             <Newspaper className="text-primary" size={32} />
@@ -476,7 +480,10 @@ const EconomicNews = () => {
                   <div key={i} className="rounded-xl border border-border bg-card card-shadow overflow-hidden">
                     <div className="p-6 pb-4">
                       <div className="flex items-start justify-between gap-3 mb-3">
-                        <h2 className="text-lg font-display font-bold text-foreground">{item.title}</h2>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h2 className="text-lg font-display font-bold text-foreground">{item.title}</h2>
+                          <AIBadge />
+                        </div>
                         <Badge className={`shrink-0 text-xs border ${categoryColor(item.category)}`}>{item.category}</Badge>
                       </div>
                       <div>
@@ -496,6 +503,9 @@ const EconomicNews = () => {
                           <p className="text-sm text-foreground leading-relaxed mt-1">{item.action}</p>
                         </div>
                       </div>
+                    </div>
+                    <div className="border-t border-border px-6 py-2 flex justify-end">
+                      <ReportIssue contentType="ai_news" contentReference={item.title} />
                     </div>
                   </div>
                 ))}
