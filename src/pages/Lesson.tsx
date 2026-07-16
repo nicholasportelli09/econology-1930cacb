@@ -7,6 +7,7 @@ import { completeLesson, loadStreak } from "@/lib/lessons";
 import { ArrowRight, BookOpen, CheckCircle2, XCircle, Flame, Zap } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Seo } from "@/components/Seo";
+import { trackProduct } from "@/lib/productAnalytics";
 
 type Phase = "read" | "quiz" | "result" | "testFailed";
 
@@ -35,6 +36,7 @@ const Lesson = () => {
     setQIdx(0);
     setAnswers([]);
     setResult(null);
+    if (conceptId) void trackProduct("lesson_started", { concept_id: conceptId });
   }, [conceptId, testOut]);
 
   const score = useMemo(
