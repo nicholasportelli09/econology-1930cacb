@@ -168,7 +168,10 @@ export default function Signup() {
           </form>
 
           <p className="text-[11px] text-center pt-1" style={{ color: "hsl(240 15% 50%)" }}>
-            By signing up you agree to our Terms & Privacy Policy.
+            By signing up you agree to our{" "}
+            <Link to="/terms" className="text-primary hover:underline font-semibold">Terms of Use</Link>
+            {" "}and{" "}
+            <Link to="/privacy" className="text-primary hover:underline font-semibold">Privacy Notice</Link>.
           </p>
         </div>
 
@@ -180,6 +183,11 @@ export default function Signup() {
           <Link to="/" className="block transition-colors hover:opacity-80" style={{ color: "hsl(240 15% 45%)" }}>
             ← Back to landing page
           </Link>
+          <p className="text-[11px]" style={{ color: "hsl(240 15% 55%)" }}>
+            <Link to="/privacy" className="hover:underline">Privacy</Link>
+            {" · "}
+            <Link to="/terms" className="hover:underline">Terms</Link>
+          </p>
         </div>
       </motion.div>
     </div>
