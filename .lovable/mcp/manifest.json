@@ -19,7 +19,7 @@
       {
         "name": "get_profile",
         "title": "Get my Econology profile",
-        "description": "Returns the signed-in user's Econology profile: onboarding goals, learning preferences, diagnostic scores, and streak metadata.",
+        "description": "Returns the signed-in user's semantic Econology profile: literacy scores, mastered/weak/unknown concepts, diagnostic date and count, and (if stored) goals and learning preferences.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -35,7 +35,7 @@
       {
         "name": "get_progress",
         "title": "Get my learning progress",
-        "description": "Returns the signed-in user's current streak, XP, and recent lesson progress in Econology.",
+        "description": "Returns the signed-in user's current and longest streak, total core lessons, total XP, and recent lesson concept IDs with scores and completion dates.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -51,7 +51,7 @@
       {
         "name": "list_portfolio",
         "title": "List my portfolio tickers",
-        "description": "Returns the tickers the signed-in user is tracking in their Econology portfolio.",
+        "description": "Returns the tickers the signed-in user tracks — ticker symbol and when it was added.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -94,7 +94,7 @@
       {
         "name": "list_pinned_articles",
         "title": "List my pinned articles",
-        "description": "Returns economic-news articles the signed-in user has pinned in Econology.",
+        "description": "Returns the signed-in user's pinned economic-news articles with safe display fields only (title, url, site, symbol, published_date, snippet, image, pinned_at).",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,

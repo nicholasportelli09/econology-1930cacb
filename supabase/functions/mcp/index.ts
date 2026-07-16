@@ -17,13 +17,38 @@ function readEnv(name) {
   const proc = globalThis.process;
   return proc?.env?.[name];
 }
-function newTraceId() {
+function newRequestId() {
   const rand = Math.random().toString(36).slice(2, 10);
-  return `trace_${Date.now().toString(36)}_${rand}`;
+  return `req_${Date.now().toString(36)}_${rand}`;
 }
-function errorResult(tool, traceId, code, message, detail) {
-  const payload = { error: { tool, traceId, code, message, detail: detail ?? null } };
-  console.error(`[mcp:${tool}] ${code} traceId=${traceId} message=${message}`, detail ?? "");
+var ERROR_META = {
+  unauthenticated: { message: "Sign in required.", retryable: false },
+  forbidden: { message: "You are not allowed to perform this action.", retryable: false },
+  no_user_id: { message: "Sign in required.", retryable: false },
+  config_missing: { message: "Service is temporarily unavailable.", retryable: true },
+  auth_missing_token: { message: "Sign in required.", retryable: false },
+  invalid_input: { message: "The input was invalid.", retryable: false },
+  not_found: { message: "That item was not found.", retryable: false },
+  db_read_failed: { message: "Could not read your data right now.", retryable: true },
+  db_write_failed: { message: "Could not save your change right now.", retryable: true },
+  rls_denied: { message: "You do not have access to this data.", retryable: false },
+  rate_limited: { message: "You are doing that too often. Try again shortly.", retryable: true },
+  handler_exception: { message: "Something went wrong. Please try again.", retryable: true }
+};
+function errorResult(tool, requestId, code, logMessage, detail) {
+  const meta = ERROR_META[code] ?? { message: "Something went wrong.", retryable: true };
+  const payload = {
+    error: {
+      code,
+      message: meta.message,
+      retryable: meta.retryable,
+      request_id: requestId
+    }
+  };
+  console.error(
+    `[mcp:${tool}] code=${code} request_id=${requestId} msg=${logMessage}`,
+    detail ?? ""
+  );
   return {
     content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
     structuredContent: payload,
@@ -34,13 +59,11 @@ function supabaseForUser(ctx) {
   const url = readEnv("SUPABASE_URL");
   const key = readEnv("SUPABASE_PUBLISHABLE_KEY") ?? readEnv("SUPABASE_ANON_KEY");
   if (!url || !key) {
-    throw new Error(
-      `mcp_config_missing: SUPABASE_URL=${url ? "ok" : "missing"} SUPABASE_PUBLISHABLE_KEY=${key ? "ok" : "missing"}`
-    );
+    throw new Error("mcp_config_missing");
   }
   const token = ctx.getToken();
   if (!token) {
-    throw new Error("mcp_auth_missing_token: OAuth verified but no bearer token was forwarded");
+    throw new Error("mcp_auth_missing_token");
   }
   return createClient(url, key, {
     global: { headers: { Authorization: `Bearer ${token}` } },
@@ -49,87 +72,99 @@ function supabaseForUser(ctx) {
 }
 function withAuthAndTrace(tool, run) {
   return async (input, ctx) => {
-    const traceId = newTraceId();
+    const requestId = newRequestId();
+    const started = Date.now();
+    const authed = ctx.isAuthenticated();
+    const userId = authed ? ctx.getUserId() : null;
+    console.log(
+      `[mcp:${tool}] start request_id=${requestId} authed=${authed} user_resolved=${userId ? "yes" : "no"}`
+    );
     try {
-      if (!ctx.isAuthenticated()) {
-        return errorResult(tool, traceId, "unauthenticated", "OAuth token was not accepted or missing");
+      if (!authed) {
+        return errorResult(tool, requestId, "unauthenticated", "no verified oauth token");
       }
-      const userId = ctx.getUserId();
       if (!userId) {
-        return errorResult(tool, traceId, "no_user_id", "OAuth token verified but sub claim is empty");
+        return errorResult(tool, requestId, "no_user_id", "sub claim missing");
       }
       const supabase = supabaseForUser(ctx);
-      return await run(input, ctx, { traceId, supabase, userId });
+      const result = await run(input, ctx, { requestId, supabase, userId });
+      console.log(
+        `[mcp:${tool}] end request_id=${requestId} ok=${!result.isError} duration_ms=${Date.now() - started}`
+      );
+      return result;
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      const stack = err instanceof Error ? err.stack : void 0;
-      const code = message.startsWith("mcp_config_missing") ? "config_missing" : message.startsWith("mcp_auth_missing_token") ? "auth_missing_token" : "handler_exception";
-      return errorResult(tool, traceId, code, message, { stack });
+      const code = message === "mcp_config_missing" ? "config_missing" : message === "mcp_auth_missing_token" ? "auth_missing_token" : "handler_exception";
+      console.error(
+        `[mcp:${tool}] exception request_id=${requestId} duration_ms=${Date.now() - started} code=${code}`
+      );
+      return errorResult(tool, requestId, code, message);
     }
   };
 }
-function dbError(tool, traceId, op, error) {
-  return errorResult(tool, traceId, `db_${op}_failed`, error.message, {
-    pg_code: error.code ?? null,
-    details: error.details ?? null,
-    hint: error.hint ?? null
+function dbError(tool, requestId, op, error) {
+  const isRls = error.code === "42501";
+  const code = isRls ? "rls_denied" : op === "write" ? "db_write_failed" : "db_read_failed";
+  return errorResult(tool, requestId, code, `pg_code=${error.code ?? "?"} op=${op}`, {
+    pg_code: error.code ?? null
   });
 }
-var INTERNAL_FIELDS = /* @__PURE__ */ new Set(["id", "user_id"]);
-function sanitizeRow(row) {
+function pick(row, keys) {
   if (!row) return null;
   const out = {};
-  for (const [k, v] of Object.entries(row)) {
-    if (INTERNAL_FIELDS.has(k)) continue;
-    out[k] = v;
-  }
+  for (const k of keys) out[k] = row[k];
   return out;
 }
-function sanitizeRows(rows) {
+function pickMany(rows, keys) {
   if (!rows) return [];
-  return rows.map((r) => sanitizeRow(r));
+  return rows.map((r) => pick(r, keys));
 }
 
 // src/lib/mcp/tools/get-profile.ts
 var get_profile_default = defineTool({
   name: "get_profile",
   title: "Get my Econology profile",
-  description: "Returns the signed-in user's Econology profile: onboarding goals, learning preferences, diagnostic scores, and streak metadata.",
+  description: "Returns the signed-in user's semantic Econology profile: literacy scores, mastered/weak/unknown concepts, diagnostic date and count, and (if stored) goals and learning preferences.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: withAuthAndTrace("get_profile", async (_input, _ctx, { traceId, supabase, userId }) => {
-    const [profileRes, streakRes] = await Promise.all([
-      supabase.from("literacy_profiles").select("*").eq("user_id", userId).maybeSingle(),
-      supabase.from("daily_streak").select("*").eq("user_id", userId).maybeSingle()
-    ]);
-    if (profileRes.error) return dbError("get_profile", traceId, "select_profile", profileRes.error);
-    if (streakRes.error) return dbError("get_profile", traceId, "select_streak", streakRes.error);
-    const raw = profileRes.data;
-    if (!raw && !streakRes.data) {
+  handler: withAuthAndTrace("get_profile", async (_input, _ctx, { requestId, supabase, userId }) => {
+    const { data, error } = await supabase.from("literacy_profiles").select(
+      "score_budgeting, score_credit, score_investing, score_macro, score_risk, mastered_concepts, weak_concepts, unknown_concepts, diagnostic_taken_at, diagnostic_count, onboarding"
+    ).eq("user_id", userId).maybeSingle();
+    if (error) return dbError("get_profile", requestId, "read", error);
+    if (!data) {
+      const empty = { profile: null, request_id: requestId };
       return {
         content: [{ type: "text", text: "No profile yet. Complete onboarding in the app." }],
-        structuredContent: { profile: null, traceId }
+        structuredContent: empty
       };
     }
-    const sanitized = sanitizeRow(raw ?? {}) ?? {};
-    const onboarding = raw?.onboarding ?? null;
-    delete sanitized.onboarding;
+    const row = data;
+    const scores = pick(row, [
+      "score_budgeting",
+      "score_credit",
+      "score_investing",
+      "score_macro",
+      "score_risk"
+    ]);
+    const onboarding = row.onboarding ?? null;
+    const goals = onboarding?.financialGoals ?? onboarding?.goals;
+    const topics = onboarding?.topicsOfInterest ?? onboarding?.topics;
+    const learning_style = onboarding?.learningStyle;
     const profile = {
-      goals: onboarding?.financialGoals ?? onboarding?.goals ?? null,
-      topics_of_interest: onboarding?.topicsOfInterest ?? onboarding?.topics ?? null,
-      learning_style: onboarding?.learningStyle ?? null,
-      demographics: onboarding ? {
-        name: onboarding.name ?? null,
-        age: onboarding.age ?? null,
-        student_status: onboarding.studentStatus ?? null,
-        living_situation: onboarding.livingSituation ?? null
-      } : null,
-      diagnostic: raw ? sanitized : null,
-      streak: sanitizeRow(streakRes.data)
+      literacy_scores: scores,
+      mastered_concepts: row.mastered_concepts ?? [],
+      weak_concepts: row.weak_concepts ?? [],
+      unknown_concepts: row.unknown_concepts ?? [],
+      diagnostic_taken_at: row.diagnostic_taken_at ?? null,
+      diagnostic_count: row.diagnostic_count ?? 0,
+      goals: goals && goals.length > 0 ? goals : null,
+      topics_of_interest: topics && topics.length > 0 ? topics : null,
+      learning_style: learning_style ?? null
     };
     return {
       content: [{ type: "text", text: JSON.stringify(profile, null, 2) }],
-      structuredContent: { profile, traceId }
+      structuredContent: { profile, request_id: requestId }
     };
   })
 });
@@ -139,20 +174,31 @@ import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.22.2";
 var get_progress_default = defineTool2({
   name: "get_progress",
   title: "Get my learning progress",
-  description: "Returns the signed-in user's current streak, XP, and recent lesson progress in Econology.",
+  description: "Returns the signed-in user's current and longest streak, total core lessons, total XP, and recent lesson concept IDs with scores and completion dates.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: withAuthAndTrace("get_progress", async (_input, _ctx, { traceId, supabase, userId }) => {
+  handler: withAuthAndTrace("get_progress", async (_input, _ctx, { requestId, supabase, userId }) => {
     const [streakRes, lessonsRes] = await Promise.all([
-      supabase.from("daily_streak").select("*").eq("user_id", userId).maybeSingle(),
-      supabase.from("lesson_progress").select("*").eq("user_id", userId).order("updated_at", { ascending: false }).limit(20)
+      supabase.from("daily_streak").select("current_streak, longest_streak, total_lessons, total_xp, last_lesson_date").eq("user_id", userId).maybeSingle(),
+      supabase.from("lesson_progress").select("concept_id, quiz_score, quiz_total, attempts, completed_at").eq("user_id", userId).order("completed_at", { ascending: false }).limit(20)
     ]);
-    if (streakRes.error) return dbError("get_progress", traceId, "select_streak", streakRes.error);
-    if (lessonsRes.error) return dbError("get_progress", traceId, "select_lessons", lessonsRes.error);
+    if (streakRes.error) return dbError("get_progress", requestId, "read", streakRes.error);
+    if (lessonsRes.error) return dbError("get_progress", requestId, "read", lessonsRes.error);
+    const streak = pick(streakRes.data, [
+      "current_streak",
+      "longest_streak",
+      "total_lessons",
+      "total_xp",
+      "last_lesson_date"
+    ]);
+    const recent_lessons = pickMany(
+      lessonsRes.data,
+      ["concept_id", "quiz_score", "quiz_total", "attempts", "completed_at"]
+    );
     const payload = {
-      streak: sanitizeRow(streakRes.data),
-      recent_lessons: sanitizeRows(lessonsRes.data),
-      traceId
+      streak,
+      recent_lessons,
+      request_id: requestId
     };
     return {
       content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
@@ -166,16 +212,17 @@ import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.22.2";
 var list_portfolio_default = defineTool3({
   name: "list_portfolio",
   title: "List my portfolio tickers",
-  description: "Returns the tickers the signed-in user is tracking in their Econology portfolio.",
+  description: "Returns the tickers the signed-in user tracks \u2014 ticker symbol and when it was added.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: withAuthAndTrace("list_portfolio", async (_input, _ctx, { traceId, supabase, userId }) => {
-    const { data, error } = await supabase.from("user_portfolio").select("*").eq("user_id", userId);
-    if (error) return dbError("list_portfolio", traceId, "select", error);
-    const portfolio = sanitizeRows(data);
+  handler: withAuthAndTrace("list_portfolio", async (_input, _ctx, { requestId, supabase, userId }) => {
+    const { data, error } = await supabase.from("user_portfolio").select("ticker, created_at").eq("user_id", userId).order("created_at", { ascending: false });
+    if (error) return dbError("list_portfolio", requestId, "read", error);
+    const rows = pickMany(data, ["ticker", "created_at"]);
+    const portfolio = rows.map((r) => ({ ticker: r.ticker, added_at: r.created_at }));
     return {
       content: [{ type: "text", text: JSON.stringify(portfolio, null, 2) }],
-      structuredContent: { portfolio, traceId }
+      structuredContent: { portfolio, request_id: requestId }
     };
   })
 });
@@ -207,16 +254,35 @@ import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.22.2";
 var list_pinned_articles_default = defineTool5({
   name: "list_pinned_articles",
   title: "List my pinned articles",
-  description: "Returns economic-news articles the signed-in user has pinned in Econology.",
+  description: "Returns the signed-in user's pinned economic-news articles with safe display fields only (title, url, site, symbol, published_date, snippet, image, pinned_at).",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: withAuthAndTrace("list_pinned_articles", async (_input, _ctx, { traceId, supabase, userId }) => {
-    const { data, error } = await supabase.from("pinned_articles").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(50);
-    if (error) return dbError("list_pinned_articles", traceId, "select", error);
-    const articles = sanitizeRows(data);
+  handler: withAuthAndTrace("list_pinned_articles", async (_input, _ctx, { requestId, supabase, userId }) => {
+    const { data, error } = await supabase.from("pinned_articles").select("title, url, image, site, symbol, published_date, snippet, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(50);
+    if (error) return dbError("list_pinned_articles", requestId, "read", error);
+    const rows = pickMany(data, [
+      "title",
+      "url",
+      "image",
+      "site",
+      "symbol",
+      "published_date",
+      "snippet",
+      "created_at"
+    ]);
+    const articles = rows.map((r) => ({
+      title: r.title,
+      url: r.url,
+      image: r.image,
+      site: r.site,
+      symbol: r.symbol,
+      published_date: r.published_date,
+      snippet: r.snippet,
+      pinned_at: r.created_at
+    }));
     return {
       content: [{ type: "text", text: JSON.stringify(articles, null, 2) }],
-      structuredContent: { articles, traceId }
+      structuredContent: { articles, request_id: requestId }
     };
   })
 });
