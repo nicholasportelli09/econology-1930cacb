@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-const SITE = "https://econology.lovable.app";
+const SITE = "https://www.econology.app";
 
 export type SeoProps = {
   title: string;
