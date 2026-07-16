@@ -51,7 +51,8 @@ const Onboarding = () => {
       if (uid) {
         await supabase
           .from("literacy_profiles")
-          .upsert({ user_id: uid, onboarding: profile }, { onConflict: "user_id" });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .upsert({ user_id: uid, onboarding: profile } as any, { onConflict: "user_id" });
       }
     } catch (e) {
       console.warn("onboarding persist failed", e);
