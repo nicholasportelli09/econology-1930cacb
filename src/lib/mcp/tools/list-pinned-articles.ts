@@ -1,17 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
-import { defineTool, type ToolContext } from "@lovable.dev/mcp-js";
-
-function supabaseForUser(ctx: ToolContext) {
-  const url = (globalThis as any).Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL!;
-  const key =
-    (globalThis as any).Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ??
-    (globalThis as any).Deno?.env.get("SUPABASE_ANON_KEY") ??
-    process.env.SUPABASE_PUBLISHABLE_KEY!;
-  return createClient(url, key, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
+import { defineTool } from "@lovable.dev/mcp-js";
+import { dbError, withAuthAndTrace } from "./_shared";
 
 export default defineTool({
   name: "list_pinned_articles",
@@ -19,20 +7,17 @@ export default defineTool({
   description: "Returns economic-news articles the signed-in user has pinned in Econology.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async (_input, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
-    }
-    const { data, error } = await supabaseForUser(ctx)
+  handler: withAuthAndTrace("list_pinned_articles", async (_input, _ctx, { traceId, supabase, userId }) => {
+    const { data, error } = await supabase
       .from("pinned_articles")
       .select("*")
-      .eq("user_id", ctx.getUserId())
+      .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .limit(50);
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (error) return dbError("list_pinned_articles", traceId, "select", error);
     return {
       content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
-      structuredContent: { articles: data ?? [] },
+      structuredContent: { articles: data ?? [], traceId },
     };
-  },
+  }),
 });

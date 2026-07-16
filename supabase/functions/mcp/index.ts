@@ -6,115 +6,143 @@
 import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.22.2";
 
 // src/lib/mcp/tools/get-profile.ts
-import { createClient } from "npm:@supabase/supabase-js@^2.97.0";
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.22.2";
+
+// src/lib/mcp/tools/_shared.ts
+import { createClient } from "npm:@supabase/supabase-js@^2.97.0";
+function readEnv(name) {
+  const denoEnv = globalThis.Deno?.env;
+  const fromDeno = denoEnv?.get(name);
+  if (fromDeno) return fromDeno;
+  const proc = globalThis.process;
+  return proc?.env?.[name];
+}
+function newTraceId() {
+  const rand = Math.random().toString(36).slice(2, 10);
+  return `trace_${Date.now().toString(36)}_${rand}`;
+}
+function errorResult(tool, traceId, code, message, detail) {
+  const payload = { error: { tool, traceId, code, message, detail: detail ?? null } };
+  console.error(`[mcp:${tool}] ${code} traceId=${traceId} message=${message}`, detail ?? "");
+  return {
+    content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+    structuredContent: payload,
+    isError: true
+  };
+}
 function supabaseForUser(ctx) {
-  const url = globalThis.Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL;
-  const key = globalThis.Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ?? globalThis.Deno?.env.get("SUPABASE_ANON_KEY") ?? process.env.SUPABASE_PUBLISHABLE_KEY;
+  const url = readEnv("SUPABASE_URL");
+  const key = readEnv("SUPABASE_PUBLISHABLE_KEY") ?? readEnv("SUPABASE_ANON_KEY");
+  if (!url || !key) {
+    throw new Error(
+      `mcp_config_missing: SUPABASE_URL=${url ? "ok" : "missing"} SUPABASE_PUBLISHABLE_KEY=${key ? "ok" : "missing"}`
+    );
+  }
+  const token = ctx.getToken();
+  if (!token) {
+    throw new Error("mcp_auth_missing_token: OAuth verified but no bearer token was forwarded");
+  }
   return createClient(url, key, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+    global: { headers: { Authorization: `Bearer ${token}` } },
     auth: { persistSession: false, autoRefreshToken: false }
   });
 }
+function withAuthAndTrace(tool, run) {
+  return async (input, ctx) => {
+    const traceId = newTraceId();
+    try {
+      if (!ctx.isAuthenticated()) {
+        return errorResult(tool, traceId, "unauthenticated", "OAuth token was not accepted or missing");
+      }
+      const userId = ctx.getUserId();
+      if (!userId) {
+        return errorResult(tool, traceId, "no_user_id", "OAuth token verified but sub claim is empty");
+      }
+      const supabase = supabaseForUser(ctx);
+      return await run(input, ctx, { traceId, supabase, userId });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      const stack = err instanceof Error ? err.stack : void 0;
+      const code = message.startsWith("mcp_config_missing") ? "config_missing" : message.startsWith("mcp_auth_missing_token") ? "auth_missing_token" : "handler_exception";
+      return errorResult(tool, traceId, code, message, { stack });
+    }
+  };
+}
+function dbError(tool, traceId, op, error) {
+  return errorResult(tool, traceId, `db_${op}_failed`, error.message, {
+    pg_code: error.code ?? null,
+    details: error.details ?? null,
+    hint: error.hint ?? null
+  });
+}
+
+// src/lib/mcp/tools/get-profile.ts
 var get_profile_default = defineTool({
   name: "get_profile",
   title: "Get my Econology profile",
   description: "Returns the signed-in user's Econology literacy profile: level, goals, learning preferences, and streak metadata.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async (_input, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
+  handler: withAuthAndTrace("get_profile", async (_input, _ctx, { traceId, supabase, userId }) => {
+    const { data, error } = await supabase.from("literacy_profiles").select("*").eq("user_id", userId).maybeSingle();
+    if (error) return dbError("get_profile", traceId, "select", error);
+    if (!data) {
+      return {
+        content: [{ type: "text", text: "No profile yet. Complete onboarding in the app." }],
+        structuredContent: { profile: null, traceId }
+      };
     }
-    const supabase = supabaseForUser(ctx);
-    const { data, error } = await supabase.from("literacy_profiles").select("*").eq("user_id", ctx.getUserId()).maybeSingle();
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
-    if (!data) return { content: [{ type: "text", text: "No profile yet. Complete onboarding in the app." }] };
     return {
       content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
-      structuredContent: { profile: data }
+      structuredContent: { profile: data, traceId }
     };
-  }
+  })
 });
 
 // src/lib/mcp/tools/get-progress.ts
-import { createClient as createClient2 } from "npm:@supabase/supabase-js@^2.97.0";
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.22.2";
-function supabaseForUser2(ctx) {
-  const url = globalThis.Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL;
-  const key = globalThis.Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ?? globalThis.Deno?.env.get("SUPABASE_ANON_KEY") ?? process.env.SUPABASE_PUBLISHABLE_KEY;
-  return createClient2(url, key, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
 var get_progress_default = defineTool2({
   name: "get_progress",
   title: "Get my learning progress",
   description: "Returns the signed-in user's current streak, XP, and recent lesson progress in Econology.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async (_input, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
-    }
-    const supabase = supabaseForUser2(ctx);
+  handler: withAuthAndTrace("get_progress", async (_input, _ctx, { traceId, supabase, userId }) => {
     const [streakRes, lessonsRes] = await Promise.all([
-      supabase.from("daily_streak").select("*").eq("user_id", ctx.getUserId()).maybeSingle(),
-      supabase.from("lesson_progress").select("*").eq("user_id", ctx.getUserId()).order("updated_at", { ascending: false }).limit(20)
+      supabase.from("daily_streak").select("*").eq("user_id", userId).maybeSingle(),
+      supabase.from("lesson_progress").select("*").eq("user_id", userId).order("updated_at", { ascending: false }).limit(20)
     ]);
-    if (streakRes.error) return { content: [{ type: "text", text: streakRes.error.message }], isError: true };
-    if (lessonsRes.error) return { content: [{ type: "text", text: lessonsRes.error.message }], isError: true };
-    const payload = { streak: streakRes.data ?? null, recent_lessons: lessonsRes.data ?? [] };
+    if (streakRes.error) return dbError("get_progress", traceId, "select_streak", streakRes.error);
+    if (lessonsRes.error) return dbError("get_progress", traceId, "select_lessons", lessonsRes.error);
+    const payload = { streak: streakRes.data ?? null, recent_lessons: lessonsRes.data ?? [], traceId };
     return {
       content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
       structuredContent: payload
     };
-  }
+  })
 });
 
 // src/lib/mcp/tools/list-portfolio.ts
-import { createClient as createClient3 } from "npm:@supabase/supabase-js@^2.97.0";
 import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.22.2";
-function supabaseForUser3(ctx) {
-  const url = globalThis.Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL;
-  const key = globalThis.Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ?? globalThis.Deno?.env.get("SUPABASE_ANON_KEY") ?? process.env.SUPABASE_PUBLISHABLE_KEY;
-  return createClient3(url, key, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
 var list_portfolio_default = defineTool3({
   name: "list_portfolio",
   title: "List my portfolio tickers",
   description: "Returns the tickers the signed-in user is tracking in their Econology portfolio.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async (_input, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
-    }
-    const { data, error } = await supabaseForUser3(ctx).from("user_portfolio").select("*").eq("user_id", ctx.getUserId());
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+  handler: withAuthAndTrace("list_portfolio", async (_input, _ctx, { traceId, supabase, userId }) => {
+    const { data, error } = await supabase.from("user_portfolio").select("*").eq("user_id", userId);
+    if (error) return dbError("list_portfolio", traceId, "select", error);
     return {
       content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
-      structuredContent: { portfolio: data ?? [] }
+      structuredContent: { portfolio: data ?? [], traceId }
     };
-  }
+  })
 });
 
 // src/lib/mcp/tools/add-portfolio-ticker.ts
-import { createClient as createClient4 } from "npm:@supabase/supabase-js@^2.97.0";
 import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.22.2";
 import { z } from "npm:zod@^4.4.3";
-function supabaseForUser4(ctx) {
-  const url = globalThis.Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL;
-  const key = globalThis.Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ?? globalThis.Deno?.env.get("SUPABASE_ANON_KEY") ?? process.env.SUPABASE_PUBLISHABLE_KEY;
-  return createClient4(url, key, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
 var add_portfolio_ticker_default = defineTool4({
   name: "add_portfolio_ticker",
   title: "Add a ticker to my portfolio",
@@ -123,48 +151,33 @@ var add_portfolio_ticker_default = defineTool4({
     ticker: z.string().trim().min(1).max(12).describe("Stock ticker symbol, e.g. AAPL.")
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
-  handler: async ({ ticker }, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
-    }
+  handler: withAuthAndTrace("add_portfolio_ticker", async ({ ticker }, _ctx, { traceId, supabase, userId }) => {
     const symbol = ticker.toUpperCase();
-    const { data, error } = await supabaseForUser4(ctx).from("user_portfolio").upsert({ user_id: ctx.getUserId(), ticker: symbol }, { onConflict: "user_id,ticker" }).select();
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    const { data, error } = await supabase.from("user_portfolio").upsert({ user_id: userId, ticker: symbol }, { onConflict: "user_id,ticker" }).select();
+    if (error) return dbError("add_portfolio_ticker", traceId, "upsert", error);
     return {
       content: [{ type: "text", text: `Added ${symbol} to your portfolio.` }],
-      structuredContent: { added: data?.[0] ?? { ticker: symbol } }
+      structuredContent: { added: data?.[0] ?? { ticker: symbol }, traceId }
     };
-  }
+  })
 });
 
 // src/lib/mcp/tools/list-pinned-articles.ts
-import { createClient as createClient5 } from "npm:@supabase/supabase-js@^2.97.0";
 import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.22.2";
-function supabaseForUser5(ctx) {
-  const url = globalThis.Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL;
-  const key = globalThis.Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ?? globalThis.Deno?.env.get("SUPABASE_ANON_KEY") ?? process.env.SUPABASE_PUBLISHABLE_KEY;
-  return createClient5(url, key, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-}
 var list_pinned_articles_default = defineTool5({
   name: "list_pinned_articles",
   title: "List my pinned articles",
   description: "Returns economic-news articles the signed-in user has pinned in Econology.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async (_input, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
-    }
-    const { data, error } = await supabaseForUser5(ctx).from("pinned_articles").select("*").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(50);
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+  handler: withAuthAndTrace("list_pinned_articles", async (_input, _ctx, { traceId, supabase, userId }) => {
+    const { data, error } = await supabase.from("pinned_articles").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(50);
+    if (error) return dbError("list_pinned_articles", traceId, "select", error);
     return {
       content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
-      structuredContent: { articles: data ?? [] }
+      structuredContent: { articles: data ?? [], traceId }
     };
-  }
+  })
 });
 
 // src/lib/mcp/index.ts
