@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
+import { track } from "@/lib/analytics";
 import StepWelcome from "@/components/onboarding/StepWelcome";
 import StepSituation from "@/components/onboarding/StepSituation";
 import StepMoney from "@/components/onboarding/StepMoney";
@@ -16,6 +17,10 @@ const Onboarding = () => {
   const [profile, setProfile] = useState<UserProfile>(defaultProfile);
   const navigate = useNavigate();
   const totalSteps = 5;
+
+  useEffect(() => {
+    track("onboarding_started");
+  }, []);
 
   const update = (fields: Partial<UserProfile>) => {
     setProfile((prev) => ({ ...prev, ...fields }));
@@ -33,6 +38,11 @@ const Onboarding = () => {
 
   const handleFinish = () => {
     localStorage.setItem("econology_profile", JSON.stringify(profile));
+    track("onboarding_completed", {
+      goals: profile.financialGoals,
+      topics: profile.topicsOfInterest,
+      learningStyle: profile.learningStyle,
+    });
     navigate("/quiz");
   };
 
