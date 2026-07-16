@@ -71,6 +71,11 @@ export function ArticleCard({ article, profile, formatDate, isPinned, onPin, onU
             });
             track("news_article_read", { url: article.url, site: article.site });
           });
+          import("@/lib/productAnalytics").then(({ trackProduct }) => {
+            const bucket = (article.site ?? "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "_").slice(0, 40);
+            void trackProduct("news_article_opened", { source_bucket: bucket });
+            void trackProduct("original_source_opened", { source_bucket: bucket });
+          });
         }}
       >
         {article.image && (
