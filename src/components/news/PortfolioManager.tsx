@@ -285,14 +285,18 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
                     {isActive ? "Viewing" : "View chart"}
                   </span>
                   {q && q.price > 0 && (
-                    showChange ? (
-                      <span className={`flex items-center gap-0.5 text-xs font-medium ${isUp ? "text-accent" : "text-destructive"}`}>
-                        {isUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                        {isUp ? "+" : ""}{q.changePercent.toFixed(2)}%
-                      </span>
-                    ) : (
-                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Last close</span>
-                    )
+                    <span
+                      className={`flex items-center gap-0.5 text-xs font-semibold ${isUp ? "text-accent" : "text-destructive"}`}
+                      title={marketStatus.isOpen ? "Change today" : `Change at last close · ${marketStatus.reason}`}
+                    >
+                      {isUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                      {isUp ? "+" : ""}{q.changePercent.toFixed(2)}%
+                      {!marketStatus.isOpen && (
+                        <span className="ml-1 hidden md:inline text-[9px] font-medium uppercase tracking-wider text-muted-foreground">
+                          at close
+                        </span>
+                      )}
+                    </span>
                   )}
                   {quotesLoading && !q && (
                     <Loader2 size={12} className="animate-spin text-muted-foreground" />
@@ -329,14 +333,16 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
                 <span className="text-base font-bold text-foreground">
                   ${quotes[activeChart].price.toFixed(2)}
                 </span>
-                {showChange ? (
-                  <span className={`flex items-center gap-0.5 text-sm font-semibold ${quotes[activeChart].change >= 0 ? "text-accent" : "text-destructive"}`}>
-                    {quotes[activeChart].change >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                    {quotes[activeChart].change >= 0 ? "+" : ""}{quotes[activeChart].changePercent.toFixed(2)}%
-                  </span>
-                ) : (
-                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground border border-border bg-muted/50 px-2 py-0.5 rounded" title={marketStatus.reason}>
-                    {marketStatus.isWeekend ? "Last close · weekend" : "Last close"}
+                <span
+                  className={`flex items-center gap-0.5 text-sm font-semibold ${quotes[activeChart].change >= 0 ? "text-accent" : "text-destructive"}`}
+                  title={marketStatus.isOpen ? "Change today" : `Change at last close · ${marketStatus.reason}`}
+                >
+                  {quotes[activeChart].change >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                  {quotes[activeChart].change >= 0 ? "+" : ""}{quotes[activeChart].changePercent.toFixed(2)}%
+                </span>
+                {!marketStatus.isOpen && (
+                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground border border-border bg-muted/50 px-1.5 py-0.5 rounded" title={marketStatus.reason}>
+                    Last close
                   </span>
                 )}
               </>
