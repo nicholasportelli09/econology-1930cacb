@@ -415,7 +415,7 @@ const Index = () => {
               { q: "Is it free to use?", a: "Yes — Econology is completely free. Create an account and start building your financial confidence right away." },
               { q: "How does the daily lesson work?", a: "Each day you get one short, personalized lesson based on your goals and current knowledge. Complete it, earn XP, and watch your literacy score grow." },
               { q: "Can I track real stocks?", a: "Absolutely. Add tickers to your portfolio, get live quotes, and see relevant news filtered to your investments." },
-              { q: "Is my data secure?", a: "We use industry-standard encryption and never share your personal data with third parties. Your privacy is our priority." },
+              { q: "How does Econology handle my data?", a: "We use encryption in transit, row-level database security, and only share data with the service providers we need to run each feature (see our Privacy Notice). No online service can promise perfect security, but we work to keep the risk low and only collect what a feature actually needs." },
               { q: "How do I reset my learning progress?", a: "Head to Settings and you can reset your quiz scores or topic selections at any time." },
             ].map((faq, i) => (
               <AccordionItem key={i} value={`faq-${i}`} className="rounded-xl border px-4 md:px-6" style={{ borderColor: "rgba(0,0,0,0.08)", background: "rgba(255,255,255,0.5)" }}>
