@@ -172,7 +172,7 @@ export default function Signup() {
         <div className="text-center space-y-2 text-sm">
           <p style={{ color: "hsl(240 15% 45%)" }}>
             Already have an account?{" "}
-            <Link to="/login" className="text-primary hover:underline font-semibold">Sign In</Link>
+            <Link to={nextPath ? `/login?next=${encodeURIComponent(nextPath)}` : "/login"} className="text-primary hover:underline font-semibold">Sign In</Link>
           </p>
           <Link to="/" className="block transition-colors hover:opacity-80" style={{ color: "hsl(240 15% 45%)" }}>
             ← Back to landing page
