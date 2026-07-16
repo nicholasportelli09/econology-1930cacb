@@ -10,16 +10,20 @@ export default defineTool({
     ticker: z.string().trim().min(1).max(12).describe("Stock ticker symbol, e.g. AAPL."),
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
-  handler: withAuthAndTrace<{ ticker: string }>("add_portfolio_ticker", async ({ ticker }, _ctx, { traceId, supabase, userId }) => {
+  handler: withAuthAndTrace<{ ticker: string }>("add_portfolio_ticker", async ({ ticker }, _ctx, { requestId, supabase, userId }) => {
     const symbol = ticker.toUpperCase();
     const { data, error } = await supabase
       .from("user_portfolio")
       .upsert({ user_id: userId, ticker: symbol }, { onConflict: "user_id,ticker" })
-      .select();
-    if (error) return dbError("add_portfolio_ticker", traceId, "upsert", error);
+      .select("ticker, created_at");
+    if (error) return dbError("add_portfolio_ticker", requestId, "write", error);
+    const row = data?.[0] as { ticker: string; created_at: string } | undefined;
     return {
       content: [{ type: "text", text: `Added ${symbol} to your portfolio.` }],
-      structuredContent: { added: data?.[0] ?? { ticker: symbol }, traceId },
+      structuredContent: {
+        added: row ? { ticker: row.ticker, added_at: row.created_at } : { ticker: symbol },
+        request_id: requestId,
+      },
     };
   }),
 });
