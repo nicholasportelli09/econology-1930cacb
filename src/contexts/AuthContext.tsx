@@ -100,11 +100,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const params = new URLSearchParams(window.location.search);
           const rawNext = params.get("next");
           const safeNext = rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : null;
-          const profile = localStorage.getItem("econology_profile");
-          const target = safeNext ?? (profile ? "/dashboard" : "/onboarding");
-          window.history.replaceState({}, "", target);
-          // Trigger react-router to react to the URL change.
-          window.dispatchEvent(new PopStateEvent("popstate"));
+
+          // Determine whether this returning user has already completed the
+          // placement/onboarding. Check the DB (source of truth) so we don't
+          // force them through it again on a new device/browser where
+          // localStorage is empty. Fall back to legacy localStorage flags.
+          const hasLocalProfile =
+            !!localStorage.getItem("econology_profile") ||
+            localStorage.getItem("econology_placement_done") === "true";
+
+          const redirect = (target: string) => {
+            window.history.replaceState({}, "", target);
+            window.dispatchEvent(new PopStateEvent("popstate"));
+          };
+
+          if (safeNext) {
+            redirect(safeNext);
+          } else if (hasLocalProfile) {
+            redirect("/dashboard");
+          } else {
+            // Query literacy_profiles to see if they've completed placement before.
+            supabase
+              .from("literacy_profiles")
+              .select("user_id")
+              .eq("user_id", session.user.id)
+              .maybeSingle()
+              .then(({ data }) => {
+                if (data) {
+                  localStorage.setItem("econology_placement_done", "true");
+                  redirect("/dashboard");
+                } else {
+                  redirect("/onboarding");
+                }
+              });
+          }
         }
       }
     });
