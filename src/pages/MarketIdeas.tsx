@@ -19,6 +19,9 @@ import { type UserProfile, defaultProfile } from "@/types/profile";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Disclaimer } from "@/components/Disclaimer";
+import { AIBadge } from "@/components/AIBadge";
+import { ReportIssue } from "@/components/ReportIssue";
 
 interface CaseStudy {
   name: string;
@@ -99,13 +102,8 @@ const MarketIdeas = () => {
       <DashboardHeader initials={initials} />
 
       <main className="max-w-[1320px] mx-auto px-4 md:px-10 lg:px-6 py-8 space-y-8">
-        {/* Educational-only banner — single, concise */}
-        <div className="flex items-center gap-3 rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-2.5">
-          <AlertTriangle className="text-destructive shrink-0" size={16} />
-          <p className="text-xs text-destructive">
-            <span className="font-bold uppercase tracking-wider">Not financial advice.</span> Educational ideas only — figures are illustrative. Do your own research.
-          </p>
-        </div>
+        {/* Persistent educational-only banner */}
+        <Disclaimer />
 
         {/* Economic News promo */}
         <Link
@@ -207,7 +205,10 @@ const MarketIdeas = () => {
                       </button>
                     </div>
                     <div className="flex items-start justify-between mb-3 pr-16">
-                      <h3 className="text-lg font-display font-bold text-foreground">{inv.name}</h3>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-lg font-display font-bold text-foreground">{inv.name}</h3>
+                        <AIBadge />
+                      </div>
                       <Badge className={`shrink-0 text-xs border ${lensColor(inv.riskLevel)}`}>{inv.riskLevel} complexity</Badge>
                     </div>
                     {inv.ticker && inv.ticker !== "N/A" && <span className="text-xs font-mono text-primary mb-3">{inv.ticker}</span>}
@@ -217,9 +218,15 @@ const MarketIdeas = () => {
                       <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Why study this</span><p className="text-sm text-primary/90 italic">{inv.personalizedNote}</p></div>
                       <div><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sizing example</span><p className="text-sm text-foreground font-medium">{inv.startingAmount}</p></div>
                     </div>
-                    <button onClick={() => navigate("/investment", { state: { investment: inv } })} className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80 mt-auto">
-                      Walk through it <ArrowRight size={14} />
-                    </button>
+                    <div className="mt-auto flex items-center justify-between gap-2">
+                      <button onClick={() => navigate("/investment", { state: { investment: inv } })} className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80">
+                        Walk through it <ArrowRight size={14} />
+                      </button>
+                      <ReportIssue
+                        contentType="market_idea"
+                        contentReference={`${inv.ticker || "n/a"} | ${inv.name}`}
+                      />
+                    </div>
                   </div>
                 );
               })}
