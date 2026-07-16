@@ -19,7 +19,7 @@
       {
         "name": "get_profile",
         "title": "Get my Econology profile",
-        "description": "Returns the signed-in user's Econology literacy profile: level, goals, learning preferences, and streak metadata.",
+        "description": "Returns the signed-in user's Econology profile: onboarding goals, learning preferences, diagnostic scores, and streak metadata.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,

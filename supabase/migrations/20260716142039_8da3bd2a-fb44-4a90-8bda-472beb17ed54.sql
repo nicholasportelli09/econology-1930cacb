@@ -1,0 +1,1 @@
+ALTER TABLE public.literacy_profiles ADD COLUMN IF NOT EXISTS onboarding jsonb;

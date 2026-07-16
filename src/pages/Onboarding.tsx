@@ -4,6 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import { track } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
 import StepWelcome from "@/components/onboarding/StepWelcome";
 import StepSituation from "@/components/onboarding/StepSituation";
 import StepMoney from "@/components/onboarding/StepMoney";
@@ -36,13 +37,26 @@ const Onboarding = () => {
     });
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     localStorage.setItem("econology_profile", JSON.stringify(profile));
     track("onboarding_completed", {
       goals: profile.financialGoals,
       topics: profile.topicsOfInterest,
       learningStyle: profile.learningStyle,
     });
+    // Persist onboarding so the assistant / MCP tools can honor goals & preferences.
+    try {
+      const { data: auth } = await supabase.auth.getUser();
+      const uid = auth.user?.id;
+      if (uid) {
+        await supabase
+          .from("literacy_profiles")
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .upsert({ user_id: uid, onboarding: profile } as any, { onConflict: "user_id" });
+      }
+    } catch (e) {
+      console.warn("onboarding persist failed", e);
+    }
     navigate("/quiz");
   };
 

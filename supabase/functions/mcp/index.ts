@@ -75,26 +75,61 @@ function dbError(tool, traceId, op, error) {
     hint: error.hint ?? null
   });
 }
+var INTERNAL_FIELDS = /* @__PURE__ */ new Set(["id", "user_id"]);
+function sanitizeRow(row) {
+  if (!row) return null;
+  const out = {};
+  for (const [k, v] of Object.entries(row)) {
+    if (INTERNAL_FIELDS.has(k)) continue;
+    out[k] = v;
+  }
+  return out;
+}
+function sanitizeRows(rows) {
+  if (!rows) return [];
+  return rows.map((r) => sanitizeRow(r));
+}
 
 // src/lib/mcp/tools/get-profile.ts
 var get_profile_default = defineTool({
   name: "get_profile",
   title: "Get my Econology profile",
-  description: "Returns the signed-in user's Econology literacy profile: level, goals, learning preferences, and streak metadata.",
+  description: "Returns the signed-in user's Econology profile: onboarding goals, learning preferences, diagnostic scores, and streak metadata.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: withAuthAndTrace("get_profile", async (_input, _ctx, { traceId, supabase, userId }) => {
-    const { data, error } = await supabase.from("literacy_profiles").select("*").eq("user_id", userId).maybeSingle();
-    if (error) return dbError("get_profile", traceId, "select", error);
-    if (!data) {
+    const [profileRes, streakRes] = await Promise.all([
+      supabase.from("literacy_profiles").select("*").eq("user_id", userId).maybeSingle(),
+      supabase.from("daily_streak").select("*").eq("user_id", userId).maybeSingle()
+    ]);
+    if (profileRes.error) return dbError("get_profile", traceId, "select_profile", profileRes.error);
+    if (streakRes.error) return dbError("get_profile", traceId, "select_streak", streakRes.error);
+    const raw = profileRes.data;
+    if (!raw && !streakRes.data) {
       return {
         content: [{ type: "text", text: "No profile yet. Complete onboarding in the app." }],
         structuredContent: { profile: null, traceId }
       };
     }
+    const sanitized = sanitizeRow(raw ?? {}) ?? {};
+    const onboarding = raw?.onboarding ?? null;
+    delete sanitized.onboarding;
+    const profile = {
+      goals: onboarding?.financialGoals ?? onboarding?.goals ?? null,
+      topics_of_interest: onboarding?.topicsOfInterest ?? onboarding?.topics ?? null,
+      learning_style: onboarding?.learningStyle ?? null,
+      demographics: onboarding ? {
+        name: onboarding.name ?? null,
+        age: onboarding.age ?? null,
+        student_status: onboarding.studentStatus ?? null,
+        living_situation: onboarding.livingSituation ?? null
+      } : null,
+      diagnostic: raw ? sanitized : null,
+      streak: sanitizeRow(streakRes.data)
+    };
     return {
-      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
-      structuredContent: { profile: data, traceId }
+      content: [{ type: "text", text: JSON.stringify(profile, null, 2) }],
+      structuredContent: { profile, traceId }
     };
   })
 });
@@ -114,7 +149,11 @@ var get_progress_default = defineTool2({
     ]);
     if (streakRes.error) return dbError("get_progress", traceId, "select_streak", streakRes.error);
     if (lessonsRes.error) return dbError("get_progress", traceId, "select_lessons", lessonsRes.error);
-    const payload = { streak: streakRes.data ?? null, recent_lessons: lessonsRes.data ?? [], traceId };
+    const payload = {
+      streak: sanitizeRow(streakRes.data),
+      recent_lessons: sanitizeRows(lessonsRes.data),
+      traceId
+    };
     return {
       content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
       structuredContent: payload
@@ -133,9 +172,10 @@ var list_portfolio_default = defineTool3({
   handler: withAuthAndTrace("list_portfolio", async (_input, _ctx, { traceId, supabase, userId }) => {
     const { data, error } = await supabase.from("user_portfolio").select("*").eq("user_id", userId);
     if (error) return dbError("list_portfolio", traceId, "select", error);
+    const portfolio = sanitizeRows(data);
     return {
-      content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
-      structuredContent: { portfolio: data ?? [], traceId }
+      content: [{ type: "text", text: JSON.stringify(portfolio, null, 2) }],
+      structuredContent: { portfolio, traceId }
     };
   })
 });
@@ -173,9 +213,10 @@ var list_pinned_articles_default = defineTool5({
   handler: withAuthAndTrace("list_pinned_articles", async (_input, _ctx, { traceId, supabase, userId }) => {
     const { data, error } = await supabase.from("pinned_articles").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(50);
     if (error) return dbError("list_pinned_articles", traceId, "select", error);
+    const articles = sanitizeRows(data);
     return {
-      content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
-      structuredContent: { articles: data ?? [], traceId }
+      content: [{ type: "text", text: JSON.stringify(articles, null, 2) }],
+      structuredContent: { articles, traceId }
     };
   })
 });

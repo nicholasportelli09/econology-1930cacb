@@ -1,5 +1,5 @@
 import { defineTool } from "@lovable.dev/mcp-js";
-import { dbError, withAuthAndTrace } from "./_shared";
+import { dbError, sanitizeRow, sanitizeRows, withAuthAndTrace } from "./_shared";
 
 export default defineTool({
   name: "get_progress",
@@ -19,7 +19,11 @@ export default defineTool({
     ]);
     if (streakRes.error) return dbError("get_progress", traceId, "select_streak", streakRes.error);
     if (lessonsRes.error) return dbError("get_progress", traceId, "select_lessons", lessonsRes.error);
-    const payload = { streak: streakRes.data ?? null, recent_lessons: lessonsRes.data ?? [], traceId };
+    const payload = {
+      streak: sanitizeRow(streakRes.data as Record<string, unknown> | null),
+      recent_lessons: sanitizeRows(lessonsRes.data as Record<string, unknown>[] | null),
+      traceId,
+    };
     return {
       content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
       structuredContent: payload,

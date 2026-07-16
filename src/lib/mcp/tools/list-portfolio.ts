@@ -1,5 +1,5 @@
 import { defineTool } from "@lovable.dev/mcp-js";
-import { dbError, withAuthAndTrace } from "./_shared";
+import { dbError, sanitizeRows, withAuthAndTrace } from "./_shared";
 
 export default defineTool({
   name: "list_portfolio",
@@ -13,9 +13,10 @@ export default defineTool({
       .select("*")
       .eq("user_id", userId);
     if (error) return dbError("list_portfolio", traceId, "select", error);
+    const portfolio = sanitizeRows(data as Record<string, unknown>[] | null);
     return {
-      content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
-      structuredContent: { portfolio: data ?? [], traceId },
+      content: [{ type: "text", text: JSON.stringify(portfolio, null, 2) }],
+      structuredContent: { portfolio, traceId },
     };
   }),
 });
