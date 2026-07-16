@@ -327,7 +327,7 @@ import { defineTool as defineTool7 } from "npm:@lovable.dev/mcp-js@0.22.2";
 var health_check_default = defineTool7({
   name: "health_check",
   title: "Server health check",
-  description: "Returns basic server health: ok status, server time, and a request id. Does not require authentication.",
+  description: "Returns basic server health: ok status, server time, and a request id. Use this to verify connectivity and cold-start behavior.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async () => {

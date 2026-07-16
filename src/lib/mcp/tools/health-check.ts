@@ -5,7 +5,7 @@ export default defineTool({
   name: "health_check",
   title: "Server health check",
   description:
-    "Returns basic server health: ok status, server time, and a request id. Does not require authentication.",
+    "Returns basic server health: ok status, server time, and a request id. Use this to verify connectivity and cold-start behavior.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async () => {
