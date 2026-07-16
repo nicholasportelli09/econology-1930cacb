@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getUSMarketStatus } from "@/lib/marketStatus";
-import { Disclaimer } from "@/components/Disclaimer";
 
 interface StockQuote {
   price: number;
