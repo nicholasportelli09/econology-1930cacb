@@ -139,7 +139,9 @@ var add_portfolio_ticker_default = defineTool4({
 import { createClient as createClient5 } from "npm:@supabase/supabase-js@^2.97.0";
 import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.22.2";
 function supabaseForUser5(ctx) {
-  return createClient5(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
+  const url = globalThis.Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL;
+  const key = globalThis.Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ?? globalThis.Deno?.env.get("SUPABASE_ANON_KEY") ?? process.env.SUPABASE_PUBLISHABLE_KEY;
+  return createClient5(url, key, {
     global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
     auth: { persistSession: false, autoRefreshToken: false }
   });
