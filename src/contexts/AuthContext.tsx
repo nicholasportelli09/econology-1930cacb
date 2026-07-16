@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 import { identifyUser, resetAnalytics, track } from "@/lib/analytics";
+import { setAnalyticsUser, trackProduct, newSession } from "@/lib/productAnalytics";
 
 interface AuthContextType {
   user: User | null;
@@ -31,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         setIsGuest(false);
         localStorage.removeItem("econology_guest");
+        setAnalyticsUser(session.user.id);
         identifyUser(session.user.id, {
           email: session.user.email ?? undefined,
           provider:
@@ -40,6 +42,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       if (event === "SIGNED_OUT") {
         resetAnalytics();
+        setAnalyticsUser(null);
+        newSession();
       }
       // Only flip loading off on the very first event to avoid re-showing the
       // full-screen loader (which causes a flicker) on subsequent token refreshes.
@@ -64,7 +68,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             (u.identities?.[0] as { provider?: string } | undefined)?.provider ||
             "email";
           track("login_completed", { userId: u.id, provider, fresh: isFresh });
-          if (isFresh) track("signup_completed", { userId: u.id, provider });
+          if (isFresh) {
+            track("signup_completed", { userId: u.id, provider });
+            void trackProduct("signup_completed", { provider });
+          }
           if (isFresh && !localStorage.getItem(guardKey)) {
             localStorage.setItem(guardKey, "1");
             // Fire-and-forget — don't block the redirect.
