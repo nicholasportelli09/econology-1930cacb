@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string
+          event: string
+          id: string
+          pathname: string | null
+          properties: Json | null
+          session_id: string | null
+          severity: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          id?: string
+          pathname?: string | null
+          properties?: Json | null
+          session_id?: string | null
+          severity?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: string
+          pathname?: string | null
+          properties?: Json | null
+          session_id?: string | null
+          severity?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       audit_log: {
         Row: {
           action: string
@@ -432,6 +468,17 @@ export type Database = {
           message: Json
           msg_id: number
           read_ct: number
+        }[]
+      }
+      retention_cohorts: {
+        Args: { end_date: string; start_date: string }
+        Returns: {
+          cohort_date: string
+          cohort_size: number
+          d1_rate: number
+          d1_return: number
+          d7_rate: number
+          d7_return: number
         }[]
       }
     }
