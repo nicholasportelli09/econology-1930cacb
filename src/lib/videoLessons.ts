@@ -1,18 +1,20 @@
 import { supabase } from "@/integrations/supabase/client";
-import {
-  FREEZE_TOKEN_EVERY,
-  FREEZE_TOKEN_MAX,
-  loadStreak,
-  type StreakState,
-} from "@/lib/lessons";
+import { loadStreak, type StreakState } from "@/lib/lessons";
 
 /**
- * Watch-and-earn-XP for curated videos. We reuse the existing lesson_progress
- * + daily_streak tables — concept_id is stored as `video:<youtubeId>` so
- * videos and lessons share the same XP / streak rails without a new schema.
+ * Watch-and-earn-XP for curated videos.
+ *
+ * Video watches are a "learning activity", NOT a lesson:
+ *   - They do NOT advance the daily streak.
+ *   - They do NOT increment `total_lessons` or `total_xp`.
+ *   - They do NOT update `last_lesson_date`.
+ *   - They only bump `total_videos` and `video_xp` on the streak row.
+ *
+ * Video watch history still lives in `lesson_progress` with a `video:<id>`
+ * concept id purely as a "have I watched this?" store.
  *
  * Awards a flat 25 XP for a correct quick-check (15 XP for a wrong one — they
- * still watched). Counts toward `total_lessons` once per video.
+ * still watched). No XP for re-watching.
  */
 
 export const VIDEO_XP_CORRECT = 25;
@@ -20,18 +22,6 @@ export const VIDEO_XP_WATCHED = 15;
 
 function videoConceptId(videoId: string): string {
   return `video:${videoId}`;
-}
-
-function todayUTC(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-function yesterdayUTC(): string {
-  return new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-}
-function daysBetween(a: string, b: string): number {
-  const da = new Date(a + "T00:00:00Z").getTime();
-  const db = new Date(b + "T00:00:00Z").getTime();
-  return Math.round((db - da) / 86400000);
 }
 
 export async function loadWatchedVideoIds(userId: string): Promise<Set<string>> {
@@ -78,60 +68,29 @@ export async function recordVideoWatch(
     { onConflict: "user_id,concept_id" },
   );
 
-  // Update XP + total_lessons on the streak row, but DON'T touch streak/date —
-  // videos boost XP without single-handedly satisfying the daily lesson loop.
   const prev = await loadStreak(userId);
-  const today = todayUTC();
-  const yest = yesterdayUTC();
-
-  // Video completions advance the daily streak using the same rules as
-  // written lessons — otherwise streaks stagnate for video-first users.
-  let nextCurrent = prev.current;
-  let nextFreeze = prev.freezeTokens;
-  if (prev.lastLessonDate === today) {
-    // Already counted today.
-  } else if (prev.lastLessonDate === yest || prev.current === 0) {
-    nextCurrent = (prev.current || 0) + 1;
-  } else if (
-    prev.lastLessonDate &&
-    daysBetween(prev.lastLessonDate, today) === 2 &&
-    nextFreeze > 0
-  ) {
-    nextFreeze -= 1;
-    nextCurrent = prev.current + 1;
-  } else {
-    nextCurrent = 1;
-  }
-
-  const totalLessons = prev.totalLessons + (firstTime ? 1 : 0);
-  if (
-    firstTime &&
-    totalLessons > 0 &&
-    totalLessons % FREEZE_TOKEN_EVERY === 0 &&
-    nextFreeze < FREEZE_TOKEN_MAX
-  ) {
-    nextFreeze += 1;
-  }
-
   const next: StreakState = {
-    current: nextCurrent,
-    longest: Math.max(prev.longest, nextCurrent),
-    lastLessonDate: today,
-    freezeTokens: nextFreeze,
-    totalLessons,
-    totalXp: prev.totalXp + xpAwarded,
+    ...prev,
+    totalVideos: prev.totalVideos + (firstTime ? 1 : 0),
+    videoXp: prev.videoXp + xpAwarded,
   };
 
+  // Only touch the video counters — do NOT overwrite streak/date/lesson totals.
+  // Cast to loose record because generated types may not include the new
+  // columns until the Supabase types file regenerates.
   await supabase.from("daily_streak").upsert(
     {
       user_id: userId,
-      current_streak: next.current,
-      longest_streak: next.longest,
-      last_lesson_date: next.lastLessonDate,
-      freeze_tokens: next.freezeTokens,
-      total_lessons: next.totalLessons,
-      total_xp: next.totalXp,
-    },
+      total_videos: next.totalVideos,
+      video_xp: next.videoXp,
+      // Preserve required fields on first-ever row (upsert needs full row).
+      current_streak: prev.current,
+      longest_streak: prev.longest,
+      last_lesson_date: prev.lastLessonDate,
+      freeze_tokens: prev.freezeTokens,
+      total_lessons: prev.totalLessons,
+      total_xp: prev.totalXp,
+    } as never,
     { onConflict: "user_id" },
   );
 
