@@ -372,5 +372,6 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
       </button>
     ) : null}
     </div>
+    </div>
   );
 }
