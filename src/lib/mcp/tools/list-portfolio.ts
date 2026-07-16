@@ -1,17 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
-import { defineTool, type ToolContext } from "@lovable.dev/mcp-js";
-
-function supabaseForUser(ctx: ToolContext) {
-  const url = (globalThis as any).Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL!;
-  const key =
-    (globalThis as any).Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ??
-    (globalThis as any).Deno?.env.get("SUPABASE_ANON_KEY") ??
-    process.env.SUPABASE_PUBLISHABLE_KEY!;
-  return createClient(url, key, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
+import { defineTool } from "@lovable.dev/mcp-js";
+import { dbError, withAuthAndTrace } from "./_shared";
 
 export default defineTool({
   name: "list_portfolio",
@@ -19,18 +7,15 @@ export default defineTool({
   description: "Returns the tickers the signed-in user is tracking in their Econology portfolio.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async (_input, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
-    }
-    const { data, error } = await supabaseForUser(ctx)
+  handler: withAuthAndTrace("list_portfolio", async (_input, _ctx, { traceId, supabase, userId }) => {
+    const { data, error } = await supabase
       .from("user_portfolio")
       .select("*")
-      .eq("user_id", ctx.getUserId());
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+      .eq("user_id", userId);
+    if (error) return dbError("list_portfolio", traceId, "select", error);
     return {
       content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
-      structuredContent: { portfolio: data ?? [] },
+      structuredContent: { portfolio: data ?? [], traceId },
     };
-  },
+  }),
 });
