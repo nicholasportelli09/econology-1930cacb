@@ -4,6 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { type UserProfile, defaultProfile } from "@/types/profile";
 import { track } from "@/lib/analytics";
+import { trackProduct } from "@/lib/productAnalytics";
 import { supabase } from "@/integrations/supabase/client";
 import StepWelcome from "@/components/onboarding/StepWelcome";
 import StepSituation from "@/components/onboarding/StepSituation";
@@ -21,6 +22,7 @@ const Onboarding = () => {
 
   useEffect(() => {
     track("onboarding_started");
+    void trackProduct("onboarding_started");
   }, []);
 
   const update = (fields: Partial<UserProfile>) => {
@@ -43,6 +45,10 @@ const Onboarding = () => {
       goals: profile.financialGoals,
       topics: profile.topicsOfInterest,
       learningStyle: profile.learningStyle,
+    });
+    void trackProduct("onboarding_completed", {
+      goals_count: profile.financialGoals.length,
+      topics_count: profile.topicsOfInterest.length,
     });
     // Persist onboarding so the assistant / MCP tools can honor goals & preferences.
     try {

@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
+import { trackProduct } from "@/lib/productAnalytics";
 
 export interface LessonProgressRow {
   conceptId: string;
@@ -130,6 +131,7 @@ export async function completeLesson(
     attempts,
     accuracy: quizTotal > 0 ? Math.round((quizScore / quizTotal) * 100) : 0,
   });
+  void trackProduct("lesson_completed", { concept_id: conceptId });
 
   // Streak update.
   const prev = await loadStreak(userId);

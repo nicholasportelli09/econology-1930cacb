@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { trackProduct } from "@/lib/productAnalytics";
 
 type ContentType = "ai_news" | "market_idea" | "ai_summary" | "ai_digest" | "ai_tutor";
 
@@ -77,6 +78,8 @@ export function ReportIssue({
       return;
     }
     toast({ title: "Thanks for the report", description: "We review flagged content and act on patterns we see." });
+    void trackProduct("content_reported", { surface: contentType, reason_bucket: reason });
+    void trackProduct("feedback_submitted", { surface: contentType });
     setOpen(false);
     setReason("");
     setDetails("");

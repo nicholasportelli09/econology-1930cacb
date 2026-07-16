@@ -73,6 +73,7 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
       setNewTicker("");
       toast({ title: "Added", description: `${ticker} added to your portfolio.` });
       import("@/lib/analytics").then(({ track }) => track("watchlist_ticker_added", { ticker, source: "manual" }));
+      import("@/lib/productAnalytics").then(({ trackProduct }) => void trackProduct("watchlist_ticker_added"));
     } catch (e: any) {
       toast({ title: "Error", description: e.message || "Failed to add ticker", variant: "destructive" });
       import("@/lib/analytics").then(({ trackError }) => trackError(e, { where: "addTicker", ticker }));
@@ -140,6 +141,9 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
       import("@/lib/analytics").then(({ track }) =>
         newOnes.forEach((t) => track("watchlist_ticker_added", { ticker: t, source: "screenshot" })),
       );
+      import("@/lib/productAnalytics").then(({ trackProduct }) => {
+        newOnes.forEach(() => void trackProduct("watchlist_ticker_added"));
+      });
     } catch (e: any) {
       toast({ title: "Import failed", description: e.message || "Could not read screenshot", variant: "destructive" });
     } finally {

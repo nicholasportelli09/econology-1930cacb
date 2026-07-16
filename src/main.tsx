@@ -3,6 +3,8 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
 import { initAnalytics } from "@/lib/analytics";
+import { initProductAnalytics } from "@/lib/productAnalytics";
+import AppErrorBoundary from "@/components/AppErrorBoundary";
 
 // Initialize theme before render to avoid flash.
 // Default for everyone is LIGHT mode. Only honor an explicit user toggle.
@@ -20,10 +22,13 @@ if (!localStorage.getItem("econology_first_visit")) {
 
 // Initialize analytics + crash monitoring before render.
 initAnalytics();
+initProductAnalytics();
 
 createRoot(document.getElementById("root")!).render(
   <HelmetProvider>
-    <App />
+    <AppErrorBoundary>
+      <App />
+    </AppErrorBoundary>
   </HelmetProvider>
 );
 

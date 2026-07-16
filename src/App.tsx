@@ -29,6 +29,7 @@ import OAuthConsent from "./pages/OAuthConsent";
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import AdminLaunchMetrics from "./pages/AdminLaunchMetrics";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,9 @@ const App = () => (
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/budget" element={<ProtectedRoute><BudgetSimulator /></ProtectedRoute>} />
             <Route path="/videos" element={<ProtectedRoute><Videos /></ProtectedRoute>} />
+
+            {/* Admin (server-side role check inside the page) */}
+            <Route path="/admin/launch-metrics" element={<ProtectedRoute><AdminLaunchMetrics /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
