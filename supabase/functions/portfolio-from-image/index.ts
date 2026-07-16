@@ -109,15 +109,15 @@ Rules:
     const m = content.match(/```(?:json)?\s*([\s\S]*?)```/);
     if (m) jsonStr = m[1].trim();
 
-    let parsed: { tickers?: string[] } = {};
-    try { parsed = JSON.parse(jsonStr); } catch {
+    let parsedResult: { tickers?: string[] } = {};
+    try { parsedResult = JSON.parse(jsonStr); } catch {
       // try to salvage tickers via regex
       const matches = content.match(/\b[A-Z]{1,5}(?:\.[A-Z])?\b/g) || [];
-      parsed = { tickers: matches };
+      parsedResult = { tickers: matches };
     }
 
     const cleaned = Array.from(new Set(
-      (parsed.tickers || [])
+      (parsedResult.tickers || [])
         .filter((t): t is string => typeof t === "string")
         .map(t => t.trim().toUpperCase())
         .filter(t => /^[A-Z]{1,5}(\.[A-Z])?$/.test(t))
