@@ -2,7 +2,12 @@ import { createClient } from "@supabase/supabase-js";
 import { defineTool, type ToolContext } from "@lovable.dev/mcp-js";
 
 function supabaseForUser(ctx: ToolContext) {
-  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+  const url = (globalThis as any).Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL!;
+  const key =
+    (globalThis as any).Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ??
+    (globalThis as any).Deno?.env.get("SUPABASE_ANON_KEY") ??
+    process.env.SUPABASE_PUBLISHABLE_KEY!;
+  return createClient(url, key, {
     global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
     auth: { persistSession: false, autoRefreshToken: false },
   });
