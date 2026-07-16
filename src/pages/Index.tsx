@@ -447,6 +447,8 @@ const Index = () => {
               <button onClick={() => navigate("/ask")} className="hover:text-white transition-colors">Ask Ekon</button>
               <button onClick={() => document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" })} className="hover:text-white transition-colors">FAQ</button>
               <button onClick={() => navigate("/login")} className="hover:text-white transition-colors">Sign In</button>
+              <button onClick={() => navigate("/privacy")} className="hover:text-white transition-colors">Privacy</button>
+              <button onClick={() => navigate("/terms")} className="hover:text-white transition-colors">Terms</button>
             </div>
 
             <button
@@ -460,6 +462,7 @@ const Index = () => {
 
           <div className="mt-8 pt-5 border-t text-center text-xs" style={{ borderColor: "hsl(232 30% 25%)", color: "hsl(230 18% 60%)" }}>
             <p>© 2026 Econology · The science of smart money</p>
+            <p className="mt-2">Educational content only — not financial advice.</p>
           </div>
         </div>
       </footer>
