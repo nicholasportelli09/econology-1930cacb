@@ -65,8 +65,44 @@ serve(async (req) => {
       .filter(t => /^[A-Z0-9.\-]{1,10}$/.test(t));
     const quotes: Record<string, any> = {};
 
+    // Finnhub's free tier doesn't cover cash indices. Route SPX / GSPC
+    // (the S&P 500 index, in points) to Financial Modeling Prep instead.
+    const FMP_API_KEY = Deno.env.get("FMP_API_KEY");
+    const INDEX_MAP: Record<string, string> = {
+      SPX: "^GSPC",
+      GSPC: "^GSPC",
+    };
+    async function fetchIndexQuote(alias: string, fmpSymbol: string) {
+      if (!FMP_API_KEY) return;
+      try {
+        const url = `https://financialmodelingprep.com/api/v3/quote/${encodeURIComponent(fmpSymbol)}?apikey=${FMP_API_KEY}`;
+        const resp = await fetch(url);
+        if (!resp.ok) return;
+        const arr = await resp.json();
+        const row = Array.isArray(arr) ? arr[0] : null;
+        if (!row) return;
+        quotes[alias] = {
+          price: row.price ?? 0,
+          change: row.change ?? 0,
+          changePercent: row.changesPercentage ?? 0,
+          high: row.dayHigh ?? 0,
+          low: row.dayLow ?? 0,
+          open: row.open ?? 0,
+          prevClose: row.previousClose ?? 0,
+          timestamp: row.timestamp ?? 0,
+          isIndex: true,
+        };
+      } catch (e) {
+        console.error(`Failed to fetch index quote for ${alias}:`, e);
+      }
+    }
+
     await Promise.all(
       tickerList.slice(0, 20).map(async (ticker) => {
+        if (INDEX_MAP[ticker]) {
+          await fetchIndexQuote(ticker, INDEX_MAP[ticker]);
+          return;
+        }
         try {
           const url = `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}&token=${FINNHUB_API_KEY}`;
           const resp = await fetch(url);

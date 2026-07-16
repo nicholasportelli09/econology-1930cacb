@@ -10,7 +10,7 @@ import { getUSMarketStatus } from "@/lib/marketStatus";
  * sector. Replaces the full heatmap to keep the news page focused.
  */
 const SECTORS: { ticker: string; name: string }[] = [
-  { ticker: "SPY", name: "S&P 500" },
+  { ticker: "SPX", name: "S&P 500" },
   { ticker: "XLK", name: "Technology" },
   { ticker: "XLF", name: "Financials" },
   { ticker: "XLV", name: "Health Care" },
@@ -52,7 +52,7 @@ export function SectorHeatmap() {
 
   useEffect(() => { load(); }, [load]);
 
-  const spy = quotes["SPY"];
+  const spx = quotes["SPX"];
   const status = getUSMarketStatus();
   const showChange = status.isOpen; // only show today's % move during the live session
   const sectors = SECTORS.slice(1);
@@ -118,30 +118,34 @@ export function SectorHeatmap() {
 
       {!error && ready && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          {/* SPY */}
-          {spy && (
+          {/* S&P 500 index (points, not dollars) */}
+          {spx && (
             <div className={cn(
               "rounded-lg border p-3",
               !showChange
                 ? "bg-muted/40 border-border"
-                : spy.changePercent >= 0
+                : spx.changePercent >= 0
                 ? "bg-accent/10 border-accent/30"
                 : "bg-destructive/10 border-destructive/30"
             )}>
-              <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-wider">S&P 500 (SPY)</p>
+              <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-wider">S&P 500 (SPX)</p>
               {showChange ? (
                 <>
                   <p className={cn(
                     "text-lg font-mono font-bold mt-0.5",
-                    spy.changePercent >= 0 ? "text-accent" : "text-destructive"
+                    spx.changePercent >= 0 ? "text-accent" : "text-destructive"
                   )}>
-                    {spy.changePercent >= 0 ? "+" : ""}{spy.changePercent.toFixed(2)}%
+                    {spx.changePercent >= 0 ? "+" : ""}{spx.changePercent.toFixed(2)}%
                   </p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">${spy.price.toFixed(2)}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                    {spx.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} pts
+                  </p>
                 </>
               ) : (
                 <>
-                  <p className="text-lg font-mono font-bold mt-0.5 text-foreground">${spy.price.toFixed(2)}</p>
+                  <p className="text-lg font-mono font-bold mt-0.5 text-foreground">
+                    {spx.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-xs font-normal text-muted-foreground">pts</span>
+                  </p>
                   <p className="text-[10px] text-muted-foreground mt-0.5">Last close</p>
                 </>
               )}
