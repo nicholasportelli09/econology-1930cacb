@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import EconologyLogo from "@/components/EconologyLogo";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,9 @@ import { Seo } from "@/components/Seo";
 
 export default function Login() {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const rawNext = searchParams.get("next");
+  const nextPath = rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : null;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,7 +35,7 @@ export default function Login() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo: `${window.location.origin}${nextPath ?? "/dashboard"}`,
         },
       });
       if (error) {
@@ -108,7 +111,7 @@ export default function Login() {
         <div className="text-center space-y-2 text-sm">
           <p style={{ color: "hsl(240 15% 45%)" }}>
             Don't have an account?{" "}
-            <Link to="/signup" className="text-primary hover:underline font-medium">Sign Up</Link>
+            <Link to={nextPath ? `/signup?next=${encodeURIComponent(nextPath)}` : "/signup"} className="text-primary hover:underline font-medium">Sign Up</Link>
           </p>
           <Link to="/" className="block transition-colors hover:opacity-80" style={{ color: "hsl(240 15% 45%)" }}>
             ← Back to landing page

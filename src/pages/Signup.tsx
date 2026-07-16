@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import logoSrc from "@/assets/econology-logo.png";
@@ -12,6 +12,9 @@ import { Seo } from "@/components/Seo";
 export default function Signup() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const rawNext = searchParams.get("next");
+  const nextPath = rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : null;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +33,7 @@ export default function Signup() {
       password,
       options: {
         data: { display_name: name },
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}${nextPath ?? "/"}`,
       },
     });
     setLoading(false);
@@ -48,7 +51,7 @@ export default function Signup() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/onboarding`,
+          redirectTo: `${window.location.origin}${nextPath ?? "/onboarding"}`,
         },
       });
       if (error) {
@@ -169,7 +172,7 @@ export default function Signup() {
         <div className="text-center space-y-2 text-sm">
           <p style={{ color: "hsl(240 15% 45%)" }}>
             Already have an account?{" "}
-            <Link to="/login" className="text-primary hover:underline font-semibold">Sign In</Link>
+            <Link to={nextPath ? `/login?next=${encodeURIComponent(nextPath)}` : "/login"} className="text-primary hover:underline font-semibold">Sign In</Link>
           </p>
           <Link to="/" className="block transition-colors hover:opacity-80" style={{ color: "hsl(240 15% 45%)" }}>
             ← Back to landing page

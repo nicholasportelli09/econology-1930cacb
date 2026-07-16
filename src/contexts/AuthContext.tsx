@@ -76,10 +76,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         const currentPath = window.location.pathname;
         if (currentPath === "/login" || currentPath === "/signup" || currentPath === "/verify-email") {
+          // Preserve ?next=<relative path> so OAuth consent (or other
+          // deep links) can round-trip through sign-in.
+          const params = new URLSearchParams(window.location.search);
+          const rawNext = params.get("next");
+          const safeNext = rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : null;
           const profile = localStorage.getItem("econology_profile");
-          // Use history API to avoid a full reload flash. ProtectedRoute will
-          // pick up the new auth state without unmounting the app shell.
-          const target = profile ? "/dashboard" : "/onboarding";
+          const target = safeNext ?? (profile ? "/dashboard" : "/onboarding");
           window.history.replaceState({}, "", target);
           // Trigger react-router to react to the URL change.
           window.dispatchEvent(new PopStateEvent("popstate"));
