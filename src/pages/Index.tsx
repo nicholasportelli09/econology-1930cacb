@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
+import { HeroBrainIntro } from "@/components/HeroBrainIntro";
 import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, Shield } from "lucide-react";
 import { Sparkles, TrendingUp, MessageCircle, Flame, Trophy, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -107,7 +108,14 @@ const Index = () => {
       </nav>
 
       {/* Hero */}
-      <section className="relative z-10 flex flex-col items-center text-center px-6 pt-6 pb-16 md:pt-10 md:pb-20 w-full">
+      <section className="relative overflow-hidden z-10 flex flex-col items-center text-center px-6 pt-6 pb-16 md:pt-10 md:pb-20 w-full">
+        <HeroBrainIntro />
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.7, duration: 0.7, ease: "easeOut" }}
+          className="relative z-10 w-full flex flex-col items-center"
+        >
         <motion.div
           variants={container}
           initial="hidden"
@@ -260,6 +268,7 @@ const Index = () => {
               </div>
             </div>
           </motion.div>
+        </motion.div>
         </motion.div>
       </section>
 
