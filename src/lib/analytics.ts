@@ -186,7 +186,7 @@ export function track(event: EconologyEvent, props: EventProps = {}): void {
   }
 
   // Buffer events to reduce network chatter and gracefully handle offline.
-  buffer.push({ event, props, severity: "info" });
+  buffer.push({ event, props, severity: "info", userId: identifiedUserId });
 
   // Flush immediately if the buffer is getting large.
   if (buffer.length >= 10) {
@@ -215,7 +215,7 @@ export function trackError(err: unknown, context: EventProps = {}): void {
     return;
   }
 
-  buffer.push({ event: "app_error", props: safeContext, severity: "error" });
+  buffer.push({ event: "app_error", props: safeContext, severity: "error", userId: identifiedUserId });
 }
 
 export function trackCrash(err: unknown, context: EventProps = {}): void {
@@ -239,6 +239,7 @@ export function trackCrash(err: unknown, context: EventProps = {}): void {
     event: "app_error",
     props: safeContext,
     severity: "crash",
+    userId: identifiedUserId,
   });
 
   // Crashes are flushed immediately so we don't lose them.
