@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Mail, Lock, User, Sparkles, Flame, Trophy } from "lucide-react";
 import { Seo } from "@/components/Seo";
+import { track } from "@/lib/analytics";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ export default function Signup() {
       return;
     }
     setLoading(true);
+    track("signup_started", { method: "email" });
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -47,6 +49,7 @@ export default function Signup() {
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
+    track("oauth_started", { provider: "google", from: "signup" });
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",

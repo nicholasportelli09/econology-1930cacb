@@ -71,8 +71,10 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
       onUpdate([...tickers, ticker]);
       setNewTicker("");
       toast({ title: "Added", description: `${ticker} added to your portfolio.` });
+      import("@/lib/analytics").then(({ track }) => track("watchlist_ticker_added", { ticker, source: "manual" }));
     } catch (e: any) {
       toast({ title: "Error", description: e.message || "Failed to add ticker", variant: "destructive" });
+      import("@/lib/analytics").then(({ trackError }) => trackError(e, { where: "addTicker", ticker }));
     } finally {
       setAdding(false);
     }
@@ -90,6 +92,7 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
         return next;
       });
       toast({ title: "Removed", description: `${ticker} removed from portfolio.` });
+      import("@/lib/analytics").then(({ track }) => track("watchlist_ticker_removed", { ticker }));
     } catch (e: any) {
       toast({ title: "Error", description: e.message || "Failed to remove", variant: "destructive" });
     }
@@ -133,6 +136,9 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
         title: `Added ${newOnes.length} ticker${newOnes.length > 1 ? "s" : ""}`,
         description: newOnes.join(", "),
       });
+      import("@/lib/analytics").then(({ track }) =>
+        newOnes.forEach((t) => track("watchlist_ticker_added", { ticker: t, source: "screenshot" })),
+      );
     } catch (e: any) {
       toast({ title: "Import failed", description: e.message || "Could not read screenshot", variant: "destructive" });
     } finally {

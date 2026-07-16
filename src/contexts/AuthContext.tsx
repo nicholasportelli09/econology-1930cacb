@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
+import { identifyUser, resetAnalytics, track } from "@/lib/analytics";
 
 interface AuthContextType {
   user: User | null;
@@ -30,6 +31,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         setIsGuest(false);
         localStorage.removeItem("econology_guest");
+        identifyUser(session.user.id, {
+          email: session.user.email ?? undefined,
+          provider:
+            (session.user.app_metadata as { provider?: string } | undefined)?.provider ?? "email",
+          created_at: session.user.created_at,
+        });
+      }
+      if (event === "SIGNED_OUT") {
+        resetAnalytics();
       }
       // Only flip loading off on the very first event to avoid re-showing the
       // full-screen loader (which causes a flicker) on subsequent token refreshes.
@@ -49,12 +59,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const lastSignIn = u.last_sign_in_at ? new Date(u.last_sign_in_at).getTime() : Date.now();
           const isFresh = created > 0 && Math.abs(lastSignIn - created) < 120_000;
           const guardKey = `econology_signup_notified_${u.id}`;
+          const provider =
+            (u.app_metadata as { provider?: string } | undefined)?.provider ||
+            (u.identities?.[0] as { provider?: string } | undefined)?.provider ||
+            "email";
+          track("login_completed", { userId: u.id, provider, fresh: isFresh });
+          if (isFresh) track("signup_completed", { userId: u.id, provider });
           if (isFresh && !localStorage.getItem(guardKey)) {
             localStorage.setItem(guardKey, "1");
-            const provider =
-              (u.app_metadata as any)?.provider ||
-              (u.identities?.[0] as any)?.provider ||
-              "email";
             // Fire-and-forget — don't block the redirect.
             supabase.functions
               .invoke("send-transactional-email", {

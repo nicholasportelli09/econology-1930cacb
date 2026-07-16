@@ -59,6 +59,17 @@ export function ArticleCard({ article, profile, formatDate, isPinned, onPin, onU
         target="_blank"
         rel="noopener noreferrer"
         className="group flex gap-4 p-4 hover:bg-muted/30 transition-colors"
+        onClick={() => {
+          import("@/lib/analytics").then(({ track }) => {
+            track("news_source_opened", {
+              url: article.url,
+              site: article.site,
+              symbol: article.symbol,
+              title: article.title,
+            });
+            track("news_article_read", { url: article.url, site: article.site });
+          });
+        }}
       >
         {article.image && (
           <img

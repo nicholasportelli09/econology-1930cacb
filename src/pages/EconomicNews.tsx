@@ -229,8 +229,14 @@ const EconomicNews = () => {
       if (error) throw error;
       setPinnedArticles(prev => [data as PinnedArticleRow, ...prev]);
       toast({ title: "Pinned!", description: "Article saved to your pins." });
+      import("@/lib/analytics").then(({ track }) =>
+        track("article_pinned", { url: article.url, site: article.site, symbol: article.symbol }),
+      );
     } catch (e: any) {
       toast({ title: "Error", description: e.message || "Failed to pin", variant: "destructive" });
+      import("@/lib/analytics").then(({ trackError }) =>
+        trackError(e, { where: "pinArticle", url: article.url }),
+      );
     }
   };
 
@@ -248,6 +254,7 @@ const EconomicNews = () => {
       if (error) throw error;
       setPinnedArticles(prev => prev.filter(a => a.id !== id));
       toast({ title: "Unpinned", description: "Article removed from pins." });
+      import("@/lib/analytics").then(({ track }) => track("article_unpinned", { id }));
     } catch (e: any) {
       toast({ title: "Error", description: e.message || "Failed to unpin", variant: "destructive" });
     }

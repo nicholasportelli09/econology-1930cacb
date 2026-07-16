@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { track } from "@/lib/analytics";
 
 export interface LessonProgressRow {
   conceptId: string;
@@ -112,6 +113,23 @@ export async function completeLesson(
     },
     { onConflict: "user_id,concept_id" },
   );
+
+  // Count total lessons completed to fire first_lesson_completed exactly once.
+  const { count: totalCompleted } = await supabase
+    .from("lesson_progress")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId);
+  const isFirst = attempts === 1 && (totalCompleted ?? 0) <= 1;
+  if (isFirst) {
+    track("first_lesson_completed", { conceptId, quizScore, quizTotal });
+  }
+  track("lesson_completed", {
+    conceptId,
+    quizScore,
+    quizTotal,
+    attempts,
+    accuracy: quizTotal > 0 ? Math.round((quizScore / quizTotal) * 100) : 0,
+  });
 
   // Streak update.
   const prev = await loadStreak(userId);
