@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://econology.lovable.app/sitemap.xml
+Sitemap: https://www.econology.app/sitemap.xml
