@@ -195,9 +195,9 @@ Return ONLY valid JSON in this format. The legacy field names are kept for back-
       jsonStr = jsonMatch[1].trim();
     }
 
-    let parsed;
+    let parsedResult;
     try {
-      parsed = JSON.parse(jsonStr);
+      parsedResult = JSON.parse(jsonStr);
     } catch {
       console.error("Failed to parse AI response as JSON:", content);
       return new Response(
@@ -206,7 +206,7 @@ Return ONLY valid JSON in this format. The legacy field names are kept for back-
       );
     }
 
-    return new Response(JSON.stringify(parsed), {
+    return new Response(JSON.stringify(parsedResult), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
