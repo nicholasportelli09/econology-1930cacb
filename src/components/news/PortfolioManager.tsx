@@ -35,7 +35,8 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const marketStatus = getUSMarketStatus();
-  const showChange = marketStatus.isOpen;
+  // Always surface % change next to each holding — when the market is closed
+  // it reflects the last close, and we label it as such via tooltip.
 
   const fetchQuotes = useCallback(async () => {
     if (tickers.length === 0) return;
