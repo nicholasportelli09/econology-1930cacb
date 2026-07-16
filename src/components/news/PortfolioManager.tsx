@@ -163,7 +163,6 @@ export function PortfolioManager({ userId, tickers, onUpdate, loading }: Portfol
 
   return (
     <div className="space-y-3">
-    <Disclaimer />
     <div className="grid gap-4 lg:grid-cols-2">
     <div className="rounded-xl border border-border bg-card p-4 space-y-3 min-w-0">
       <div className="flex items-center justify-between">
