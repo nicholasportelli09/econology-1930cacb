@@ -62,6 +62,9 @@ const Quiz = () => {
       }
       localStorage.setItem("econology_profile", JSON.stringify(profile));
     }
+    import("@/lib/analytics").then(({ track }) =>
+      track("placement_quiz_completed", { score: finalScore, quizSet }),
+    );
   };
 
   const handleFinish = () => {
