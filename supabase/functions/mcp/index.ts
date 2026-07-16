@@ -6,35 +6,97 @@
 import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.22.2";
 
 // src/lib/mcp/tools/get-profile.ts
-import { createClient } from "npm:@supabase/supabase-js@^2.97.0";
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.22.2";
+
+// src/lib/mcp/tools/_shared.ts
+import { createClient } from "npm:@supabase/supabase-js@^2.97.0";
+function readEnv(name) {
+  const denoEnv = globalThis.Deno?.env;
+  const fromDeno = denoEnv?.get(name);
+  if (fromDeno) return fromDeno;
+  const proc = globalThis.process;
+  return proc?.env?.[name];
+}
+function newTraceId() {
+  const rand = Math.random().toString(36).slice(2, 10);
+  return `trace_${Date.now().toString(36)}_${rand}`;
+}
+function errorResult(tool, traceId, code, message, detail) {
+  const payload = { error: { tool, traceId, code, message, detail: detail ?? null } };
+  console.error(`[mcp:${tool}] ${code} traceId=${traceId} message=${message}`, detail ?? "");
+  return {
+    content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+    structuredContent: payload,
+    isError: true
+  };
+}
 function supabaseForUser(ctx) {
-  const url = globalThis.Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL;
-  const key = globalThis.Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ?? globalThis.Deno?.env.get("SUPABASE_ANON_KEY") ?? process.env.SUPABASE_PUBLISHABLE_KEY;
+  const url = readEnv("SUPABASE_URL");
+  const key = readEnv("SUPABASE_PUBLISHABLE_KEY") ?? readEnv("SUPABASE_ANON_KEY");
+  if (!url || !key) {
+    throw new Error(
+      `mcp_config_missing: SUPABASE_URL=${url ? "ok" : "missing"} SUPABASE_PUBLISHABLE_KEY=${key ? "ok" : "missing"}`
+    );
+  }
+  const token = ctx.getToken();
+  if (!token) {
+    throw new Error("mcp_auth_missing_token: OAuth verified but no bearer token was forwarded");
+  }
   return createClient(url, key, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+    global: { headers: { Authorization: `Bearer ${token}` } },
     auth: { persistSession: false, autoRefreshToken: false }
   });
 }
+function withAuthAndTrace(tool, run) {
+  return async (input, ctx) => {
+    const traceId = newTraceId();
+    try {
+      if (!ctx.isAuthenticated()) {
+        return errorResult(tool, traceId, "unauthenticated", "OAuth token was not accepted or missing");
+      }
+      const userId = ctx.getUserId();
+      if (!userId) {
+        return errorResult(tool, traceId, "no_user_id", "OAuth token verified but sub claim is empty");
+      }
+      const supabase = supabaseForUser(ctx);
+      return await run(input, ctx, { traceId, supabase, userId });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      const stack = err instanceof Error ? err.stack : void 0;
+      const code = message.startsWith("mcp_config_missing") ? "config_missing" : message.startsWith("mcp_auth_missing_token") ? "auth_missing_token" : "handler_exception";
+      return errorResult(tool, traceId, code, message, { stack });
+    }
+  };
+}
+function dbError(tool, traceId, op, error) {
+  return errorResult(tool, traceId, `db_${op}_failed`, error.message, {
+    pg_code: error.code ?? null,
+    details: error.details ?? null,
+    hint: error.hint ?? null
+  });
+}
+
+// src/lib/mcp/tools/get-profile.ts
 var get_profile_default = defineTool({
   name: "get_profile",
   title: "Get my Econology profile",
   description: "Returns the signed-in user's Econology literacy profile: level, goals, learning preferences, and streak metadata.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async (_input, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
+  handler: withAuthAndTrace("get_profile", async (_input, _ctx, { traceId, supabase, userId }) => {
+    const { data, error } = await supabase.from("literacy_profiles").select("*").eq("user_id", userId).maybeSingle();
+    if (error) return dbError("get_profile", traceId, "select", error);
+    if (!data) {
+      return {
+        content: [{ type: "text", text: "No profile yet. Complete onboarding in the app." }],
+        structuredContent: { profile: null, traceId }
+      };
     }
-    const supabase = supabaseForUser(ctx);
-    const { data, error } = await supabase.from("literacy_profiles").select("*").eq("user_id", ctx.getUserId()).maybeSingle();
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
-    if (!data) return { content: [{ type: "text", text: "No profile yet. Complete onboarding in the app." }] };
     return {
       content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
-      structuredContent: { profile: data }
+      structuredContent: { profile: data, traceId }
     };
-  }
+  })
 });
 
 // src/lib/mcp/tools/get-progress.ts
