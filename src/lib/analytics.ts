@@ -101,7 +101,7 @@ async function flushBuffer(): Promise<void> {
   const batch = buffer;
   buffer = [];
   await Promise.all(
-    batch.map((item) => insertEvent(item.event, item.props, item.severity))
+    batch.map((item) => insertEvent(item.event, item.props, item.severity, item.userId))
   );
 }
 
