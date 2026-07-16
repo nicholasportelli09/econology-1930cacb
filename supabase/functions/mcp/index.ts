@@ -253,9 +253,40 @@ var add_portfolio_ticker_default = defineTool4({
   })
 });
 
-// src/lib/mcp/tools/list-pinned-articles.ts
+// src/lib/mcp/tools/remove-portfolio-ticker.ts
 import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.22.2";
-var list_pinned_articles_default = defineTool5({
+import { z as z2 } from "npm:zod@^4.4.3";
+var remove_portfolio_ticker_default = defineTool5({
+  name: "remove_portfolio_ticker",
+  title: "Remove a ticker from my portfolio",
+  description: "Removes a stock ticker symbol from the signed-in user's Econology portfolio watchlist.",
+  inputSchema: {
+    ticker: z2.string().trim().min(1).max(12).describe("Stock ticker symbol to remove, e.g. AAPL.")
+  },
+  annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
+  handler: withAuthAndTrace(
+    "remove_portfolio_ticker",
+    async ({ ticker }, _ctx, { requestId, supabase, userId }) => {
+      const symbol = ticker.toUpperCase();
+      const { data, error } = await supabase.from("user_portfolio").delete().eq("user_id", userId).eq("ticker", symbol).select("ticker");
+      if (error) return dbError("remove_portfolio_ticker", requestId, "write", error);
+      const removed = (data?.length ?? 0) > 0;
+      return {
+        content: [
+          {
+            type: "text",
+            text: removed ? `Removed ${symbol} from your portfolio.` : `${symbol} was not in your portfolio.`
+          }
+        ],
+        structuredContent: { removed, ticker: symbol, request_id: requestId }
+      };
+    }
+  )
+});
+
+// src/lib/mcp/tools/list-pinned-articles.ts
+import { defineTool as defineTool6 } from "npm:@lovable.dev/mcp-js@0.22.2";
+var list_pinned_articles_default = defineTool6({
   name: "list_pinned_articles",
   title: "List my pinned articles",
   description: "Returns the signed-in user's pinned economic-news articles with safe display fields only (title, url, site, symbol, published_date, snippet, image, pinned_at).",
@@ -291,18 +322,96 @@ var list_pinned_articles_default = defineTool5({
   })
 });
 
+// src/lib/mcp/tools/health-check.ts
+import { defineTool as defineTool7 } from "npm:@lovable.dev/mcp-js@0.22.2";
+var health_check_default = defineTool7({
+  name: "health_check",
+  title: "Server health check",
+  description: "Returns basic server health: ok status, server time, and a request id. Does not require authentication.",
+  inputSchema: {},
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async () => {
+    const requestId = newRequestId();
+    const startedAt = Date.now();
+    const payload = {
+      status: "ok",
+      server_time: (/* @__PURE__ */ new Date()).toISOString(),
+      uptime_hint_ms: startedAt,
+      request_id: requestId
+    };
+    console.log(`[mcp:health_check] ok request_id=${requestId}`);
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload) }],
+      structuredContent: payload
+    };
+  }
+});
+
+// src/lib/mcp/tools/get-launch-metrics.ts
+import { defineTool as defineTool8 } from "npm:@lovable.dev/mcp-js@0.22.2";
+import { z as z3 } from "npm:zod@^4.4.3";
+function isoDaysAgo(n) {
+  const d = /* @__PURE__ */ new Date();
+  d.setUTCDate(d.getUTCDate() - n);
+  return d.toISOString().slice(0, 10);
+}
+var get_launch_metrics_default = defineTool8({
+  name: "get_launch_metrics",
+  title: "Get launch metrics (admin)",
+  description: "Returns aggregated Econology launch metrics between two dates (new accounts, activation, D1/D7 retention, lessons per activated user, source-open rate, watchlist adoption, crash-free session rate). Admin only. No per-user rows.",
+  inputSchema: {
+    start_date: z3.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Inclusive start date, YYYY-MM-DD. Defaults to 30 days ago."),
+    end_date: z3.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Inclusive end date, YYYY-MM-DD. Defaults to today (UTC).")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: withAuthAndTrace(
+    "get_launch_metrics",
+    async ({ start_date, end_date }, _ctx, { requestId, supabase }) => {
+      const start = start_date ?? isoDaysAgo(30);
+      const end = end_date ?? isoDaysAgo(0);
+      const { data, error } = await supabase.rpc("launch_metrics", { _start: start, _end: end });
+      if (error) {
+        const isForbidden = /not authorized/i.test(error.message) || error.code === "42501";
+        return errorResult(
+          "get_launch_metrics",
+          requestId,
+          isForbidden ? "forbidden" : "db_read_failed",
+          `rpc launch_metrics failed pg_code=${error.code ?? "?"}`
+        );
+      }
+      return {
+        content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+        structuredContent: {
+          metrics: data,
+          range: { start, end },
+          request_id: requestId
+        }
+      };
+    }
+  )
+});
+
 // src/lib/mcp/index.ts
 var projectRef = "rzwijdlukameiowfbtil";
 var mcp_default = defineMcp({
   name: "econology-mcp",
   title: "Econology",
   version: "0.1.0",
-  instructions: "Tools for Econology, a daily money and markets learning app. Use these to read the signed-in user's literacy profile, learning progress and streak, portfolio watchlist, and pinned news articles, and to add tickers to their watchlist.",
+  instructions: "Tools for Econology, a daily money and markets learning app. Read the signed-in user's literacy profile, learning progress and streak, portfolio watchlist, and pinned news articles; add or remove watchlist tickers; check server health; and (admins only) read aggregated launch metrics.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated"
   }),
-  tools: [get_profile_default, get_progress_default, list_portfolio_default, add_portfolio_ticker_default, list_pinned_articles_default]
+  tools: [
+    health_check_default,
+    get_profile_default,
+    get_progress_default,
+    list_portfolio_default,
+    list_pinned_articles_default,
+    add_portfolio_ticker_default,
+    remove_portfolio_ticker_default,
+    get_launch_metrics_default
+  ]
 });
 
 // lovable-mcp-supabase-entry.ts

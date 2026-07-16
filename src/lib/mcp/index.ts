@@ -3,7 +3,10 @@ import getProfile from "./tools/get-profile";
 import getProgress from "./tools/get-progress";
 import listPortfolio from "./tools/list-portfolio";
 import addPortfolioTicker from "./tools/add-portfolio-ticker";
+import removePortfolioTicker from "./tools/remove-portfolio-ticker";
 import listPinnedArticles from "./tools/list-pinned-articles";
+import healthCheck from "./tools/health-check";
+import getLaunchMetrics from "./tools/get-launch-metrics";
 
 // Build the OAuth issuer from the project ref so it matches the issuer Supabase's
 // discovery document publishes. Never derive from SUPABASE_URL — Lovable Cloud
@@ -15,10 +18,19 @@ export default defineMcp({
   title: "Econology",
   version: "0.1.0",
   instructions:
-    "Tools for Econology, a daily money and markets learning app. Use these to read the signed-in user's literacy profile, learning progress and streak, portfolio watchlist, and pinned news articles, and to add tickers to their watchlist.",
+    "Tools for Econology, a daily money and markets learning app. Read the signed-in user's literacy profile, learning progress and streak, portfolio watchlist, and pinned news articles; add or remove watchlist tickers; check server health; and (admins only) read aggregated launch metrics.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",
   }),
-  tools: [getProfile, getProgress, listPortfolio, addPortfolioTicker, listPinnedArticles],
+  tools: [
+    healthCheck,
+    getProfile,
+    getProgress,
+    listPortfolio,
+    listPinnedArticles,
+    addPortfolioTicker,
+    removePortfolioTicker,
+    getLaunchMetrics,
+  ],
 });

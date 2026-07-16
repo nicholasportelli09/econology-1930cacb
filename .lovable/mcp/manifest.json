@@ -17,6 +17,22 @@
     },
     "tools": [
       {
+        "name": "health_check",
+        "title": "Server health check",
+        "description": "Returns basic server health: ok status, server time, and a request id. Does not require authentication.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
         "name": "get_profile",
         "title": "Get my Econology profile",
         "description": "Returns the signed-in user's semantic Econology profile: literacy scores, mastered/weak/unknown concepts, diagnostic date and count, and (if stored) goals and learning preferences.",
@@ -65,6 +81,22 @@
         "outputSchema": null
       },
       {
+        "name": "list_pinned_articles",
+        "title": "List my pinned articles",
+        "description": "Returns the signed-in user's pinned economic-news articles with safe display fields only (title, url, site, symbol, published_date, snippet, image, pinned_at).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
         "name": "add_portfolio_ticker",
         "title": "Add a ticker to my portfolio",
         "description": "Adds a stock ticker symbol to the signed-in user's Econology portfolio watchlist.",
@@ -92,9 +124,36 @@
         "outputSchema": null
       },
       {
-        "name": "list_pinned_articles",
-        "title": "List my pinned articles",
-        "description": "Returns the signed-in user's pinned economic-news articles with safe display fields only (title, url, site, symbol, published_date, snippet, image, pinned_at).",
+        "name": "remove_portfolio_ticker",
+        "title": "Remove a ticker from my portfolio",
+        "description": "Removes a stock ticker symbol from the signed-in user's Econology portfolio watchlist.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "ticker": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 12,
+              "description": "Stock ticker symbol to remove, e.g. AAPL."
+            }
+          },
+          "required": [
+            "ticker"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_launch_metrics",
+        "title": "Get launch metrics (admin)",
+        "description": "Returns aggregated Econology launch metrics between two dates (new accounts, activation, D1/D7 retention, lessons per activated user, source-open rate, watchlist adoption, crash-free session rate). Admin only. No per-user rows.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -103,7 +162,18 @@
         "inputSchema": {
           "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
-          "properties": {}
+          "properties": {
+            "start_date": {
+              "description": "Inclusive start date, YYYY-MM-DD. Defaults to 30 days ago.",
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "end_date": {
+              "description": "Inclusive end date, YYYY-MM-DD. Defaults to today (UTC).",
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          }
         },
         "outputSchema": null
       }
