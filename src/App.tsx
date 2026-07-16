@@ -25,6 +25,7 @@ import Progress from "./pages/Progress";
 import Settings from "./pages/Settings";
 import BudgetSimulator from "./pages/BudgetSimulator";
 import Videos from "./pages/Videos";
+import OAuthConsent from "./pages/OAuthConsent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,9 @@ const App = () => (
             <Route path="/signup" element={<Signup />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/tip/:tipId" element={<TipArticle />} />
+
+            {/* OAuth consent for external MCP clients */}
+            <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
 
             {/* Legacy onboarding/quiz routes redirect into placement */}
             <Route path="/onboarding" element={<Placement />} />
