@@ -67,10 +67,11 @@ function safeStringify(value: unknown): string | null {
 async function insertEvent(
   event: EconologyEvent,
   props: EventProps,
-  severity: "info" | "warning" | "error" | "crash" = "info"
+  severity: "info" | "warning" | "error" | "crash" = "info",
+  eventUserId: string | null = identifiedUserId
 ): Promise<void> {
   const payload = {
-    user_id: identifiedUserId,
+    user_id: eventUserId,
     event,
     properties: props,
     session_id: sessionId,
