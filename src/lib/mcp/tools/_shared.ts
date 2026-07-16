@@ -44,7 +44,7 @@ export function supabaseForUser(ctx: ToolContext): SupabaseClient {
 
 type Handler<I> = (input: I, ctx: ToolContext, meta: { traceId: string; supabase: SupabaseClient; userId: string }) => Promise<{
   content: Array<{ type: "text"; text: string }>;
-  structuredContent?: unknown;
+  structuredContent?: Record<string, unknown>;
   isError?: boolean;
 }>;
 
