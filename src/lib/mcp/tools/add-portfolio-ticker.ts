@@ -1,18 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
-import { defineTool, type ToolContext } from "@lovable.dev/mcp-js";
+import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-
-function supabaseForUser(ctx: ToolContext) {
-  const url = (globalThis as any).Deno?.env.get("SUPABASE_URL") ?? process.env.SUPABASE_URL!;
-  const key =
-    (globalThis as any).Deno?.env.get("SUPABASE_PUBLISHABLE_KEY") ??
-    (globalThis as any).Deno?.env.get("SUPABASE_ANON_KEY") ??
-    process.env.SUPABASE_PUBLISHABLE_KEY!;
-  return createClient(url, key, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
+import { dbError, withAuthAndTrace } from "./_shared";
 
 export default defineTool({
   name: "add_portfolio_ticker",
@@ -22,19 +10,16 @@ export default defineTool({
     ticker: z.string().trim().min(1).max(12).describe("Stock ticker symbol, e.g. AAPL."),
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
-  handler: async ({ ticker }, ctx) => {
-    if (!ctx.isAuthenticated()) {
-      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
-    }
+  handler: withAuthAndTrace<{ ticker: string }>("add_portfolio_ticker", async ({ ticker }, _ctx, { traceId, supabase, userId }) => {
     const symbol = ticker.toUpperCase();
-    const { data, error } = await supabaseForUser(ctx)
+    const { data, error } = await supabase
       .from("user_portfolio")
-      .upsert({ user_id: ctx.getUserId(), ticker: symbol }, { onConflict: "user_id,ticker" })
+      .upsert({ user_id: userId, ticker: symbol }, { onConflict: "user_id,ticker" })
       .select();
-    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (error) return dbError("add_portfolio_ticker", traceId, "upsert", error);
     return {
       content: [{ type: "text", text: `Added ${symbol} to your portfolio.` }],
-      structuredContent: { added: data?.[0] ?? { ticker: symbol } },
+      structuredContent: { added: data?.[0] ?? { ticker: symbol }, traceId },
     };
-  },
+  }),
 });
