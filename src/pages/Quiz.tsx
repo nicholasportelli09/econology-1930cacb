@@ -65,6 +65,10 @@ const Quiz = () => {
     import("@/lib/analytics").then(({ track }) =>
       track("placement_quiz_completed", { score: finalScore, quizSet }),
     );
+    import("@/lib/productAnalytics").then(({ trackProduct }) => {
+      const bucket = finalScore <= 1 ? "low" : finalScore <= 3 ? "mid" : "high";
+      void trackProduct("placement_completed", { score_bucket: bucket });
+    });
   };
 
   const handleFinish = () => {
