@@ -167,9 +167,11 @@ export type Database = {
           last_lesson_date: string | null
           longest_streak: number
           total_lessons: number
+          total_videos: number
           total_xp: number
           updated_at: string
           user_id: string
+          video_xp: number
         }
         Insert: {
           created_at?: string
@@ -179,9 +181,11 @@ export type Database = {
           last_lesson_date?: string | null
           longest_streak?: number
           total_lessons?: number
+          total_videos?: number
           total_xp?: number
           updated_at?: string
           user_id: string
+          video_xp?: number
         }
         Update: {
           created_at?: string
@@ -191,9 +195,50 @@ export type Database = {
           last_lesson_date?: string | null
           longest_streak?: number
           total_lessons?: number
+          total_videos?: number
           total_xp?: number
           updated_at?: string
           user_id?: string
+          video_xp?: number
+        }
+        Relationships: []
+      }
+      daily_streak_backup_20260716: {
+        Row: {
+          created_at: string | null
+          current_streak: number | null
+          freeze_tokens: number | null
+          id: string | null
+          last_lesson_date: string | null
+          longest_streak: number | null
+          total_lessons: number | null
+          total_xp: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_streak?: number | null
+          freeze_tokens?: number | null
+          id?: string | null
+          last_lesson_date?: string | null
+          longest_streak?: number | null
+          total_lessons?: number | null
+          total_xp?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_streak?: number | null
+          freeze_tokens?: number | null
+          id?: string | null
+          last_lesson_date?: string | null
+          longest_streak?: number | null
+          total_lessons?: number | null
+          total_xp?: number | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
