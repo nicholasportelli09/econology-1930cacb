@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "sdk_version": "0.22.2",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://rzwijdlukameiowfbtil.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "econology-mcp",
+      "version": "0.1.0",
+      "title": "Econology"
+    },
+    "tools": [
+      {
+        "name": "get_profile",
+        "title": "Get my Econology profile",
+        "description": "Returns the signed-in user's Econology literacy profile: level, goals, learning preferences, and streak metadata.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_progress",
+        "title": "Get my learning progress",
+        "description": "Returns the signed-in user's current streak, XP, and recent lesson progress in Econology.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_portfolio",
+        "title": "List my portfolio tickers",
+        "description": "Returns the tickers the signed-in user is tracking in their Econology portfolio.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "add_portfolio_ticker",
+        "title": "Add a ticker to my portfolio",
+        "description": "Adds a stock ticker symbol to the signed-in user's Econology portfolio watchlist.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "ticker": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 12,
+              "description": "Stock ticker symbol, e.g. AAPL."
+            }
+          },
+          "required": [
+            "ticker"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_pinned_articles",
+        "title": "List my pinned articles",
+        "description": "Returns economic-news articles the signed-in user has pinned in Econology.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
