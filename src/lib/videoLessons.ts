@@ -1,5 +1,10 @@
 import { supabase } from "@/integrations/supabase/client";
-import { loadStreak, type StreakState } from "@/lib/lessons";
+import {
+  FREEZE_TOKEN_EVERY,
+  FREEZE_TOKEN_MAX,
+  loadStreak,
+  type StreakState,
+} from "@/lib/lessons";
 
 /**
  * Watch-and-earn-XP for curated videos. We reuse the existing lesson_progress
@@ -15,6 +20,18 @@ export const VIDEO_XP_WATCHED = 15;
 
 function videoConceptId(videoId: string): string {
   return `video:${videoId}`;
+}
+
+function todayUTC(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+function yesterdayUTC(): string {
+  return new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+}
+function daysBetween(a: string, b: string): number {
+  const da = new Date(a + "T00:00:00Z").getTime();
+  const db = new Date(b + "T00:00:00Z").getTime();
+  return Math.round((db - da) / 86400000);
 }
 
 export async function loadWatchedVideoIds(userId: string): Promise<Set<string>> {
@@ -64,9 +81,44 @@ export async function recordVideoWatch(
   // Update XP + total_lessons on the streak row, but DON'T touch streak/date —
   // videos boost XP without single-handedly satisfying the daily lesson loop.
   const prev = await loadStreak(userId);
+  const today = todayUTC();
+  const yest = yesterdayUTC();
+
+  // Video completions advance the daily streak using the same rules as
+  // written lessons — otherwise streaks stagnate for video-first users.
+  let nextCurrent = prev.current;
+  let nextFreeze = prev.freezeTokens;
+  if (prev.lastLessonDate === today) {
+    // Already counted today.
+  } else if (prev.lastLessonDate === yest || prev.current === 0) {
+    nextCurrent = (prev.current || 0) + 1;
+  } else if (
+    prev.lastLessonDate &&
+    daysBetween(prev.lastLessonDate, today) === 2 &&
+    nextFreeze > 0
+  ) {
+    nextFreeze -= 1;
+    nextCurrent = prev.current + 1;
+  } else {
+    nextCurrent = 1;
+  }
+
+  const totalLessons = prev.totalLessons + (firstTime ? 1 : 0);
+  if (
+    firstTime &&
+    totalLessons > 0 &&
+    totalLessons % FREEZE_TOKEN_EVERY === 0 &&
+    nextFreeze < FREEZE_TOKEN_MAX
+  ) {
+    nextFreeze += 1;
+  }
+
   const next: StreakState = {
-    ...prev,
-    totalLessons: prev.totalLessons + (firstTime ? 1 : 0),
+    current: nextCurrent,
+    longest: Math.max(prev.longest, nextCurrent),
+    lastLessonDate: today,
+    freezeTokens: nextFreeze,
+    totalLessons,
     totalXp: prev.totalXp + xpAwarded,
   };
 

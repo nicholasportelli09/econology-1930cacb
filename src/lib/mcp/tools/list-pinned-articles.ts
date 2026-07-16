@@ -1,5 +1,5 @@
 import { defineTool } from "@lovable.dev/mcp-js";
-import { dbError, withAuthAndTrace } from "./_shared";
+import { dbError, sanitizeRows, withAuthAndTrace } from "./_shared";
 
 export default defineTool({
   name: "list_pinned_articles",
@@ -15,9 +15,10 @@ export default defineTool({
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) return dbError("list_pinned_articles", traceId, "select", error);
+    const articles = sanitizeRows(data as Record<string, unknown>[] | null);
     return {
-      content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
-      structuredContent: { articles: data ?? [], traceId },
+      content: [{ type: "text", text: JSON.stringify(articles, null, 2) }],
+      structuredContent: { articles, traceId },
     };
   }),
 });

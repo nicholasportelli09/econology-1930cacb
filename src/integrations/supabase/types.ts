@@ -279,6 +279,7 @@ export type Database = {
           diagnostic_taken_at: string
           id: string
           mastered_concepts: string[]
+          onboarding: Json | null
           score_budgeting: number
           score_credit: number
           score_investing: number
@@ -295,6 +296,7 @@ export type Database = {
           diagnostic_taken_at?: string
           id?: string
           mastered_concepts?: string[]
+          onboarding?: Json | null
           score_budgeting?: number
           score_credit?: number
           score_investing?: number
@@ -311,6 +313,7 @@ export type Database = {
           diagnostic_taken_at?: string
           id?: string
           mastered_concepts?: string[]
+          onboarding?: Json | null
           score_budgeting?: number
           score_credit?: number
           score_investing?: number

@@ -81,3 +81,19 @@ export function dbError(tool: string, traceId: string, op: string, error: { mess
     hint: error.hint ?? null,
   });
 }
+
+/** Strip internal identifiers before returning rows to the model. */
+const INTERNAL_FIELDS = new Set(["id", "user_id"]);
+export function sanitizeRow<T extends Record<string, unknown>>(row: T | null | undefined): Record<string, unknown> | null {
+  if (!row) return null;
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(row)) {
+    if (INTERNAL_FIELDS.has(k)) continue;
+    out[k] = v;
+  }
+  return out;
+}
+export function sanitizeRows<T extends Record<string, unknown>>(rows: T[] | null | undefined): Record<string, unknown>[] {
+  if (!rows) return [];
+  return rows.map((r) => sanitizeRow(r) as Record<string, unknown>);
+}
