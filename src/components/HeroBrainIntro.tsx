@@ -19,7 +19,7 @@ export const HeroBrainIntro = () => {
       <motion.div
         initial={{ y: -220, rotate: 0, opacity: 0 }}
         animate={{
-          y: [-220, 0, 0, 0],
+          y: [-220, 0, 0, 0, 0, 0],
           rotate: [0, 0, -12, 8, -4, 0],
           opacity: [0, 1, 1, 1, 1, 1],
         }}
