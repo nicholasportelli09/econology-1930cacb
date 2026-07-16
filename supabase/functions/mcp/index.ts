@@ -9,7 +9,7 @@ import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.22.2";
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.22.2";
 
 // src/lib/mcp/tools/_shared.ts
-import { createClient } from "npm:@supabase/supabase-js@^2.97.0";
+import { createClient } from "npm:@supabase/supabase-js@^2.110.7";
 function readEnv(name) {
   const denoEnv = globalThis.Deno?.env;
   const fromDeno = denoEnv?.get(name);
