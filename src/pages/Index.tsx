@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
-import { Brain3D } from "@/components/Brain3D";
+
 import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, Shield } from "lucide-react";
 import { Sparkles, TrendingUp, MessageCircle, Flame, Trophy, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -109,53 +109,38 @@ const Index = () => {
 
       {/* Hero */}
       <section className="relative overflow-hidden z-10 flex flex-col items-center text-center px-6 pt-6 pb-16 md:pt-10 md:pb-20 w-full">
-        <Brain3D />
-        <div className="relative z-10 w-full flex flex-col items-center">
-        <div className="flex flex-col items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.9, duration: 0.7, ease: "easeOut" }}
-            className="-mb-4 md:-mb-6"
-          >
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.7, ease: "easeOut" }}
+          className="relative z-10 w-full flex flex-col items-center"
+        >
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="flex flex-col items-center"
+        >
+          <motion.div variants={fadeUp} className="-mb-4 md:-mb-6">
             <img src={logoSrc} alt="Econology logo" width={180} height={180} className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px] animate-float" loading="eager" fetchPriority="high" />
           </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.05, duration: 0.7, ease: "easeOut" }}
-            className="text-4xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none"
-          >
+          <motion.h1 variants={fadeUp} className="text-4xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
             <span className="gradient-text">Econology</span>
           </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.2, duration: 0.7, ease: "easeOut" }}
-            className="text-lg md:text-2xl mb-3 max-w-2xl font-bold min-h-[1.75rem] md:min-h-[2.25rem]"
-            style={{ color: "hsl(240 30% 25%)" }}
-          >
+          <motion.p variants={fadeUp} className="text-lg md:text-2xl mb-3 max-w-2xl font-bold min-h-[1.75rem] md:min-h-[2.25rem]" style={{ color: "hsl(240 30% 25%)" }}>
             {tagline}
             {phase !== "done" && phase !== "sub" && (
               <span className="inline-block w-[2px] h-[1em] align-middle ml-0.5 bg-current animate-pulse" />
             )}
           </motion.p>
-          <motion.p
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.35, duration: 0.7, ease: "easeOut" }}
-            className="text-base md:text-lg mb-10 max-w-2xl leading-relaxed font-semibold min-h-[1.75rem]"
-            style={{ color: "hsl(240 20% 40%)" }}
-          >
+          <motion.p variants={fadeUp} className="text-base md:text-lg mb-10 max-w-2xl leading-relaxed font-semibold min-h-[1.75rem]" style={{ color: "hsl(240 20% 40%)" }}>
             {sub}
             {phase === "sub" && (
               <span className="inline-block w-[2px] h-[1em] align-middle ml-0.5 bg-current animate-pulse" />
             )}
           </motion.p>
           <motion.button
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.5, duration: 0.7, ease: "easeOut" }}
+            variants={fadeUp}
             onClick={() => navigate(ctaTarget)}
             className="group flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow"
           >
@@ -164,12 +149,7 @@ const Index = () => {
           </motion.button>
 
           {/* Quick proof pills — what you actually get */}
-          <motion.div
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.5, duration: 0.7, ease: "easeOut" }}
-            className="mt-6 flex flex-wrap items-center justify-center gap-2 max-w-2xl"
-          >
+          <motion.div variants={fadeUp} className="mt-6 flex flex-wrap items-center justify-center gap-2 max-w-2xl">
             {[
               { icon: Flame, label: "5-min daily lesson" },
               { icon: TrendingUp, label: "Live market data" },
@@ -190,9 +170,7 @@ const Index = () => {
 
           {/* Product preview — shows what the app actually looks/feels like */}
           <motion.div
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.5, duration: 0.7, ease: "easeOut" }}
+            variants={fadeUp}
             className="mt-12 w-full max-w-5xl"
           >
             <div
@@ -289,8 +267,8 @@ const Index = () => {
               </div>
             </div>
           </motion.div>
-        </div>
-        </div>
+        </motion.div>
+        </motion.div>
       </section>
 
       {/* Feature cards */}
