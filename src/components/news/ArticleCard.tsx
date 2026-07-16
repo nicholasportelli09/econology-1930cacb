@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { type UserProfile } from "@/types/profile";
 import ReactMarkdown from "react-markdown";
+import { AIBadge } from "@/components/AIBadge";
+import { ReportIssue } from "@/components/ReportIssue";
 
 export interface Article {
   title: string;
@@ -140,8 +142,14 @@ export function ArticleCard({ article, profile, formatDate, isPinned, onPin, onU
               <Loader2 size={14} className="animate-spin" /> Generating personalized summary...
             </div>
           ) : (
-            <div className="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed">
-              <ReactMarkdown>{summary!}</ReactMarkdown>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <AIBadge />
+                <ReportIssue contentType="ai_summary" contentReference={article.url} />
+              </div>
+              <div className="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed">
+                <ReactMarkdown>{summary!}</ReactMarkdown>
+              </div>
             </div>
           )}
         </div>
