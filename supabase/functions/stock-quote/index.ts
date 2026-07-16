@@ -66,30 +66,38 @@ serve(async (req) => {
     const quotes: Record<string, any> = {};
 
     // Finnhub's free tier doesn't cover cash indices. Route SPX / GSPC
-    // (the S&P 500 index, in points) to Financial Modeling Prep instead.
-    const FMP_API_KEY = Deno.env.get("FMP_API_KEY");
+    // (the S&P 500 index, in points) to Yahoo Finance's public chart API,
+    // which returns the real index level (e.g. 7533.77) without an API key.
     const INDEX_MAP: Record<string, string> = {
       SPX: "^GSPC",
       GSPC: "^GSPC",
+      DJI: "^DJI",
+      IXIC: "^IXIC",
     };
-    async function fetchIndexQuote(alias: string, fmpSymbol: string) {
-      if (!FMP_API_KEY) return;
+    async function fetchIndexQuote(alias: string, yahooSymbol: string) {
       try {
-        const url = `https://financialmodelingprep.com/api/v3/quote/${encodeURIComponent(fmpSymbol)}?apikey=${FMP_API_KEY}`;
-        const resp = await fetch(url);
-        if (!resp.ok) return;
-        const arr = await resp.json();
-        const row = Array.isArray(arr) ? arr[0] : null;
-        if (!row) return;
+        const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?interval=1d&range=1d`;
+        const resp = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+        if (!resp.ok) {
+          console.error(`Yahoo chart ${alias} status ${resp.status}`);
+          return;
+        }
+        const json = await resp.json();
+        const meta = json?.chart?.result?.[0]?.meta;
+        if (!meta) return;
+        const price = Number(meta.regularMarketPrice ?? 0);
+        const prev = Number(meta.chartPreviousClose ?? meta.previousClose ?? 0);
+        const change = price - prev;
+        const changePercent = prev ? (change / prev) * 100 : 0;
         quotes[alias] = {
-          price: row.price ?? 0,
-          change: row.change ?? 0,
-          changePercent: row.changesPercentage ?? 0,
-          high: row.dayHigh ?? 0,
-          low: row.dayLow ?? 0,
-          open: row.open ?? 0,
-          prevClose: row.previousClose ?? 0,
-          timestamp: row.timestamp ?? 0,
+          price,
+          change,
+          changePercent,
+          high: Number(meta.regularMarketDayHigh ?? 0),
+          low: Number(meta.regularMarketDayLow ?? 0),
+          open: Number(meta.regularMarketOpen ?? 0),
+          prevClose: prev,
+          timestamp: Number(meta.regularMarketTime ?? 0),
           isIndex: true,
         };
       } catch (e) {
