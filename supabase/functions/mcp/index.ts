@@ -3,10 +3,10 @@
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
 // src/lib/mcp/index.ts
-import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.22.2";
+import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.23.0";
 
 // src/lib/mcp/tools/get-profile.ts
-import { defineTool } from "npm:@lovable.dev/mcp-js@0.22.2";
+import { defineTool } from "npm:@lovable.dev/mcp-js@0.23.0";
 
 // src/lib/mcp/tools/_shared.ts
 import { createClient } from "npm:@supabase/supabase-js@^2.110.7";
@@ -170,7 +170,7 @@ var get_profile_default = defineTool({
 });
 
 // src/lib/mcp/tools/get-progress.ts
-import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.22.2";
+import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.23.0";
 var get_progress_default = defineTool2({
   name: "get_progress",
   title: "Get my learning progress",
@@ -208,7 +208,7 @@ var get_progress_default = defineTool2({
 });
 
 // src/lib/mcp/tools/list-portfolio.ts
-import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.22.2";
+import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.23.0";
 var list_portfolio_default = defineTool3({
   name: "list_portfolio",
   title: "List my portfolio tickers",
@@ -228,7 +228,7 @@ var list_portfolio_default = defineTool3({
 });
 
 // src/lib/mcp/tools/add-portfolio-ticker.ts
-import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.22.2";
+import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.23.0";
 import { z } from "npm:zod@^4.4.3";
 var add_portfolio_ticker_default = defineTool4({
   name: "add_portfolio_ticker",
@@ -254,7 +254,7 @@ var add_portfolio_ticker_default = defineTool4({
 });
 
 // src/lib/mcp/tools/remove-portfolio-ticker.ts
-import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.22.2";
+import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.23.0";
 import { z as z2 } from "npm:zod@^4.4.3";
 var remove_portfolio_ticker_default = defineTool5({
   name: "remove_portfolio_ticker",
@@ -285,7 +285,7 @@ var remove_portfolio_ticker_default = defineTool5({
 });
 
 // src/lib/mcp/tools/list-pinned-articles.ts
-import { defineTool as defineTool6 } from "npm:@lovable.dev/mcp-js@0.22.2";
+import { defineTool as defineTool6 } from "npm:@lovable.dev/mcp-js@0.23.0";
 var list_pinned_articles_default = defineTool6({
   name: "list_pinned_articles",
   title: "List my pinned articles",
@@ -323,7 +323,7 @@ var list_pinned_articles_default = defineTool6({
 });
 
 // src/lib/mcp/tools/health-check.ts
-import { defineTool as defineTool7 } from "npm:@lovable.dev/mcp-js@0.22.2";
+import { defineTool as defineTool7 } from "npm:@lovable.dev/mcp-js@0.23.0";
 var health_check_default = defineTool7({
   name: "health_check",
   title: "Server health check",
@@ -348,7 +348,7 @@ var health_check_default = defineTool7({
 });
 
 // src/lib/mcp/tools/get-launch-metrics.ts
-import { defineTool as defineTool8 } from "npm:@lovable.dev/mcp-js@0.22.2";
+import { defineTool as defineTool8 } from "npm:@lovable.dev/mcp-js@0.23.0";
 import { z as z3 } from "npm:zod@^4.4.3";
 function isoDaysAgo(n) {
   const d = /* @__PURE__ */ new Date();
@@ -415,5 +415,5 @@ var mcp_default = defineMcp({
 });
 
 // lovable-mcp-supabase-entry.ts
-import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.22.2/stacks/supabase";
+import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.23.0/stacks/supabase";
 Deno.serve(createSupabaseHandler(mcp_default, { functionName: "mcp" }));
