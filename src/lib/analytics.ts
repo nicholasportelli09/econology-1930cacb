@@ -34,7 +34,13 @@ export type EconologyEvent =
 let started = false;
 let identifiedUserId: string | null = null;
 let sessionId: string | null = null;
-let buffer: Array<{ event: EconologyEvent; props: EventProps; severity?: "info" | "warning" | "error" | "crash" }> = [];
+type BufferedEvent = {
+  event: EconologyEvent;
+  props: EventProps;
+  severity: "info" | "warning" | "error" | "crash";
+  userId: string | null;
+};
+let buffer: BufferedEvent[] = [];
 const flushIntervalMs = 5_000;
 let flushTimer: ReturnType<typeof setInterval> | null = null;
 
