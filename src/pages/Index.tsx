@@ -121,7 +121,7 @@ const Index = () => {
           className="flex flex-col items-center"
         >
           <motion.div variants={fadeUp} className="-mb-4 md:-mb-6">
-            <img src={logoSrc} alt="Econology logo" width={180} height={180} className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px] animate-float" loading="eager" fetchpriority="high" />
+            <img src={logoSrc} alt="Econology logo" width={180} height={180} className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px] animate-float" loading="eager" />
           </motion.div>
           <motion.h1 variants={fadeUp} className="text-4xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
             <span className="gradient-text">Econology</span>
