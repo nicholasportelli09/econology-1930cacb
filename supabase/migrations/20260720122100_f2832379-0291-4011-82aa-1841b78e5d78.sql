@@ -1,0 +1,1 @@
+DELETE FROM public.app_errors WHERE created_at < now();
