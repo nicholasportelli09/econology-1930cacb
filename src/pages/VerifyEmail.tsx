@@ -49,12 +49,8 @@ export default function VerifyEmail() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={{ background: "hsl(245 35% 96%)" }}>
       <Seo title="Verify email — Econology" description="Confirm your email address to finish setting up your Econology account." path="/verify-email" type="website" />
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/10 blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
-      </div>
 
       <div className="relative z-10 w-full max-w-md space-y-8">
         <div className="flex flex-col items-center gap-3">
@@ -66,7 +62,7 @@ export default function VerifyEmail() {
           </div>
         </div>
 
-        <div className="space-y-6 rounded-xl border border-white/40 bg-white/60 backdrop-blur-sm p-6">
+        <div className="space-y-6 rounded-xl border border-[hsl(240_20%_90%)] bg-white shadow-[0_10px_40px_-16px_hsl(245_40%_40%/0.14)] p-6">
           <div className="flex flex-col items-center gap-4">
             <p className="text-sm" style={{ color: "hsl(240 15% 50%)" }}>Enter the verification code</p>
             <InputOTP maxLength={6} value={code} onChange={setCode}>

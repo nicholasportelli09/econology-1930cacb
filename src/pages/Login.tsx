@@ -50,13 +50,8 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={{ background: "hsl(245 35% 96%)" }}>
       <Seo title="Log in — Econology" description="Sign in to Econology to continue your daily money and markets routine. Google OAuth or email OTP." path="/login" type="website" />
-      {/* Animated gradient orbs */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/10 blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
-      </div>
 
       <div className="relative z-10 w-full max-w-md space-y-8">
         <div className="flex flex-col items-center gap-3">
@@ -65,11 +60,11 @@ export default function Login() {
           <p className="text-sm" style={{ color: "hsl(240 20% 40%)" }}>Sign in to your Econology account</p>
         </div>
 
-        <div className="space-y-4 rounded-xl border border-white/40 bg-white/60 backdrop-blur-sm p-6">
+        <div className="space-y-4 rounded-xl border border-[hsl(240_20%_90%)] bg-white p-6 shadow-[0_10px_40px_-16px_hsl(245_40%_40%/0.14)]">
           <Button
             type="button"
             variant="outline"
-            className="w-full bg-white/70 border-white/50 hover:bg-white/90"
+            className="w-full bg-white hover:bg-muted"
             style={{ color: "hsl(240 20% 25%)" }}
             disabled={googleLoading}
             onClick={handleGoogleSignIn}

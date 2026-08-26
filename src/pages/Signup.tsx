@@ -69,14 +69,8 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10 relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
+    <div className="min-h-screen flex items-center justify-center px-4 py-10 relative overflow-hidden" style={{ background: "hsl(245 35% 96%)" }}>
       <Seo title="Sign up — Econology" description="Create your free Econology account and start mastering money and markets with daily lessons and AI tutoring." path="/signup" type="website" />
-      {/* Animated gradient orbs */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
-        <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full bg-accent/10 blur-[120px] animate-pulse" style={{ animationDelay: "2s" }} />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/10 blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
-      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -113,16 +107,15 @@ export default function Signup() {
         <div
           className="space-y-4 rounded-2xl border p-6 md:p-7"
           style={{
-            background: "rgba(255,255,255,0.7)",
-            backdropFilter: "blur(16px)",
-            borderColor: "rgba(255,255,255,0.8)",
-            boxShadow: "0 30px 80px -20px hsla(245, 60%, 40%, 0.25)",
+            background: "#ffffff",
+            borderColor: "hsl(240 20% 92%)",
+            boxShadow: "0 20px 60px -20px hsla(245, 60%, 40%, 0.15)",
           }}
         >
           <Button
             type="button"
             variant="outline"
-            className="w-full h-11 bg-white border-white/60 hover:bg-white/90 font-semibold"
+            className="w-full h-11 bg-white hover:bg-muted font-semibold"
             style={{ color: "hsl(240 20% 25%)" }}
             disabled={googleLoading}
             onClick={handleGoogleSignIn}

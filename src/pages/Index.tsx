@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
 import FeatureCard from "@/components/FeatureCard";
-import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, Shield } from "lucide-react";
+import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, LineChart } from "lucide-react";
 import { Sparkles, TrendingUp, MessageCircle, Flame, Trophy, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Seo } from "@/components/Seo";
@@ -74,14 +74,8 @@ const Index = () => {
   }, [phase]);
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
-      <Seo title="Econology — The Science of Smart Money" description="Master money and markets with daily lessons, live market insights, AI-curated economic news, and an AI tutor built for students and young investors." path="/" type="website" jsonLd={{"@context":"https://schema.org","@type":"WebSite","name":"Econology","url":"https://econology.lovable.app/"}} />
-      {/* Animated gradient orbs */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
-        <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full bg-secondary/10 blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
-        <div className="absolute -bottom-40 left-1/3 w-[500px] h-[500px] rounded-full bg-accent/10 blur-[120px] animate-pulse" style={{ animationDelay: "2s" }} />
-      </div>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "hsl(245 35% 96%)" }}>
+      <Seo title="Econology — The Science of Smart Money" description="Master money and markets with daily lessons, live market insights, AI-curated economic news, and an AI tutor built for students and young investors." path="/" type="website" jsonLd={{"@context":"https://schema.org","@type":"WebSite","name":"Econology","url":"https://www.econology.app/"}} />
 
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 lg:px-20 py-5 w-full">
@@ -99,7 +93,7 @@ const Index = () => {
           </button>
           <button
             onClick={() => navigate(hasSession ? "/dashboard" : "/login")}
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-lg glow-shadow"
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-lg glow-shadow active:scale-[0.98]"
           >
             {hasSession ? "Go to Dashboard" : "Sign In"}
           </button>
@@ -141,7 +135,7 @@ const Index = () => {
           <motion.button
             variants={fadeUp}
             onClick={() => navigate(ctaTarget)}
-            className="group flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow"
+            className="group flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow active:scale-[0.98]"
           >
             {ctaLabel}
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
@@ -173,12 +167,11 @@ const Index = () => {
             className="mt-12 w-full max-w-5xl"
           >
             <div
-              className="rounded-3xl border p-4 md:p-6 shadow-2xl"
+              className="rounded-3xl border p-4 md:p-6"
               style={{
-                background: "rgba(255,255,255,0.7)",
-                backdropFilter: "blur(16px)",
-                borderColor: "rgba(255,255,255,0.8)",
-                boxShadow: "0 30px 80px -20px hsla(245, 60%, 40%, 0.25)",
+                background: "#ffffff",
+                borderColor: "hsl(240 20% 92%)",
+                boxShadow: "0 30px 80px -20px hsla(245, 60%, 40%, 0.16)",
               }}
             >
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -312,13 +305,13 @@ const Index = () => {
         className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full"
       >
         <motion.h2 variants={reveal} className="text-2xl md:text-3xl font-display font-bold text-center mb-12" style={{ color: "hsl(240 30% 20%)" }}>
-          How It Works
+          How it works
         </motion.h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {[
             { step: "1", title: "Tell us about you", desc: "Answer a few questions about your financial goals, situation, and what you want to learn.", icon: Brain },
             { step: "2", title: "Get your daily plan", desc: "Receive personalized tips, lessons, and market insights matched to your interests.", icon: BarChart3 },
-            { step: "3", title: "Track your growth", desc: "Earn XP, level up, and watch your financial literacy score improve every week.", icon: Shield },
+            { step: "3", title: "Track your growth", desc: "Earn XP, level up, and watch your financial literacy score improve every week.", icon: LineChart },
           ].map((item) => {
             const Icon = item.icon;
             return (
@@ -345,9 +338,9 @@ const Index = () => {
         viewport={revealViewport}
         className="relative z-10 px-6 md:px-12 lg:px-20 pb-20 w-full"
       >
-        <div className="max-w-4xl mx-auto rounded-2xl p-8 md:p-12" style={{ background: "rgba(255,255,255,0.5)", backdropFilter: "blur(12px)" }}>
+        <div className="max-w-4xl mx-auto rounded-2xl p-8 md:p-12" style={{ background: "#ffffff", boxShadow: "0 10px 40px -16px hsla(245, 60%, 40%, 0.12)" }}>
           <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-8" style={{ color: "hsl(240 30% 20%)" }}>
-            What You'll Learn
+            What you'll learn
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
@@ -386,7 +379,7 @@ const Index = () => {
           </p>
           <button
             onClick={() => navigate(ctaTarget)}
-            className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow"
+            className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow active:scale-[0.98]"
           >
             {secondaryCtaLabel}
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
@@ -405,7 +398,7 @@ const Index = () => {
       >
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-10" style={{ color: "hsl(240 30% 20%)" }}>
-            Frequently Asked Questions
+            Frequently asked questions
           </h2>
           <Accordion type="single" collapsible className="w-full space-y-3">
             {[
@@ -416,7 +409,7 @@ const Index = () => {
               { q: "How does Econology handle my data?", a: "We use encryption in transit, row-level database security, and only share data with the service providers we need to run each feature (see our Privacy Notice). No online service can promise perfect security, but we work to keep the risk low and only collect what a feature actually needs." },
               { q: "How do I reset my learning progress?", a: "Head to Settings and you can reset your quiz scores or topic selections at any time." },
             ].map((faq, i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="rounded-xl border px-4 md:px-6" style={{ borderColor: "rgba(0,0,0,0.08)", background: "rgba(255,255,255,0.5)" }}>
+              <AccordionItem key={i} value={`faq-${i}`} className="rounded-xl border px-4 md:px-6" style={{ borderColor: "hsl(240 20% 90%)", background: "#ffffff" }}>
                 <AccordionTrigger className="text-sm md:text-base font-semibold text-left py-4" style={{ color: "hsl(240 30% 20%)" }}>
                   {faq.q}
                 </AccordionTrigger>

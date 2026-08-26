@@ -70,12 +70,10 @@ const Placement = () => {
       className="min-h-screen relative overflow-hidden flex flex-col"
       style={{
         background:
-          "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))",
+          "hsl(245 35% 96%)",
       }}
     >
       <Seo title="Placement quiz — Econology" description="Take the placement quiz so Econology can tailor your daily lessons to your current knowledge level." path="/placement" type="website" />
-      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/8 blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-accent/8 blur-[120px] animate-pulse" style={{ animationDelay: "1.5s" }} />
 
       <div className="relative z-10 flex-1 flex flex-col max-w-2xl mx-auto w-full px-6 py-8">
         <div className="mb-2 flex items-center justify-between text-sm text-muted-foreground">
@@ -88,7 +86,7 @@ const Placement = () => {
         />
 
         {step === 0 && (
-          <div className="mb-6 rounded-xl bg-card/60 backdrop-blur p-5 border border-border">
+          <div className="mb-6 rounded-xl bg-card p-5 border border-border">
             <h2 className="font-display font-semibold mb-1">Placement diagnostic</h2>
             <p className="text-sm text-muted-foreground">
               10 quick questions across 5 areas. We'll use your answers to unlock the
@@ -189,11 +187,9 @@ function PlacementResults({
       className="min-h-screen relative overflow-hidden flex flex-col"
       style={{
         background:
-          "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))",
+          "hsl(245 35% 96%)",
       }}
     >
-      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/8 blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-accent/8 blur-[120px] animate-pulse" style={{ animationDelay: "1.5s" }} />
 
       <div className="relative z-10 flex-1 flex flex-col max-w-2xl mx-auto w-full px-6 py-10">
         <div className="text-center mb-8">
@@ -207,24 +203,24 @@ function PlacementResults({
         </div>
 
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="rounded-xl border border-border bg-card/70 backdrop-blur p-3 text-center">
+          <div className="rounded-xl border border-border bg-card p-3 text-center">
             <CheckCircle2 size={18} className="mx-auto mb-1 text-green-600" />
             <div className="text-xl font-display font-bold">{correct}</div>
             <div className="text-xs text-muted-foreground">Correct</div>
           </div>
-          <div className="rounded-xl border border-border bg-card/70 backdrop-blur p-3 text-center">
+          <div className="rounded-xl border border-border bg-card p-3 text-center">
             <XCircle size={18} className="mx-auto mb-1 text-red-500" />
             <div className="text-xl font-display font-bold">{wrong}</div>
             <div className="text-xs text-muted-foreground">Missed</div>
           </div>
-          <div className="rounded-xl border border-border bg-card/70 backdrop-blur p-3 text-center">
+          <div className="rounded-xl border border-border bg-card p-3 text-center">
             <MinusCircle size={18} className="mx-auto mb-1 text-muted-foreground" />
             <div className="text-xl font-display font-bold">{skipped}</div>
             <div className="text-xs text-muted-foreground">Skipped</div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-border bg-card/70 backdrop-blur p-5 mb-6 space-y-3">
+        <div className="rounded-xl border border-border bg-card p-5 mb-6 space-y-3">
           <h2 className="font-display font-semibold text-sm uppercase tracking-wider text-muted-foreground">
             By area
           </h2>

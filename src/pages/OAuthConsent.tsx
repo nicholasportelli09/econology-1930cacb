@@ -86,9 +86,9 @@ export default function OAuthConsent() {
       : [];
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10 relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
+    <div className="min-h-screen flex items-center justify-center px-4 py-10 relative overflow-hidden" style={{ background: "hsl(245 35% 96%)" }}>
       <div className="relative z-10 w-full max-w-md">
-        <div className="rounded-2xl border border-white/50 bg-white/75 backdrop-blur-md p-6 md:p-7 shadow-xl">
+        <div className="rounded-2xl border border-[hsl(240_20%_90%)] bg-white p-6 md:p-7 shadow-[0_20px_60px_-20px_hsl(245_40%_40%/0.15)]">
           <div className="flex flex-col items-center text-center gap-2 mb-4">
             <EconologyLogo size={48} />
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-primary/10 text-primary">

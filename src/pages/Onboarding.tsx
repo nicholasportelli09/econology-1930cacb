@@ -89,10 +89,7 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex flex-col" style={{ background: "linear-gradient(135deg, hsl(255 45% 90%), hsl(230 50% 88%), hsl(245 40% 91%))" }}>
-      {/* Background effects */}
-      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/8 blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-accent/8 blur-[120px] animate-pulse" style={{ animationDelay: "1.5s" }} />
+    <div className="min-h-screen relative overflow-hidden flex flex-col" style={{ background: "hsl(245 35% 96%)" }}>
 
       <div className="relative z-10 flex-1 flex flex-col max-w-xl mx-auto w-full px-6 py-8">
         {/* Progress */}
