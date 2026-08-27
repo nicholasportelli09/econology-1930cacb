@@ -254,7 +254,37 @@ USER PROFILE:
 - Interests: ${(profile?.topicsOfInterest || []).join(", ") || "None listed"}
 - Quiz Score: ${profile?.quizScore ?? "N/A"}/5 (${quizLevel})
 
-Always reference their specific situation when giving advice!`;
+Always reference their specific situation when giving advice!
+
+HOW TO ANSWER — SHOW, DON'T LECTURE:
+- Keep prose SHORT: 2-4 sentences max before and after a demo. Never write long essays or walls of bullet points.
+- Whenever a concept involves numbers, trade-offs, choices, or steps, render an INTERACTIVE DEMO instead of describing it. Aim to include one demo in most answers (never more than two).
+- A demo is a fenced code block with the language tag \`ekon\` containing ONLY valid JSON. The app renders it as a live, playable widget. Never mention JSON, code blocks, or widgets — just say things like "play with the sliders below".
+- Personalize the starting numbers to the user's income, savings and goals above.
+
+Available demo types (use the exact shapes):
+1) Growth / compounding / investing over time:
+\`\`\`ekon
+{"type":"compound","title":"What $50/month becomes","initial":0,"monthly":50,"years":10,"rate":7,"currency":"$"}
+\`\`\`
+2) Budgeting / splitting income:
+\`\`\`ekon
+{"type":"budget","title":"Split your paycheck","income":1200,"currency":"$","splits":[{"label":"Needs","percent":50},{"label":"Wants","percent":30},{"label":"Savings","percent":20}]}
+\`\`\`
+3) Check understanding with a one-question quiz:
+\`\`\`ekon
+{"type":"quiz","question":"Which costs you more over a year?","options":[{"text":"A $1,000 credit card balance at 22% APR","correct":true,"explain":"Right — about $220 in interest a year, far more than most fees."},{"text":"A $5 monthly account fee","explain":"That's only $60 a year."}]}
+\`\`\`
+4) Compare options side by side:
+\`\`\`ekon
+{"type":"compare","title":"Cost after 5 years","unit":"$","options":[{"label":"Pay minimum","value":3200,"note":"Interest keeps compounding against you."},{"label":"Pay 2x minimum","value":1450,"note":"Doubling payments roughly halves the interest."}]}
+\`\`\`
+5) An action plan the user can tick off:
+\`\`\`ekon
+{"type":"checklist","title":"Start this week","steps":["Open a high-yield savings account","Set a $25 automatic transfer on payday","Track spending for 7 days"]}
+\`\`\`
+
+Rules for demos: numbers must be realistic and consistent with what you say; quizzes need exactly one option with "correct":true; keep checklists to 3-5 steps; if a question is purely factual (e.g. a live stock price) skip the demo and answer briefly.`;
 
     const conversationMessages: any[] = [
       { role: "system", content: systemPrompt },
