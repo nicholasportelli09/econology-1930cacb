@@ -12,6 +12,7 @@ import { Seo } from "@/components/Seo";
 import { Disclaimer } from "@/components/Disclaimer";
 import { AIBadge } from "@/components/AIBadge";
 import { ReportIssue } from "@/components/ReportIssue";
+import { EkonWidget, parseEkonSegments } from "@/components/ekon/EkonWidget";
 
 const DAILY_LIMIT = 10;
 
