@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link, useSearchParams } from "react-router-dom"
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { CONCEPT_BY_ID, DIMENSION_LABELS } from "@/data/conceptGraph";
-import { completeLesson, loadStreak } from "@/lib/lessons";
+import { completeLesson, loadStreak, isConceptCompleted } from "@/lib/lessons";
 import { ArrowRight, BookOpen, CheckCircle2, XCircle, Flame, Zap } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Seo } from "@/components/Seo";
@@ -23,6 +23,7 @@ const Lesson = () => {
   const [qIdx, setQIdx] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [alreadyDone, setAlreadyDone] = useState(false);
   const [result, setResult] = useState<{
     score: number;
     total: number;
@@ -38,6 +39,17 @@ const Lesson = () => {
     setResult(null);
     if (conceptId) void trackProduct("lesson_started", { concept_id: conceptId });
   }, [conceptId, testOut]);
+
+  // Flag revisits so a finished lesson reads as review, not as new work.
+  useEffect(() => {
+    let cancelled = false;
+    setAlreadyDone(false);
+    if (!user || !conceptId) return;
+    void isConceptCompleted(user.id, conceptId).then((done) => {
+      if (!cancelled) setAlreadyDone(done);
+    });
+    return () => { cancelled = true; };
+  }, [user, conceptId]);
 
   const score = useMemo(
     () => answers.reduce((acc, a, i) => acc + (a === concept?.quiz[i].correct ? 1 : 0), 0),
@@ -124,6 +136,17 @@ const Lesson = () => {
             </p>
           )}
         </div>
+
+        {alreadyDone && phase !== "result" && (
+          <div className="rounded-xl border border-border bg-muted/40 p-4 text-sm flex flex-wrap items-center gap-3">
+            <span className="text-muted-foreground">
+              You've already completed this lesson — this is review.
+            </span>
+            <Link to="/learn" className="text-primary font-medium hover:underline inline-flex items-center gap-1">
+              Go to your next lesson <ArrowRight size={14} />
+            </Link>
+          </div>
+        )}
 
         {phase === "read" && (
           <div className="space-y-6">

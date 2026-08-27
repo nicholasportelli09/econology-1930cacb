@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Flame, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { loadLiteracyProfile, pickNextConcept } from "@/lib/literacy";
-import { loadLessonProgress, loadStreak, hasDoneTodaysLesson } from "@/lib/lessons";
+import { loadLessonProgress, loadStreak, hasDoneTodaysLesson, LESSON_PROGRESS_EVENT } from "@/lib/lessons";
 import { CONCEPT_BY_ID, DIMENSION_LABELS } from "@/data/conceptGraph";
 
 /**
@@ -20,25 +20,38 @@ export default function DailyLesson() {
 
   useEffect(() => {
     if (!user) return;
-    (async () => {
+    let cancelled = false;
+    const refresh = async () => {
       const [profile, progress, streak] = await Promise.all([
         loadLiteracyProfile(user.id),
         loadLessonProgress(user.id),
         loadStreak(user.id),
       ]);
+      if (cancelled) return;
       if (!profile) {
         setNeedsPlacement(true);
         setLoading(false);
         return;
       }
+      // Never re-serve a concept the user already finished.
       const completed = new Set(progress.map((p) => p.conceptId));
       const pick = pickNextConcept(profile, completed);
       setNext(pick ? { id: pick.conceptId, rationale: pick.rationale } : null);
       setDoneToday(hasDoneTodaysLesson(streak));
       setStreakNum(streak.current);
       setLoading(false);
-    })();
+    };
+    void refresh();
+    const onFocus = () => { void refresh(); };
+    window.addEventListener(LESSON_PROGRESS_EVENT, onFocus);
+    window.addEventListener("focus", onFocus);
+    return () => {
+      cancelled = true;
+      window.removeEventListener(LESSON_PROGRESS_EVENT, onFocus);
+      window.removeEventListener("focus", onFocus);
+    };
   }, [user]);
+
 
   if (loading) {
     return (

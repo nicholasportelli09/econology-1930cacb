@@ -4,7 +4,7 @@ import { CheckCircle2, Circle, BookOpen, Newspaper, Calculator, MessageCircle, T
 import { getGamification } from "@/lib/gamification";
 import { useAuth } from "@/contexts/AuthContext";
 import { loadLiteracyProfile, pickNextConcept, weakestDimensions } from "@/lib/literacy";
-import { loadLessonProgress } from "@/lib/lessons";
+import { loadLessonProgress, LESSON_PROGRESS_EVENT } from "@/lib/lessons";
 import { CONCEPT_BY_ID, CONCEPTS_BY_DIMENSION, DIMENSION_LABELS } from "@/data/conceptGraph";
 
 interface PlanItem {
@@ -43,12 +43,14 @@ export default function DailyPlan() {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    (async () => {
+    const run = async () => {
       const [profile, progress] = await Promise.all([
         loadLiteracyProfile(user.id),
         loadLessonProgress(user.id),
       ]);
       if (cancelled) return;
+      setNextLessonId(null);
+      setNextLessonTitle(null);
       if (profile) {
         const completed = new Set(progress.map((p) => p.conceptId));
         const pick = pickNextConcept(profile, completed);
@@ -67,8 +69,16 @@ export default function DailyPlan() {
           setReadTopic(candidate ? candidate.title : DIMENSION_LABELS[weakest]);
         }
       }
-    })();
-    return () => { cancelled = true; };
+    };
+    void run();
+    const onRefresh = () => { void run(); };
+    window.addEventListener(LESSON_PROGRESS_EVENT, onRefresh);
+    window.addEventListener("focus", onRefresh);
+    return () => {
+      cancelled = true;
+      window.removeEventListener(LESSON_PROGRESS_EVENT, onRefresh);
+      window.removeEventListener("focus", onRefresh);
+    };
   }, [user]);
 
   const items: PlanItem[] = useMemo(() => {

@@ -258,7 +258,26 @@ export async function completeLesson(
     { onConflict: "user_id" },
   );
 
+  // Let mounted dashboard widgets know they must re-pick the next concept.
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(LESSON_PROGRESS_EVENT, { detail: { conceptId } }));
+  }
+
   return { streak: next, usedFreeze, xpAwarded };
+}
+
+/** Fired on `window` whenever lesson progress changes, so widgets can refetch. */
+export const LESSON_PROGRESS_EVENT = "econology:lesson-progress";
+
+/** Has the user already completed this concept? */
+export async function isConceptCompleted(userId: string, conceptId: string): Promise<boolean> {
+  const { data } = await supabase
+    .from("lesson_progress")
+    .select("concept_id")
+    .eq("user_id", userId)
+    .eq("concept_id", conceptId)
+    .maybeSingle();
+  return !!data;
 }
 
 /** Has the user completed today's required lesson? */
