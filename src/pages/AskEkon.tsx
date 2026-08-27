@@ -12,6 +12,7 @@ import { Seo } from "@/components/Seo";
 import { Disclaimer } from "@/components/Disclaimer";
 import { AIBadge } from "@/components/AIBadge";
 import { ReportIssue } from "@/components/ReportIssue";
+import { EkonWidget, parseEkonSegments } from "@/components/ekon/EkonWidget";
 
 const DAILY_LIMIT = 10;
 
@@ -274,7 +275,11 @@ export default function AskEkon() {
                         <ReportIssue contentType="ai_tutor" contentReference={msg.content.slice(0, 200)} />
                       </div>
                       <div className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        {parseEkonSegments(msg.content).map((seg, si) =>
+                          seg.kind === "widget"
+                            ? <EkonWidget key={si} spec={seg.spec} />
+                            : <ReactMarkdown key={si}>{seg.text}</ReactMarkdown>
+                        )}
                       </div>
                     </div>
                   )}
