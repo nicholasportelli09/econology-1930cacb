@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Flame, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { loadLiteracyProfile, pickNextConcept } from "@/lib/literacy";
-import { loadLessonProgress, loadStreak, hasDoneTodaysLesson } from "@/lib/lessons";
+import { loadLessonProgress, loadStreak, hasDoneTodaysLesson, LESSON_PROGRESS_EVENT } from "@/lib/lessons";
 import { CONCEPT_BY_ID, DIMENSION_LABELS } from "@/data/conceptGraph";
 
 /**
