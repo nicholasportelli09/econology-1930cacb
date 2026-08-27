@@ -60,7 +60,7 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
           title: "Welcome to Econology 👋",
           description:
             "Take a quick tour (about 90 seconds) to see everything Econology can do — daily lessons, AI insights, market ideas, and more. Hit <b>Skip tour</b> anytime to jump straight in.",
-          side: "over",
+          side: "over" as unknown as "top",
           align: "center",
         },
       },
@@ -219,7 +219,7 @@ export function startProductTour(opts?: { onFinish?: () => void }) {
           title: "You're all set! 🎉",
           description:
             "Tap today's lesson, add a stock, or ask Ekon anything to get started. You can replay this tour anytime from <b>Settings → Replay tour</b>. Welcome aboard.",
-          side: "over",
+          side: "over" as unknown as "top",
           align: "center",
         },
       },

@@ -259,7 +259,7 @@ function CompareWidget(spec: Extract<EkonSpec, { type: "compare" }>) {
     <Shell icon={Scale} title={spec.title ?? "Compare the options"}>
       <div className="h-36 -ml-2">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} onClick={(s: { activeTooltipIndex?: number }) => typeof s?.activeTooltipIndex === "number" && setActive(s.activeTooltipIndex)}>
+          <BarChart data={data} onClick={(s: { activeTooltipIndex?: number | string }) => { const i = Number(s?.activeTooltipIndex); if (!Number.isNaN(i)) setActive(i); }}>
             <XAxis dataKey="label" tickLine={false} axisLine={false} fontSize={10} stroke="hsl(var(--muted-foreground))" />
             <YAxis tickLine={false} axisLine={false} fontSize={10} width={44} stroke="hsl(var(--muted-foreground))" />
             <Tooltip
