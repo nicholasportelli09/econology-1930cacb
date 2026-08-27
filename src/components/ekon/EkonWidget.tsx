@@ -340,24 +340,68 @@ export function EkonWidget({ spec }: { spec: EkonSpec }) {
   }
 }
 
+const KNOWN_TYPES = ["compound", "budget", "quiz", "compare", "checklist"];
+
+/** Finds a balanced JSON object starting at `start`; returns end index (exclusive) or -1. */
+function matchBraces(s: string, start: number): number {
+  let depth = 0;
+  let inStr = false;
+  let esc = false;
+  for (let i = start; i < s.length; i++) {
+    const c = s[i];
+    if (inStr) {
+      if (esc) esc = false;
+      else if (c === "\\") esc = true;
+      else if (c === '"') inStr = false;
+      continue;
+    }
+    if (c === '"') inStr = true;
+    else if (c === "{") depth++;
+    else if (c === "}") {
+      depth--;
+      if (depth === 0) return i + 1;
+    }
+  }
+  return -1;
+}
+
 /** Splits a message into markdown text segments and interactive widget specs. */
 export function parseEkonSegments(content: string): ({ kind: "text"; text: string } | { kind: "widget"; spec: EkonSpec })[] {
   const out: ({ kind: "text"; text: string } | { kind: "widget"; spec: EkonSpec })[] = [];
-  const re = /```ekon\s*([\s\S]*?)(?:```|$)/g;
-  let lastIndex = 0;
+  // Strip fences (```ekon / ```json / ```) so we can scan raw JSON objects uniformly.
+  const cleaned = content.replace(/```(?:ekon|json)?/gi, "");
+
+  const push = (text: string) => {
+    if (text.trim()) out.push({ kind: "text", text });
+  };
+
+  let cursor = 0;
+  const re = /\{\s*"type"\s*:\s*"(\w+)"/g;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(content)) !== null) {
-    const before = content.slice(lastIndex, m.index);
-    if (before.trim()) out.push({ kind: "text", text: before });
-    try {
-      const spec = JSON.parse(m[1].trim()) as EkonSpec;
-      if (spec && typeof spec === "object" && spec.type) out.push({ kind: "widget", spec });
-    } catch {
-      // Block still streaming or malformed — ignore until complete.
+  while ((m = re.exec(cleaned)) !== null) {
+    if (!KNOWN_TYPES.includes(m[1])) continue;
+    if (m.index < cursor) continue;
+    const end = matchBraces(cleaned, m.index);
+    if (end === -1) {
+      // Incomplete block still streaming — drop the partial JSON.
+      push(cleaned.slice(cursor, m.index));
+      cursor = cleaned.length;
+      break;
     }
-    lastIndex = m.index + m[0].length;
+    let spec: EkonSpec | null = null;
+    try {
+      spec = JSON.parse(cleaned.slice(m.index, end)) as EkonSpec;
+    } catch {
+      spec = null;
+    }
+    if (spec?.type) {
+      push(cleaned.slice(cursor, m.index));
+      out.push({ kind: "widget", spec });
+      cursor = end;
+      re.lastIndex = end;
+    }
   }
-  const rest = content.slice(lastIndex);
-  if (rest.trim()) out.push({ kind: "text", text: rest });
+  push(cleaned.slice(cursor));
   return out.length ? out : [{ kind: "text", text: content }];
 }
+
