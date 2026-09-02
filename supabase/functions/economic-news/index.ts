@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { z } from "npm:zod@3.23.8";
+import { cached, cacheKey } from "../_shared/cache.ts";
 
 const BodySchema = z.object({
   profile: z.record(z.any()).optional(),
@@ -66,6 +67,9 @@ serve(async (req) => {
     const NEWSAPI_API_KEY = Deno.env.get("NEWSAPI_API_KEY");
     if (NEWSAPI_API_KEY) {
       try {
+        // Headlines are the same for every user: fetch once per 15 minutes.
+        const headlinesKey = await cacheKey("newsapi:economy:v1");
+        const { value: cachedHeadlines } = await cached<string | null>(headlinesKey, 900, async () => {
         const newsResp = await fetch(
           `https://newsapi.org/v2/everything?q=economy OR inflation OR "interest rates" OR jobs OR markets&language=en&sortBy=publishedAt&pageSize=10&apiKey=${NEWSAPI_API_KEY}`
         );
@@ -73,7 +77,7 @@ serve(async (req) => {
           const newsData = await newsResp.json();
           const articles = newsData.articles || [];
           if (articles.length > 0) {
-            realHeadlines = articles
+            return articles
               .map((a: any, i: number) => `${i + 1}. "${a.title}" (${a.source?.name || "unknown"}, ${a.publishedAt || "recent"})${a.description ? ": " + a.description.slice(0, 150) : ""}`)
               .join("\n");
           }
@@ -81,6 +85,9 @@ serve(async (req) => {
           const t = await newsResp.text();
           console.error("NewsAPI fetch failed:", newsResp.status, t);
         }
+        return null;
+        });
+        realHeadlines = cachedHeadlines ?? "";
       } catch (err) {
         console.error("NewsAPI fetch error:", err);
       }

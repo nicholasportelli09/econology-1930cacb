@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { cached, cacheKey } from "../_shared/cache.ts";
 
 const ALLOWED_ORIGINS = [
   "https://www.econology.app",
@@ -95,13 +96,18 @@ serve(async (req) => {
     // Fetch RSS feeds in parallel
     const feedPromises = channelIds.map(async (channelId: string) => {
       try {
-        const res = await fetch(
-          `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
-          { headers: { "User-Agent": "Mozilla/5.0" } }
-        );
-        if (!res.ok) return [];
-        const xml = await res.text();
-        return parseRSSFeed(xml, channelId);
+        // Channel feeds are identical for all users: cache parsed entries 30 min.
+        const key = await cacheKey(`yt-rss:v1:${channelId}`);
+        const { value } = await cached<VideoEntry[]>(key, 1800, async () => {
+          const res = await fetch(
+            `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
+            { headers: { "User-Agent": "Mozilla/5.0" } }
+          );
+          if (!res.ok) return [];
+          const xml = await res.text();
+          return parseRSSFeed(xml, channelId);
+        });
+        return value ?? [];
       } catch (e) {
         console.error(`Failed to fetch RSS for ${channelId}:`, e);
         return [];

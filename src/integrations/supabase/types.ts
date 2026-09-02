@@ -50,6 +50,27 @@ export type Database = {
         }
         Relationships: []
       }
+      api_cache: {
+        Row: {
+          cache_key: string
+          created_at: string
+          expires_at: string
+          payload: Json
+        }
+        Insert: {
+          cache_key: string
+          created_at?: string
+          expires_at: string
+          payload: Json
+        }
+        Update: {
+          cache_key?: string
+          created_at?: string
+          expires_at?: string
+          payload?: Json
+        }
+        Relationships: []
+      }
       app_errors: {
         Row: {
           app_version: string | null

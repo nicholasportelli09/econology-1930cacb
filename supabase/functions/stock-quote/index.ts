@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { z } from "npm:zod@3.23.8";
+import { cached, cacheKey } from "../_shared/cache.ts";
 
 const BodySchema = z.object({
   tickers: z.string().min(1).max(500),
@@ -105,11 +106,17 @@ serve(async (req) => {
       }
     }
 
+    // Quotes are identical for every user, so cache each symbol briefly.
+    // A traffic spike then costs one upstream call per symbol per minute.
+    const QUOTE_TTL_SECONDS = 60;
+
     await Promise.all(
       tickerList.slice(0, 20).map(async (ticker) => {
+        const key = await cacheKey(`quote:v1:${ticker}`);
+        const { value } = await cached<any>(key, QUOTE_TTL_SECONDS, async () => {
         if (INDEX_MAP[ticker]) {
           await fetchIndexQuote(ticker, INDEX_MAP[ticker]);
-          return;
+          return quotes[ticker] ?? null;
         }
         try {
           const url = `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}&token=${FINNHUB_API_KEY}`;
@@ -130,6 +137,9 @@ serve(async (req) => {
         } catch (e) {
           console.error(`Failed to fetch quote for ${ticker}:`, e);
         }
+        return quotes[ticker] ?? null;
+        });
+        if (value) quotes[ticker] = value;
       })
     );
 
