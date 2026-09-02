@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { z } from "npm:zod@3.23.8";
-import { cached, cacheKey, cacheSet } from "../_shared/cache.ts";
+import { cacheGet, cacheKey, cacheSet } from "../_shared/cache.ts";
 
 const BodySchema = z.object({
   tickers: z.string().max(500).optional().default(""),
@@ -66,9 +66,9 @@ serve(async (req) => {
     // Same headlines for everyone -> cache the whole response for 10 minutes.
     const NEWS_TTL_SECONDS = 600;
     const newsKey = await cacheKey(`stock-news:v1:${String(tickers).toUpperCase()}|${category}|${limit}`);
-    const cachedNews = await cached<{ articles: unknown[] } | null>(newsKey, NEWS_TTL_SECONDS, async () => null);
-    if (cachedNews.hit && cachedNews.value) {
-      return new Response(JSON.stringify(cachedNews.value), {
+    const cachedNews = await cacheGet<{ articles: unknown[] }>(newsKey);
+    if (cachedNews) {
+      return new Response(JSON.stringify(cachedNews), {
         headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "HIT" },
       });
     }
