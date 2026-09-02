@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { z } from "npm:zod@3.23.8";
+import { cached, cacheKey, cacheSet } from "../_shared/cache.ts";
 
 const BodySchema = z.object({
   tickers: z.string().max(500).optional().default(""),
@@ -62,6 +63,16 @@ serve(async (req) => {
     }
     const { tickers, category, limit } = parsed.data;
 
+    // Same headlines for everyone -> cache the whole response for 10 minutes.
+    const NEWS_TTL_SECONDS = 600;
+    const newsKey = await cacheKey(`stock-news:v1:${String(tickers).toUpperCase()}|${category}|${limit}`);
+    const cachedNews = await cached<{ articles: unknown[] } | null>(newsKey, NEWS_TTL_SECONDS, async () => null);
+    if (cachedNews.hit && cachedNews.value) {
+      return new Response(JSON.stringify(cachedNews.value), {
+        headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "HIT" },
+      });
+    }
+
     let url: string;
     if (tickers && String(tickers).trim()) {
       // If multiple tickers, fetch for each and merge
@@ -95,8 +106,9 @@ serve(async (req) => {
         symbol: item._ticker || item.related || "",
       }));
 
+      await cacheSet(newsKey, { articles }, NEWS_TTL_SECONDS);
       return new Response(JSON.stringify({ articles }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "MISS" },
       });
     } else {
       // General market news
@@ -118,8 +130,9 @@ serve(async (req) => {
         symbol: item.related || "",
       }));
 
+      await cacheSet(newsKey, { articles }, NEWS_TTL_SECONDS);
       return new Response(JSON.stringify({ articles }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json", "X-Cache": "MISS" },
       });
     }
   } catch (e) {
