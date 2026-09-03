@@ -165,29 +165,21 @@ const Index = () => {
               {/* Mobile proof bubbles — prominent row below CTA */}
               <motion.div variants={fadeUp} className="mt-8 flex flex-wrap lg:hidden items-center justify-center gap-3 max-w-2xl">
                 {[
-                  { icon: Flame, label: "5-min daily lesson", size: "lg" },
-                  { icon: TrendingUp, label: "Live market data", size: "sm" },
-                  { icon: MessageCircle, label: "AI tutor — Ask Ekon", size: "lg" },
-                  { icon: Trophy, label: "XP + streaks", size: "sm" },
-                  { icon: Zap, label: "Free forever", size: "md" },
-                ].map(({ icon: Icon, label, size }) => {
-                  const sizeClasses = {
-                    lg: "px-4 py-2.5 gap-2 text-sm",
-                    md: "px-3.5 py-2 gap-1.5 text-xs",
-                    sm: "px-3 py-1.5 gap-1.5 text-xs",
-                  }[size];
-                  const iconSize = size === "lg" ? 15 : 13;
-                  return (
-                    <span
-                      key={label}
-                      className={`inline-flex items-center rounded-xl font-display font-semibold border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 ${sizeClasses}`}
-                      style={{ color: "hsl(240 30% 25%)" }}
-                    >
-                      <Icon size={iconSize} className="text-primary" />
-                      {label}
-                    </span>
-                  );
-                })}
+                  { icon: Flame, label: "5-min daily lesson" },
+                  { icon: TrendingUp, label: "Live market data" },
+                  { icon: MessageCircle, label: "AI tutor — Ask Ekon" },
+                  { icon: Trophy, label: "XP + streaks" },
+                  { icon: Zap, label: "Free forever" },
+                ].map(({ icon: Icon, label }) => (
+                  <span
+                    key={label}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-display font-semibold border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30"
+                    style={{ color: "hsl(240 30% 25%)" }}
+                  >
+                    <Icon size={15} className="text-primary" />
+                    {label}
+                  </span>
+                ))}
               </motion.div>
             </div>
 
