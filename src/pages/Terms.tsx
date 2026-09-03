@@ -2,13 +2,7 @@ import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import logoSrc from "@/assets/econology-logo.png";
 
-const LAST_UPDATED = "16 July 2026";
-
-const TBD = (label: string) => (
-  <span className="inline-flex items-center rounded-md bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border border-yellow-500/40 px-2 py-0.5 text-[11px] font-semibold">
-    [TO BE PROVIDED — {label}]
-  </span>
-);
+const LAST_UPDATED = "3 September 2026";
 
 export default function Terms() {
   return (
@@ -38,25 +32,17 @@ export default function Terms() {
           product matures.
         </p>
 
-        <div className="not-prose rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-4 text-sm">
-          <p className="m-0 text-yellow-800 dark:text-yellow-300">
-            <strong>Draft for beta:</strong> Items marked <em>[TO BE PROVIDED]</em> require the
-            operator (legal entity, jurisdiction, age minimum, contact email) to be finalized
-            before general release.
-          </p>
-        </div>
-
         <h2>1. The service</h2>
         <p>
-          Econology (&ldquo;we&rdquo;, &ldquo;us&rdquo;) is an educational product operated by{" "}
-          {TBD("legal entity name")}. It teaches money and markets through daily lessons,
-          curated news, AI-generated summaries and market ideas, and an AI tutor.
+          Econology (&ldquo;we&rdquo;, &ldquo;us&rdquo;) is an educational product operated by
+          Econology. It teaches money and markets through daily lessons, curated news,
+          AI-generated summaries and market ideas, and an AI tutor.
         </p>
 
         <h2>2. Eligibility</h2>
         <p>
-          You must be at least {TBD("minimum age")} to use Econology. During the closed beta,
-          access may be limited to invited students.
+          You must be at least 13 years old to use Econology. During the closed beta, access may
+          be limited to invited students.
         </p>
 
         <h2>3. Not financial advice</h2>
@@ -131,16 +117,17 @@ export default function Terms() {
 
         <h2>11. Termination</h2>
         <p>
-          You may stop using Econology and request account deletion at any time by contacting{" "}
-          {TBD("support contact email")}. We may terminate or suspend access for violations of
-          these terms.
+          You may stop using Econology and request account deletion at any time by emailing{" "}
+          <a href="mailto:support@econology.app" className="text-primary hover:underline">
+            support@econology.app
+          </a>. We may terminate or suspend access for violations of these terms.
         </p>
 
         <h2>12. Governing law</h2>
         <p>
-          These terms are governed by the laws of {TBD("jurisdiction")}, without regard to
-          conflict-of-law rules. Disputes will be resolved in the courts of that jurisdiction
-          unless applicable consumer law grants you additional rights.
+          These terms are governed by the laws applicable to Econology&rsquo;s operations,
+          without regard to conflict-of-law rules. Disputes will be resolved in the courts of
+          that jurisdiction unless applicable consumer law grants you additional rights.
         </p>
 
         <h2>13. Changes</h2>
@@ -151,7 +138,10 @@ export default function Terms() {
 
         <h2>14. Contact</h2>
         <p>
-          Questions about these terms: {TBD("support contact email")}.
+          Questions about these terms:{" "}
+          <a href="mailto:support@econology.app" className="text-primary hover:underline">
+            support@econology.app
+          </a>
         </p>
 
         <hr />
