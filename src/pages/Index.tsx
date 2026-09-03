@@ -115,22 +115,33 @@ const Index = () => {
             className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-2 items-center"
           >
             {/* Left proof bubbles */}
-            <motion.div variants={fadeUp} className="hidden lg:flex lg:col-span-3 flex-col items-end gap-4 pr-2">
+            <motion.div variants={fadeUp} className="hidden lg:flex lg:col-span-3 flex-col items-end gap-5 pr-2">
               {[
-                { icon: Flame, label: "5-min daily lesson", delay: "0s" },
-                { icon: TrendingUp, label: "Live market data", delay: "1.5s" },
-              ].map(({ icon: Icon, label, delay }) => (
-                <div
-                  key={label}
-                  className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
-                  style={{ animation: `float 6s ease-in-out infinite`, animationDelay: delay }}
-                >
-                  <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shrink-0">
-                    <Icon size={16} className="text-primary-foreground" />
+                { icon: Flame, label: "5-min daily lesson", delay: "0s", duration: "6s", size: "lg", rotate: "-1.5deg" },
+                { icon: TrendingUp, label: "Live market data", delay: "1.2s", duration: "7s", size: "sm", rotate: "1deg" },
+              ].map(({ icon: Icon, label, delay, duration, size, rotate }) => {
+                const sizeClasses = {
+                  lg: "px-5 py-3.5 gap-3.5 text-base",
+                  sm: "px-3.5 py-2.5 gap-2.5 text-sm",
+                }[size];
+                const iconBoxClasses = {
+                  lg: "w-10 h-10 rounded-xl",
+                  sm: "w-8 h-8 rounded-lg",
+                }[size];
+                const iconSize = size === "lg" ? 18 : 14;
+                return (
+                  <div
+                    key={label}
+                    className={`group flex items-center rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg ${sizeClasses}`}
+                    style={{ animation: `float ${duration} ease-in-out infinite`, animationDelay: delay, transform: `rotate(${rotate})` }}
+                  >
+                    <div className={`${iconBoxClasses} gradient-bg flex items-center justify-center shrink-0`}>
+                      <Icon size={iconSize} className="text-primary-foreground" />
+                    </div>
+                    <span className="font-display font-semibold whitespace-nowrap text-foreground">{label}</span>
                   </div>
-                  <span className="text-sm font-display font-semibold whitespace-nowrap text-foreground">{label}</span>
-                </div>
-              ))}
+                );
+              })}
             </motion.div>
 
             {/* Center hero content */}
