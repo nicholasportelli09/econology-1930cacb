@@ -117,18 +117,19 @@ const Index = () => {
             {/* Left proof bubbles */}
             <motion.div variants={fadeUp} className="hidden lg:flex lg:col-span-3 flex-col items-end gap-5 pr-2">
               {[
-                { icon: Flame, label: "5-min daily lesson", delay: "0s", duration: "6s", offsetY: "-16px", rotate: "-1.5deg" },
-                { icon: TrendingUp, label: "Live market data", delay: "1.2s", duration: "7s", offsetY: "18px", rotate: "1deg" },
+                { icon: Flame, label: "5-min daily lesson", delay: "0s", duration: "6s", offsetY: -16, rotate: -1.5 },
+                { icon: TrendingUp, label: "Live market data", delay: "1.2s", duration: "7s", offsetY: 18, rotate: 1 },
               ].map(({ icon: Icon, label, delay, duration, offsetY, rotate }) => (
-                <div
-                  key={label}
-                  className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
-                  style={{ animation: `float ${duration} ease-in-out infinite`, animationDelay: delay, transform: `translateY(${offsetY}) rotate(${rotate})` }}
-                >
-                  <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shrink-0">
-                    <Icon size={16} className="text-primary-foreground" />
+                <div key={label} style={{ marginTop: offsetY, transform: `rotate(${rotate}deg)` }}>
+                  <div
+                    className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
+                    style={{ animation: `float ${duration} ease-in-out infinite`, animationDelay: delay }}
+                  >
+                    <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shrink-0">
+                      <Icon size={16} className="text-primary-foreground" />
+                    </div>
+                    <span className="text-sm font-display font-semibold whitespace-nowrap text-foreground">{label}</span>
                   </div>
-                  <span className="text-sm font-display font-semibold whitespace-nowrap text-foreground">{label}</span>
                 </div>
               ))}
             </motion.div>
@@ -186,19 +187,20 @@ const Index = () => {
             {/* Right proof bubbles */}
             <motion.div variants={fadeUp} className="hidden lg:flex lg:col-span-3 flex-col items-start gap-5 pl-2">
               {[
-                { icon: MessageCircle, label: "AI tutor — Ask Ekon", delay: "0.8s", duration: "5.5s", offsetY: "-20px", rotate: "-1deg" },
-                { icon: Trophy, label: "XP + streaks", delay: "2s", duration: "6.2s", offsetY: "6px", rotate: "2deg" },
-                { icon: Zap, label: "Free forever", delay: "0.3s", duration: "7.5s", offsetY: "22px", rotate: "-2deg" },
+                { icon: MessageCircle, label: "AI tutor — Ask Ekon", delay: "0.8s", duration: "5.5s", offsetY: -20, rotate: -1 },
+                { icon: Trophy, label: "XP + streaks", delay: "2s", duration: "6.2s", offsetY: 6, rotate: 2 },
+                { icon: Zap, label: "Free forever", delay: "0.3s", duration: "7.5s", offsetY: 22, rotate: -2 },
               ].map(({ icon: Icon, label, delay, duration, offsetY, rotate }) => (
-                <div
-                  key={label}
-                  className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
-                  style={{ animation: `float ${duration} ease-in-out infinite`, animationDelay: delay, transform: `translateY(${offsetY}) rotate(${rotate})` }}
-                >
-                  <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shrink-0">
-                    <Icon size={16} className="text-primary-foreground" />
+                <div key={label} style={{ marginTop: offsetY, transform: `rotate(${rotate}deg)` }}>
+                  <div
+                    className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
+                    style={{ animation: `float ${duration} ease-in-out infinite`, animationDelay: delay }}
+                  >
+                    <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shrink-0">
+                      <Icon size={16} className="text-primary-foreground" />
+                    </div>
+                    <span className="text-sm font-display font-semibold whitespace-nowrap text-foreground">{label}</span>
                   </div>
-                  <span className="text-sm font-display font-semibold whitespace-nowrap text-foreground">{label}</span>
                 </div>
               ))}
             </motion.div>
