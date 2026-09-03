@@ -112,17 +112,17 @@ const Index = () => {
             variants={container}
             initial="hidden"
             animate="show"
-            className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-4 items-center"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-2 items-center"
           >
             {/* Left proof bubbles */}
-            <motion.div variants={fadeUp} className="hidden lg:flex lg:col-span-3 flex-col items-end gap-4 pr-4">
+            <motion.div variants={fadeUp} className="hidden lg:flex lg:col-span-3 flex-col items-end gap-4 pr-2">
               {[
                 { icon: Flame, label: "5-min daily lesson", delay: "0s" },
                 { icon: TrendingUp, label: "Live market data", delay: "1.5s" },
               ].map(({ icon: Icon, label, delay }) => (
                 <div
                   key={label}
-                  className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card/80 backdrop-blur-sm card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-lg"
+                  className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
                   style={{ animation: `float 6s ease-in-out infinite`, animationDelay: delay }}
                 >
                   <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shrink-0">
@@ -173,7 +173,7 @@ const Index = () => {
                 ].map(({ icon: Icon, label }) => (
                   <span
                     key={label}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-display font-semibold border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/20"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-display font-semibold border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30"
                     style={{ color: "hsl(240 30% 25%)" }}
                   >
                     <Icon size={15} className="text-primary" />
@@ -184,7 +184,7 @@ const Index = () => {
             </div>
 
             {/* Right proof bubbles */}
-            <motion.div variants={fadeUp} className="hidden lg:flex lg:col-span-3 flex-col items-start gap-4 pl-4">
+            <motion.div variants={fadeUp} className="hidden lg:flex lg:col-span-3 flex-col items-start gap-4 pl-2">
               {[
                 { icon: MessageCircle, label: "AI tutor — Ask Ekon", delay: "0.8s" },
                 { icon: Trophy, label: "XP + streaks", delay: "2.2s" },
@@ -192,7 +192,7 @@ const Index = () => {
               ].map(({ icon: Icon, label, delay }) => (
                 <div
                   key={label}
-                  className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card/80 backdrop-blur-sm card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-lg"
+                  className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
                   style={{ animation: `float 6s ease-in-out infinite`, animationDelay: delay }}
                 >
                   <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shrink-0">
