@@ -101,70 +101,115 @@ const Index = () => {
       </nav>
 
       {/* Hero */}
-      <section className="relative overflow-hidden z-10 flex flex-col items-center text-center px-6 pt-6 pb-16 md:pt-10 md:pb-20 w-full">
+      <section className="relative overflow-hidden z-10 px-6 pt-6 pb-16 md:pt-10 md:pb-20 w-full">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.7, ease: "easeOut" }}
-          className="relative z-10 w-full flex flex-col items-center"
+          className="relative z-10 w-full max-w-7xl mx-auto"
         >
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="flex flex-col items-center"
-        >
-          <motion.div variants={fadeUp} className="-mb-4 md:-mb-6">
-            <img src={logoSrc} alt="Econology logo" width={180} height={180} className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px] animate-float" loading="eager" />
-          </motion.div>
-          <motion.h1 variants={fadeUp} className="text-4xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
-            <span className="gradient-text">Econology</span>
-          </motion.h1>
-          <motion.p variants={fadeUp} className="text-lg md:text-2xl mb-3 max-w-2xl font-bold min-h-[1.75rem] md:min-h-[2.25rem]" style={{ color: "hsl(240 30% 25%)" }}>
-            {tagline}
-            {phase !== "done" && phase !== "sub" && (
-              <span className="inline-block w-[2px] h-[1em] align-middle ml-0.5 bg-current animate-pulse" />
-            )}
-          </motion.p>
-          <motion.p variants={fadeUp} className="text-base md:text-lg mb-10 max-w-2xl leading-relaxed font-semibold min-h-[1.75rem]" style={{ color: "hsl(240 20% 40%)" }}>
-            {sub}
-            {phase === "sub" && (
-              <span className="inline-block w-[2px] h-[1em] align-middle ml-0.5 bg-current animate-pulse" />
-            )}
-          </motion.p>
-          <motion.button
-            variants={fadeUp}
-            onClick={() => navigate(ctaTarget)}
-            className="group flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow active:scale-[0.98]"
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-2 items-center"
           >
-            {ctaLabel}
-            <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-          </motion.button>
+            {/* Left proof bubbles */}
+            <motion.div variants={fadeUp} className="hidden lg:flex lg:col-span-3 flex-col items-end gap-4 pr-2">
+              {[
+                { icon: Flame, label: "5-min daily lesson", delay: "0s" },
+                { icon: TrendingUp, label: "Live market data", delay: "1.5s" },
+              ].map(({ icon: Icon, label, delay }) => (
+                <div
+                  key={label}
+                  className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
+                  style={{ animation: `float 6s ease-in-out infinite`, animationDelay: delay }}
+                >
+                  <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shrink-0">
+                    <Icon size={16} className="text-primary-foreground" />
+                  </div>
+                  <span className="text-sm font-display font-semibold whitespace-nowrap text-foreground">{label}</span>
+                </div>
+              ))}
+            </motion.div>
 
-          {/* Quick proof pills — what you actually get */}
-          <motion.div variants={fadeUp} className="mt-6 flex flex-wrap items-center justify-center gap-2 max-w-2xl">
-            {[
-              { icon: Flame, label: "5-min daily lesson" },
-              { icon: TrendingUp, label: "Live market data" },
-              { icon: MessageCircle, label: "AI tutor — Ask Ekon" },
-              { icon: Trophy, label: "XP + streaks" },
-              { icon: Zap, label: "Free forever" },
-            ].map(({ icon: Icon, label }) => (
-              <span
-                key={label}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border"
-                style={{ background: "rgba(255,255,255,0.6)", borderColor: "rgba(0,0,0,0.08)", color: "hsl(240 30% 25%)" }}
+            {/* Center hero content */}
+            <div className="lg:col-span-6 flex flex-col items-center text-center">
+              <motion.div variants={fadeUp} className="-mb-4 md:-mb-6">
+                <img src={logoSrc} alt="Econology logo" width={180} height={180} className="shrink-0 object-contain w-[120px] h-[120px] md:w-[180px] md:h-[180px] animate-float" loading="eager" />
+              </motion.div>
+              <motion.h1 variants={fadeUp} className="text-4xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-3 leading-none">
+                <span className="gradient-text">Econology</span>
+              </motion.h1>
+              <motion.p variants={fadeUp} className="text-lg md:text-2xl mb-3 max-w-2xl font-bold min-h-[1.75rem] md:min-h-[2.25rem]" style={{ color: "hsl(240 30% 25%)" }}>
+                {tagline}
+                {phase !== "done" && phase !== "sub" && (
+                  <span className="inline-block w-[2px] h-[1em] align-middle ml-0.5 bg-current animate-pulse" />
+                )}
+              </motion.p>
+              <motion.p variants={fadeUp} className="text-base md:text-lg mb-10 max-w-2xl leading-relaxed font-semibold min-h-[1.75rem]" style={{ color: "hsl(240 20% 40%)" }}>
+                {sub}
+                {phase === "sub" && (
+                  <span className="inline-block w-[2px] h-[1em] align-middle ml-0.5 bg-current animate-pulse" />
+                )}
+              </motion.p>
+              <motion.button
+                variants={fadeUp}
+                onClick={() => navigate(ctaTarget)}
+                className="group flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-semibold gradient-bg text-primary-foreground transition-all hover:opacity-90 hover:shadow-xl glow-shadow active:scale-[0.98]"
               >
-                <Icon size={13} className="text-accent" />
-                {label}
-              </span>
-            ))}
+                {ctaLabel}
+                <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+              </motion.button>
+
+              {/* Mobile proof bubbles — prominent row below CTA */}
+              <motion.div variants={fadeUp} className="mt-8 flex flex-wrap lg:hidden items-center justify-center gap-3 max-w-2xl">
+                {[
+                  { icon: Flame, label: "5-min daily lesson" },
+                  { icon: TrendingUp, label: "Live market data" },
+                  { icon: MessageCircle, label: "AI tutor — Ask Ekon" },
+                  { icon: Trophy, label: "XP + streaks" },
+                  { icon: Zap, label: "Free forever" },
+                ].map(({ icon: Icon, label }) => (
+                  <span
+                    key={label}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-display font-semibold border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30"
+                    style={{ color: "hsl(240 30% 25%)" }}
+                  >
+                    <Icon size={15} className="text-primary" />
+                    {label}
+                  </span>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* Right proof bubbles */}
+            <motion.div variants={fadeUp} className="hidden lg:flex lg:col-span-3 flex-col items-start gap-4 pl-2">
+              {[
+                { icon: MessageCircle, label: "AI tutor — Ask Ekon", delay: "0.8s" },
+                { icon: Trophy, label: "XP + streaks", delay: "2.2s" },
+                { icon: Zap, label: "Free forever", delay: "0.3s" },
+              ].map(({ icon: Icon, label, delay }) => (
+                <div
+                  key={label}
+                  className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
+                  style={{ animation: `float 6s ease-in-out infinite`, animationDelay: delay }}
+                >
+                  <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shrink-0">
+                    <Icon size={16} className="text-primary-foreground" />
+                  </div>
+                  <span className="text-sm font-display font-semibold whitespace-nowrap text-foreground">{label}</span>
+                </div>
+              ))}
+            </motion.div>
           </motion.div>
 
           {/* Product preview — shows what the app actually looks/feels like */}
           <motion.div
             variants={fadeUp}
-            className="mt-12 w-full max-w-5xl"
+            initial="hidden"
+            animate="show"
+            className="mt-12 lg:mt-16 w-full max-w-5xl mx-auto"
           >
             <div
               className="rounded-3xl border p-4 md:p-6"
@@ -259,7 +304,6 @@ const Index = () => {
               </div>
             </div>
           </motion.div>
-        </motion.div>
         </motion.div>
       </section>
 
