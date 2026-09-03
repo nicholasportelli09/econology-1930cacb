@@ -2,25 +2,14 @@ import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import logoSrc from "@/assets/econology-logo.png";
 
-const LAST_UPDATED = "16 July 2026";
-
-/**
- * Missing owner-supplied details are rendered as [TO BE PROVIDED BY OPERATOR]
- * so the beta launches without invented legal entities, addresses, jurisdictions,
- * age minimums, or contact emails.
- */
-const TBD = (label: string) => (
-  <span className="inline-flex items-center rounded-md bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border border-yellow-500/40 px-2 py-0.5 text-[11px] font-semibold">
-    [TO BE PROVIDED — {label}]
-  </span>
-);
+const LAST_UPDATED = "3 September 2026";
 
 export default function Privacy() {
   return (
     <div className="min-h-screen bg-background">
       <Seo
         title="Privacy — Econology"
-        description="How Econology collects, uses, and shares data during our closed student beta."
+        description="How Econology collects, uses, and protects your data during our closed student beta."
         path="/privacy"
         type="website"
       />
@@ -38,31 +27,25 @@ export default function Privacy() {
         <h1>Privacy Notice</h1>
 
         <p className="lead">
-          Econology is an educational product currently in a closed student beta. This notice
-          describes what data we collect, why we collect it, and who processes it on our behalf.
-          It is written to describe the product honestly rather than to make marketing claims.
+          Econology is an educational product in a closed student beta. This notice explains
+          what data we collect, why we collect it, who processes it on our behalf, and the
+          choices you have.
         </p>
-
-        <div className="not-prose rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-4 text-sm">
-          <p className="m-0 text-yellow-800 dark:text-yellow-300">
-            <strong>Draft for beta:</strong> Items marked <em>[TO BE PROVIDED]</em> require the
-            operator (legal entity, address, jurisdiction, age minimum, contact email) to be
-            filled in before general release.
-          </p>
-        </div>
 
         <h2>1. Who we are</h2>
         <p>
-          Econology is operated by {TBD("legal entity name")} (&ldquo;we&rdquo;, &ldquo;us&rdquo;).
-          Registered address: {TBD("registered address")}. Governing jurisdiction:{" "}
-          {TBD("jurisdiction")}. Data protection contact: {TBD("privacy contact email")}.
+          Econology is operated by Econology (&ldquo;we&rdquo;, &ldquo;us&rdquo;). For data
+          protection questions, contact us at{" "}
+          <a href="mailto:privacy@econology.app" className="text-primary hover:underline">
+            privacy@econology.app
+          </a>.
         </p>
 
         <h2>2. Who this service is for</h2>
         <p>
-          Econology is offered to students during this closed beta. Minimum age to use the
-          service: {TBD("minimum age")}. If you are below the applicable minimum age in your
-          jurisdiction, please do not create an account.
+          Econology is offered to students during this closed beta. You must be at least 13 years
+          old to create an account. If you are below the minimum age required in your
+          jurisdiction, please do not use the service.
         </p>
 
         <h2>3. What we collect</h2>
@@ -98,10 +81,9 @@ export default function Privacy() {
             responses generated for you, plus per-day usage counters that enforce rate limits.
           </li>
           <li>
-            <strong>Product analytics.</strong> Once product analytics is implemented, we will
-            record aggregated event data such as page views, feature interactions, signup
-            funnels, and error events tied to your account id. We will update this notice with
-            the analytics provider and retention when it is turned on.
+            <strong>Product analytics.</strong> We record aggregated event data such as page
+            views, feature interactions, signup funnels, lesson completions, and error events
+            tied to your account id. This helps us improve the product and diagnose issues.
           </li>
           <li>
             <strong>Basic technical data.</strong> IP address at request time, user agent, and
@@ -126,9 +108,10 @@ export default function Privacy() {
         </p>
         <ul>
           <li>
-            <strong>Supabase</strong> — hosted Postgres database, authentication, edge functions,
-            and email delivery infrastructure. Stores your account, profile, progress, watchlist,
-            pinned articles, notification preferences, and tutor usage.
+            <strong>Lovable Cloud</strong> — our backend infrastructure, including the hosted
+            database, authentication, edge functions, and email delivery. Stores your
+            account, profile, progress, watchlist, pinned articles, notification preferences,
+            and tutor usage.
           </li>
           <li>
             <strong>Vercel</strong> — hosts the web application and serves static assets and
@@ -170,19 +153,16 @@ export default function Privacy() {
         <p>
           We do not sell your personal data. We share it with the service providers listed
           above only to the extent needed to operate the features you use, and we may disclose
-          data when we are legally required to do so. We are not in a position to guarantee
-          absolute security or that data will never be accessed inappropriately — we work to
-          reduce that risk with row-level security, encryption in transit, and access controls,
-          but no online service can promise perfect security.
+          data when we are legally required to do so. We use row-level security, encryption in
+          transit, and access controls to reduce risk, but no online service can promise perfect
+          security.
         </p>
 
         <h2>7. Data retention</h2>
         <p>
           We retain account and product data for as long as your account is active. If you
-          delete your account (see &ldquo;Your choices&rdquo; below), we delete or anonymize
-          associated records within a reasonable period, except where we must keep records for
-          legal or fraud-prevention reasons. Specific retention windows will be published when
-          the operator details above are finalized.
+          delete your account, we delete or anonymize associated records within 30 days, except
+          where we must keep records for legal or fraud-prevention reasons.
         </p>
 
         <h2>8. Your choices</h2>
@@ -190,9 +170,11 @@ export default function Privacy() {
           <li>You can update your profile and notification preferences in Settings.</li>
           <li>You can unsubscribe from email at any time via the link in every email.</li>
           <li>
-            You can request access to, correction of, or deletion of your data by contacting{" "}
-            {TBD("privacy contact email")}. Depending on where you live you may also have rights
-            under GDPR, UK GDPR, CCPA, or similar laws.
+            You can request access to, correction of or deletion of your data by emailing{" "}
+            <a href="mailto:privacy@econology.app" className="text-primary hover:underline">
+              privacy@econology.app
+            </a>. Depending on where you live you may also have rights under GDPR, UK GDPR,
+            CCPA, or similar laws.
           </li>
         </ul>
 
@@ -200,7 +182,7 @@ export default function Privacy() {
         <p>
           Econology uses browser storage to keep you signed in, remember your onboarding
           profile, and cache lesson state. Embedded third-party widgets (YouTube, TradingView)
-          may set their own cookies when they load. We do not currently use advertising cookies.
+          may set their own cookies when they load. We do not use advertising cookies.
         </p>
 
         <h2>10. International transfers</h2>
@@ -226,7 +208,10 @@ export default function Privacy() {
 
         <h2>13. Contact</h2>
         <p>
-          Questions about this notice or your data: {TBD("privacy contact email")}.
+          Questions about this notice or your data:{" "}
+          <a href="mailto:privacy@econology.app" className="text-primary hover:underline">
+            privacy@econology.app
+          </a>
         </p>
 
         <hr />
