@@ -117,31 +117,20 @@ const Index = () => {
             {/* Left proof bubbles */}
             <motion.div variants={fadeUp} className="hidden lg:flex lg:col-span-3 flex-col items-end gap-5 pr-2">
               {[
-                { icon: Flame, label: "5-min daily lesson", delay: "0s", duration: "6s", size: "lg", rotate: "-1.5deg" },
-                { icon: TrendingUp, label: "Live market data", delay: "1.2s", duration: "7s", size: "sm", rotate: "1deg" },
-              ].map(({ icon: Icon, label, delay, duration, size, rotate }) => {
-                const sizeClasses = {
-                  lg: "px-5 py-3.5 gap-3.5 text-base",
-                  sm: "px-3.5 py-2.5 gap-2.5 text-sm",
-                }[size];
-                const iconBoxClasses = {
-                  lg: "w-10 h-10 rounded-xl",
-                  sm: "w-8 h-8 rounded-lg",
-                }[size];
-                const iconSize = size === "lg" ? 18 : 14;
-                return (
-                  <div
-                    key={label}
-                    className={`group flex items-center rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg ${sizeClasses}`}
-                    style={{ animation: `float ${duration} ease-in-out infinite`, animationDelay: delay, transform: `rotate(${rotate})` }}
-                  >
-                    <div className={`${iconBoxClasses} gradient-bg flex items-center justify-center shrink-0`}>
-                      <Icon size={iconSize} className="text-primary-foreground" />
-                    </div>
-                    <span className="font-display font-semibold whitespace-nowrap text-foreground">{label}</span>
+                { icon: Flame, label: "5-min daily lesson", delay: "0s", duration: "6s", offsetY: "-16px", rotate: "-1.5deg" },
+                { icon: TrendingUp, label: "Live market data", delay: "1.2s", duration: "7s", offsetY: "18px", rotate: "1deg" },
+              ].map(({ icon: Icon, label, delay, duration, offsetY, rotate }) => (
+                <div
+                  key={label}
+                  className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
+                  style={{ animation: `float ${duration} ease-in-out infinite`, animationDelay: delay, transform: `translateY(${offsetY}) rotate(${rotate})` }}
+                >
+                  <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shrink-0">
+                    <Icon size={16} className="text-primary-foreground" />
                   </div>
-                );
-              })}
+                  <span className="text-sm font-display font-semibold whitespace-nowrap text-foreground">{label}</span>
+                </div>
+              ))}
             </motion.div>
 
             {/* Center hero content */}
@@ -176,63 +165,42 @@ const Index = () => {
               {/* Mobile proof bubbles — prominent row below CTA */}
               <motion.div variants={fadeUp} className="mt-8 flex flex-wrap lg:hidden items-center justify-center gap-3 max-w-2xl">
                 {[
-                  { icon: Flame, label: "5-min daily lesson", size: "lg" },
-                  { icon: TrendingUp, label: "Live market data", size: "sm" },
-                  { icon: MessageCircle, label: "AI tutor — Ask Ekon", size: "lg" },
-                  { icon: Trophy, label: "XP + streaks", size: "sm" },
-                  { icon: Zap, label: "Free forever", size: "md" },
-                ].map(({ icon: Icon, label, size }) => {
-                  const sizeClasses = {
-                    lg: "px-4 py-2.5 gap-2 text-sm",
-                    md: "px-3.5 py-2 gap-1.5 text-xs",
-                    sm: "px-3 py-1.5 gap-1.5 text-xs",
-                  }[size];
-                  const iconSize = size === "lg" ? 15 : 13;
-                  return (
-                    <span
-                      key={label}
-                      className={`inline-flex items-center rounded-xl font-display font-semibold border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 ${sizeClasses}`}
-                      style={{ color: "hsl(240 30% 25%)" }}
-                    >
-                      <Icon size={iconSize} className="text-primary" />
-                      {label}
-                    </span>
-                  );
-                })}
+                  { icon: Flame, label: "5-min daily lesson" },
+                  { icon: TrendingUp, label: "Live market data" },
+                  { icon: MessageCircle, label: "AI tutor — Ask Ekon" },
+                  { icon: Trophy, label: "XP + streaks" },
+                  { icon: Zap, label: "Free forever" },
+                ].map(({ icon: Icon, label }) => (
+                  <span
+                    key={label}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-display font-semibold border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30"
+                    style={{ color: "hsl(240 30% 25%)" }}
+                  >
+                    <Icon size={15} className="text-primary" />
+                    {label}
+                  </span>
+                ))}
               </motion.div>
             </div>
 
             {/* Right proof bubbles */}
             <motion.div variants={fadeUp} className="hidden lg:flex lg:col-span-3 flex-col items-start gap-5 pl-2">
               {[
-                { icon: MessageCircle, label: "AI tutor — Ask Ekon", delay: "0.8s", duration: "5.5s", size: "lg", rotate: "-1deg" },
-                { icon: Trophy, label: "XP + streaks", delay: "2s", duration: "6.2s", size: "sm", rotate: "2deg" },
-                { icon: Zap, label: "Free forever", delay: "0.3s", duration: "7.5s", size: "md", rotate: "-2deg" },
-              ].map(({ icon: Icon, label, delay, duration, size, rotate }) => {
-                const sizeClasses = {
-                  lg: "px-5 py-3.5 gap-3.5 text-base",
-                  md: "px-4 py-3 gap-3 text-sm",
-                  sm: "px-3.5 py-2.5 gap-2.5 text-sm",
-                }[size];
-                const iconBoxClasses = {
-                  lg: "w-10 h-10 rounded-xl",
-                  md: "w-9 h-9 rounded-xl",
-                  sm: "w-8 h-8 rounded-lg",
-                }[size];
-                const iconSize = size === "lg" ? 18 : size === "md" ? 16 : 14;
-                return (
-                  <div
-                    key={label}
-                    className={`group flex items-center rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg ${sizeClasses}`}
-                    style={{ animation: `float ${duration} ease-in-out infinite`, animationDelay: delay, transform: `rotate(${rotate})` }}
-                  >
-                    <div className={`${iconBoxClasses} gradient-bg flex items-center justify-center shrink-0`}>
-                      <Icon size={iconSize} className="text-primary-foreground" />
-                    </div>
-                    <span className="font-display font-semibold whitespace-nowrap text-foreground">{label}</span>
+                { icon: MessageCircle, label: "AI tutor — Ask Ekon", delay: "0.8s", duration: "5.5s", offsetY: "-20px", rotate: "-1deg" },
+                { icon: Trophy, label: "XP + streaks", delay: "2s", duration: "6.2s", offsetY: "6px", rotate: "2deg" },
+                { icon: Zap, label: "Free forever", delay: "0.3s", duration: "7.5s", offsetY: "22px", rotate: "-2deg" },
+              ].map(({ icon: Icon, label, delay, duration, offsetY, rotate }) => (
+                <div
+                  key={label}
+                  className="group flex items-center gap-3 px-4 py-3 rounded-2xl border bg-card card-shadow transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
+                  style={{ animation: `float ${duration} ease-in-out infinite`, animationDelay: delay, transform: `translateY(${offsetY}) rotate(${rotate})` }}
+                >
+                  <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shrink-0">
+                    <Icon size={16} className="text-primary-foreground" />
                   </div>
-                );
-              })}
+                  <span className="text-sm font-display font-semibold whitespace-nowrap text-foreground">{label}</span>
+                </div>
+              ))}
             </motion.div>
           </motion.div>
 
