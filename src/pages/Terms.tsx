@@ -118,8 +118,8 @@ export default function Terms() {
         <h2>11. Termination</h2>
         <p>
           You may stop using Econology and request account deletion at any time by emailing{" "}
-          <a href="mailto:support@econology.app" className="text-primary hover:underline">
-            support@econology.app
+          <a href="mailto:nicholas.econology@gmail.com" className="text-primary hover:underline">
+            nicholas.econology@gmail.com
           </a>. We may terminate or suspend access for violations of these terms.
         </p>
 
@@ -139,8 +139,8 @@ export default function Terms() {
         <h2>14. Contact</h2>
         <p>
           Questions about these terms:{" "}
-          <a href="mailto:support@econology.app" className="text-primary hover:underline">
-            support@econology.app
+          <a href="mailto:nicholas.econology@gmail.com" className="text-primary hover:underline">
+            nicholas.econology@gmail.com
           </a>
         </p>
 

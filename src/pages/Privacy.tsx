@@ -36,8 +36,8 @@ export default function Privacy() {
         <p>
           Econology is operated by Econology (&ldquo;we&rdquo;, &ldquo;us&rdquo;). For data
           protection questions, contact us at{" "}
-          <a href="mailto:privacy@econology.app" className="text-primary hover:underline">
-            privacy@econology.app
+          <a href="mailto:nicholas.econology@gmail.com" className="text-primary hover:underline">
+            nicholas.econology@gmail.com
           </a>.
         </p>
 
@@ -171,8 +171,8 @@ export default function Privacy() {
           <li>You can unsubscribe from email at any time via the link in every email.</li>
           <li>
             You can request access to, correction of or deletion of your data by emailing{" "}
-            <a href="mailto:privacy@econology.app" className="text-primary hover:underline">
-              privacy@econology.app
+            <a href="mailto:nicholas.econology@gmail.com" className="text-primary hover:underline">
+              nicholas.econology@gmail.com
             </a>. Depending on where you live you may also have rights under GDPR, UK GDPR,
             CCPA, or similar laws.
           </li>
@@ -209,8 +209,8 @@ export default function Privacy() {
         <h2>13. Contact</h2>
         <p>
           Questions about this notice or your data:{" "}
-          <a href="mailto:privacy@econology.app" className="text-primary hover:underline">
-            privacy@econology.app
+          <a href="mailto:nicholas.econology@gmail.com" className="text-primary hover:underline">
+            nicholas.econology@gmail.com
           </a>
         </p>
 
