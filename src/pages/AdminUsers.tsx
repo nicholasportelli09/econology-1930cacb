@@ -42,6 +42,8 @@ function initialsFor(email: string | null): string {
   return parts.slice(0, 2).map((p) => p[0]?.toUpperCase() ?? "").join("") || "?";
 }
 
+const REFRESH_INTERVAL_MS = 30_000;
+
 export default function AdminUsers() {
   const { user, loading: authLoading } = useAuth();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -49,6 +51,7 @@ export default function AdminUsers() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   // Server-side role check (never trust a client flag).
   useEffect(() => {
@@ -65,8 +68,8 @@ export default function AdminUsers() {
       .then(({ data, error }) => setIsAdmin(!error && !!data));
   }, [user]);
 
-  const load = async (q: string) => {
-    setLoading(true);
+  const load = async (q: string, silent = false) => {
+    if (!silent) setLoading(true);
     setError(null);
     const { data, error } = await supabase.rpc("admin_list_users", {
       p_limit: 500,
@@ -74,13 +77,31 @@ export default function AdminUsers() {
       p_search: q.trim() ? q.trim() : null,
     });
     if (error) setError(error.message);
-    else setUsers((data as unknown as AppUser[]) ?? []);
-    setLoading(false);
+    else {
+      setUsers((data as unknown as AppUser[]) ?? []);
+      setLastUpdated(new Date());
+    }
+    if (!silent) setLoading(false);
   };
 
   useEffect(() => {
     if (isAdmin) void load("");
   }, [isAdmin]);
+
+  // Auto-refresh while the page is open; also refresh when the tab regains focus.
+  useEffect(() => {
+    if (!isAdmin) return;
+    const interval = window.setInterval(() => void load(search, true), REFRESH_INTERVAL_MS);
+    const onFocus = () => void load(search, true);
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdmin, search]);
 
   if (authLoading || isAdmin === null) {
     return (
