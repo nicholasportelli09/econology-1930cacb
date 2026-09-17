@@ -33,3 +33,5 @@ project_id = "rzwijdlukameiowfbtil"
     verify_jwt = false
   [functions.handle-email-suppression]
     verify_jwt = false
+  [functions.users-feed]
+    verify_jwt = false
