@@ -601,6 +601,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_users: {
+        Args: { p_limit?: number; p_offset?: number; p_search?: string }
+        Returns: {
+          created_at: string
+          email: string
+          email_confirmed: boolean
+          guest_mode: boolean
+          last_sign_in_at: string
+          lessons_completed: number
+          onboarded: boolean
+          provider: string
+          user_id: string
+        }[]
+      }
       decrypt_pii: { Args: { ciphertext: string }; Returns: string }
       delete_email: {
         Args: { message_id: number; queue_name: string }

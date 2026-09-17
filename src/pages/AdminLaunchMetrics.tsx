@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Download } from "lucide-react";
@@ -143,7 +143,10 @@ export default function AdminLaunchMetrics() {
           <div>
             <h1 className="text-3xl font-bold">Launch Metrics</h1>
             <p className="text-sm text-muted-foreground">
-              Aggregated only. Individual users are never listed here.
+              Aggregated only. Individual users are never listed here.{" "}
+              <Link to="/admin/users" className="text-primary underline underline-offset-2">
+                View users
+              </Link>
             </p>
           </div>
           <div className="flex flex-wrap items-end gap-3">

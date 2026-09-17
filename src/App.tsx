@@ -30,6 +30,7 @@ import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import AdminLaunchMetrics from "./pages/AdminLaunchMetrics";
+import AdminUsers from "./pages/AdminUsers";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +76,7 @@ const App = () => (
 
             {/* Admin (server-side role check inside the page) */}
             <Route path="/admin/launch-metrics" element={<ProtectedRoute><AdminLaunchMetrics /></ProtectedRoute>} />
+            <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
