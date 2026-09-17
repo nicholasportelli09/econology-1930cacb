@@ -15,6 +15,13 @@
       "when": 1789673291078,
       "tag": "0001_admin_list_users_rpc_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789673478945,
+      "tag": "0002_admin_list_users_rpc_typefix",
+      "breakpoints": true
     }
   ]
 }
