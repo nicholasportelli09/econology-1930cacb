@@ -12,7 +12,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Seo } from "@/components/Seo";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Pause, Play } from "lucide-react";
+import { Pause, Play, Volume2, VolumeX } from "lucide-react";
+
+// The external custom-domain host does not serve Lovable's asset path.
+const launchAssetUrl = (path: string) => {
+  const host = window.location.hostname;
+  return host === "localhost" || host === "127.0.0.1" || host.endsWith(".lovable.app")
+    ? path
+    : new URL(path, "https://econology.lovable.app").href;
+};
 
 const Index = () => {
   const navigate = useNavigate();
@@ -24,6 +32,9 @@ const Index = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const manuallyPaused = useRef(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
+  const [videoMuted, setVideoMuted] = useState(true);
+  const videoUrl = launchAssetUrl(launchVideo.url);
+  const posterUrl = launchAssetUrl(launchPoster.url);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -32,8 +43,7 @@ const Index = () => {
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry) return;
       if (entry.isIntersecting) {
-        if (!video.getAttribute("src")) video.src = launchVideo.url;
-        video.muted = true;
+        if (!video.getAttribute("src")) video.src = videoUrl;
         if (!manuallyPaused.current) void video.play().catch(() => setVideoPlaying(false));
       } else {
         video.pause();
@@ -41,20 +51,26 @@ const Index = () => {
     }, { threshold: 0.15 });
     observer.observe(video);
     return () => observer.disconnect();
-  }, []);
+  }, [videoUrl]);
 
   const toggleVideo = () => {
     const video = videoRef.current;
     if (!video) return;
     if (video.paused) {
       manuallyPaused.current = false;
-      video.muted = true;
-      if (!video.getAttribute("src")) video.src = launchVideo.url;
+      if (!video.getAttribute("src")) video.src = videoUrl;
       void video.play().catch(() => setVideoPlaying(false));
     } else {
       manuallyPaused.current = true;
       video.pause();
     }
+  };
+
+  const toggleSound = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setVideoMuted(video.muted);
   };
 
   const fadeUp = {
@@ -354,26 +370,40 @@ const Index = () => {
               width={1920}
               height={1080}
               autoPlay
-              muted
+              muted={videoMuted}
               loop
               playsInline
               preload="none"
-              poster={launchPoster.url}
+              poster={posterUrl}
+              onVolumeChange={() => setVideoMuted(videoRef.current?.muted ?? true)}
               onPlaying={() => setVideoPlaying(true)}
               onPause={() => setVideoPlaying(false)}
             >
-              <a href={launchVideo.url}>Watch the Econology launch film</a>
+              <a href={videoUrl}>Watch the Econology launch film</a>
             </video>
+            <div className="absolute bottom-3 right-3 flex items-center gap-2">
             <Button
               variant="secondary"
               size="icon"
-              className="absolute bottom-3 right-3 rounded-full bg-background/90 text-foreground shadow-sm hover:bg-background"
+              className="rounded-full border border-border/50 bg-background/90 text-foreground shadow-sm backdrop-blur-sm hover:bg-background"
+              onClick={toggleSound}
+              aria-label={videoMuted ? "Unmute film" : "Mute film"}
+              title={videoMuted ? "Unmute film" : "Mute film"}
+              aria-pressed={!videoMuted}
+            >
+              {videoMuted ? <VolumeX /> : <Volume2 />}
+            </Button>
+            <Button
+              variant="secondary"
+              size="icon"
+              className="rounded-full border border-border/50 bg-background/90 text-foreground shadow-sm backdrop-blur-sm hover:bg-background"
               onClick={toggleVideo}
               aria-label={videoPlaying ? "Pause film" : "Play film"}
               title={videoPlaying ? "Pause film" : "Play film"}
             >
               {videoPlaying ? <Pause /> : <Play />}
             </Button>
+            </div>
           </div>
         </motion.div>
       </section>
