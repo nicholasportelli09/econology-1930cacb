@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
+import launchVideo from "@/assets/econology-launch.mp4.asset.json";
+import launchPoster from "@/assets/econology-launch-poster.jpg.asset.json";
 import FeatureCard from "@/components/FeatureCard";
 import { ArrowRight, Lightbulb, BookOpen, Newspaper, CheckCircle, BarChart3, Brain, LineChart } from "lucide-react";
 import { Sparkles, TrendingUp, MessageCircle, Flame, Trophy, Zap } from "lucide-react";
@@ -306,6 +308,22 @@ const Index = () => {
               </div>
             </div>
           </motion.div>
+
+          <div className="mt-10 md:mt-14 w-full max-w-5xl mx-auto">
+            <video
+              aria-label="Econology launch film"
+              className="block w-full aspect-video rounded-lg object-contain bg-foreground"
+              width={1920}
+              height={1080}
+              controls
+              playsInline
+              preload="none"
+              poster={launchPoster.url}
+            >
+              <source src={launchVideo.url} type="video/mp4" />
+              <a href={launchVideo.url}>Watch the Econology launch film</a>
+            </video>
+          </div>
         </motion.div>
       </section>
 
