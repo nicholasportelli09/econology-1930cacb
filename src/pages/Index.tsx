@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import EconologyLogo from "@/components/EconologyLogo";
 import logoSrc from "@/assets/econology-logo.png";
 import launchVideo from "@/assets/econology-launch.mp4.asset.json";
@@ -11,6 +11,8 @@ import { Sparkles, TrendingUp, MessageCircle, Flame, Trophy, Zap } from "lucide-
 import { useAuth } from "@/contexts/AuthContext";
 import { Seo } from "@/components/Seo";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Pause, Play } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -19,6 +21,41 @@ const Index = () => {
   const ctaLabel = hasSession ? "Continue to Dashboard" : "Start Your Journey";
   const ctaTarget = hasSession ? "/dashboard" : "/signup";
   const secondaryCtaLabel = hasSession ? "Continue to Dashboard" : "Get Started — It's Free";
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const manuallyPaused = useRef(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    // Load the original file only when the film enters the viewport.
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry) return;
+      if (entry.isIntersecting) {
+        if (!video.getAttribute("src")) video.src = launchVideo.url;
+        video.muted = true;
+        if (!manuallyPaused.current) void video.play().catch(() => setVideoPlaying(false));
+      } else {
+        video.pause();
+      }
+    }, { threshold: 0.15 });
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
+  const toggleVideo = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      manuallyPaused.current = false;
+      video.muted = true;
+      if (!video.getAttribute("src")) video.src = launchVideo.url;
+      void video.play().catch(() => setVideoPlaying(false));
+    } else {
+      manuallyPaused.current = true;
+      video.pause();
+    }
+  };
 
   const fadeUp = {
     hidden: { opacity: 0, y: 24 },
@@ -309,20 +346,34 @@ const Index = () => {
             </div>
           </motion.div>
 
-          <div className="mt-10 md:mt-14 w-full max-w-5xl mx-auto">
+          <div className="relative mt-10 md:mt-14 w-full max-w-5xl mx-auto overflow-hidden">
             <video
+              ref={videoRef}
               aria-label="Econology launch film"
-              className="block w-full aspect-video rounded-lg object-contain bg-foreground"
+              className="block w-full aspect-video object-contain"
               width={1920}
               height={1080}
-              controls
+              autoPlay
+              muted
+              loop
               playsInline
               preload="none"
               poster={launchPoster.url}
+              onPlaying={() => setVideoPlaying(true)}
+              onPause={() => setVideoPlaying(false)}
             >
-              <source src={launchVideo.url} type="video/mp4" />
               <a href={launchVideo.url}>Watch the Econology launch film</a>
             </video>
+            <Button
+              variant="secondary"
+              size="icon"
+              className="absolute bottom-3 right-3 rounded-full bg-background/90 text-foreground shadow-sm hover:bg-background"
+              onClick={toggleVideo}
+              aria-label={videoPlaying ? "Pause film" : "Play film"}
+              title={videoPlaying ? "Pause film" : "Play film"}
+            >
+              {videoPlaying ? <Pause /> : <Play />}
+            </Button>
           </div>
         </motion.div>
       </section>
