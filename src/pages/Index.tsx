@@ -114,7 +114,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "hsl(245 35% 96%)" }}>
-      <Seo title="Econology — The Science of Smart Money" description="Master money and markets with daily lessons, live market insights, AI-curated economic news, and an AI tutor built for students and young investors." path="/" type="website" jsonLd={{"@context":"https://schema.org","@type":"WebSite","name":"Econology","url":"https://www.econology.app/"}} />
+      <Seo title="Econology: The Science of Smart Money" description="Master money and markets with daily lessons, live market insights, AI-curated economic news, and an AI tutor built for students and young investors." path="/" type="website" jsonLd={{"@context":"https://schema.org","@type":"WebSite","name":"Econology","url":"https://www.econology.app/"}} />
 
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 lg:px-20 py-5 w-full">
